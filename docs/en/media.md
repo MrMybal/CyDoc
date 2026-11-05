@@ -17,9 +17,9 @@ Dedicated examples show a [single image](doc:image-viewer), a [single video](doc
 
 ## Images {#images}
 
-The image module provides fullscreen, zoom, pan, and comparison in one frame. Transforms are synchronized to preserve alignment while comparing.
+The image module provides in-window enlargement, zoom, pan, and comparison in one frame. Transforms are synchronized to preserve alignment while comparing.
 
-Drag the handle directly on the A/B divider. It stays synchronized with the range below and supports arrow keys. The four-corner icon opens fullscreen; Escape closes it. These controls are shared by image, video, and mesh comparisons.
+Drag the handle directly on the A/B divider. It stays synchronized with the range below and supports arrow keys. The four-corner icon enlarges the reader within the documentation window; Escape reduces it. These controls are shared by image, video, and mesh comparisons.
 
 ```image
 {"src":"assets/settings.svg","compare":"assets/settings-b.svg","alt":"Application settings comparison","labels":["Before","After"]}

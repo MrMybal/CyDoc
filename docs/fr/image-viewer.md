@@ -1,13 +1,13 @@
 ---
 id: image-viewer
 title: Image seule
-description: Zoomez avec la molette ou les boutons, déplacez l’image et utilisez l’icône plein écran. Aucun second média n’est chargé.
+description: Zoomez avec la molette ou les boutons, déplacez l’image et utilisez l’icône d’agrandissement dans la fenêtre. Aucun second média n’est chargé.
 section: Exemples
 order: 13
 ---
 ## Essayer le lecteur {#viewer}
 
-Zoomez avec la molette ou les boutons, déplacez l’image et utilisez l’icône plein écran. Aucun second média n’est chargé.
+Zoomez avec la molette ou les boutons, déplacez l’image et utilisez l’icône d’agrandissement dans la fenêtre. Aucun second média n’est chargé.
 
 ```image
 {
@@ -46,3 +46,5 @@ Zoomez avec la molette ou les boutons, déplacez l’image et utilisez l’icôn
 ```
 
 [Voir les comparaisons](doc:media) · [Voir les galeries](doc:galleries).
+
+[Essayer la version épurée](doc:minimal-media).

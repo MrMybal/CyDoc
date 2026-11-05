@@ -9,6 +9,8 @@ import { mountViewer } from '../dist/viewer.js';
 import gifModule from '../dist/modules/gif.js';
 import { compileMarkdown } from '../tools/compiler.mjs';
 import { readFile } from 'node:fs/promises';
+import { mediaPresentation, commonStyles, expandButton, watchExpansion } from '../dist/modules/shared.js';
+import { captureReadingView, restoreReadingView, restoreScroll } from '../dist/reading-view.js';
 
 function dom(t) {
   // Unit fixtures only. No navigation, script evaluation, resource fetching, or server.
@@ -42,15 +44,19 @@ test('comparison grab moves on the image, keeps the range in sync, and is keyboa
   assert.equal(grab.getAttribute('aria-valuenow'), '79');
   grab.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Home', bubbles: true }));
   assert.equal(host.querySelector('input[type=range]').value, '0');
-  const fullscreen = host.querySelector('[data-action=fullscreen]');
-  assert.equal(fullscreen.textContent, ''); assert.ok(fullscreen.querySelector('svg')); assert.equal(fullscreen.getAttribute('aria-label'), 'Plein écran');
-  host.requestFullscreen = async () => { throw new Error('Native fullscreen unavailable in this fixture'); };
-  fullscreen.click(); await settle();
+  const expand = host.querySelector('[data-action=expand]');
+  assert.equal(expand.textContent, ''); assert.ok(expand.querySelector('svg')); assert.equal(expand.getAttribute('aria-label'), 'Agrandir dans la fenêtre');
+  let nativeCalls = 0;
+  host.requestFullscreen = async () => { nativeCalls++; };
+  expand.click(); await settle();
   assert.equal(host.classList.contains('media-expanded'), true);
-  assert.equal(fullscreen.getAttribute('aria-label'), 'Quitter le plein écran');
+  assert.equal(nativeCalls, 0); assert.ok(host.previousElementSibling.matches('.media-placeholder'));
+  assert.equal(expand.getAttribute('aria-label'), 'Réduire');
+  assert.equal(expand.getAttribute('aria-expanded'), 'true');
   window.document.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
   assert.equal(host.classList.contains('media-expanded'), false);
-  assert.equal(fullscreen.getAttribute('aria-label'), 'Plein écran');
+  assert.equal(host.previousElementSibling, null);
+  assert.equal(expand.getAttribute('aria-label'), 'Agrandir dans la fenêtre');
 });
 
 test('galleries load only the selected viewer and dispose the previous item', async t => {
@@ -178,4 +184,117 @@ test('reader tabs, glossary, bookmarks and note UI work using local widget fixtu
   host.querySelector('.personal-notes textarea').value='My private note';host.querySelector('[data-save-note]').click();
   const saved=JSON.parse(window.localStorage.getItem('cydoc:reading:Reading fixture'));assert.equal(saved.notes['fr:test'],'My private note');assert.equal(saved.bookmarks.length,1);
   host.querySelector('[data-personal]').click();assert.match(host.querySelector('.personal-dialog').textContent,/My private note/);viewer.destroy();
+});
+
+
+test('page changes preserve the menu, reading positions and selected code tabs; explicit targets still win', t => {
+  const { host, window } = dom(t);
+  // Inject route input and scroll coordinates into a component fixture, without browser navigation.
+  const route = { hash: '#/fr/first', href: '#/fr/first' };
+  Object.defineProperty(globalThis, 'location', { configurable: true, value: route });
+  let top = 0;
+  Object.defineProperty(window, 'scrollY', { configurable: true, get: () => top });
+  window.scrollTo = options => { top = options.top; };
+  const content = compileMarkdown('```tabs\n{"items":[{"label":"C++","code":"hello();"},{"label":"Python","code":"hello()"}]}\n```\n\n## Target {#target}', { locale: 'fr', pageId: 'first' });
+  const data = { schemaVersion: 1, name: 'Scroll fixture', version: '1', defaultLocale: 'fr', locales: [{code:'fr',label:'Français'}], pages: [
+    { id:'first',locale:'fr',title:'First',description:'',section:'Guides',order:0,...content },
+    { id:'second',locale:'fr',title:'Second',description:'',section:'Other',order:1,html:'<p>Second</p>',text:'Second',headings:[] }
+  ] };
+  const viewer = mountViewer(host, data);
+  const input = hash => { route.hash = hash; window.dispatchEvent(new window.Event('hashchange')); };
+  host.querySelectorAll('[data-tabs] [role=tab]')[1].click();
+  const nav = host.querySelector('.side-nav'); nav.scrollTop = 285;
+  host.querySelectorAll('.nav-group')[1].open = false;
+  top = 930;
+  input('#/fr/second'); assert.equal(top,0);
+  assert.equal(host.querySelector('.side-nav').scrollTop,285);
+  assert.equal(host.querySelectorAll('.nav-group')[1].open,false);
+  top = 470;
+  input('#/fr/first'); assert.equal(top,930);
+  assert.equal(host.querySelectorAll('[data-tabs] [role=tab]')[1].getAttribute('aria-selected'),'true');
+  input('#/fr/first'); assert.equal(top,930);
+  host.querySelector('#target').scrollIntoView = () => { top = 1500; };
+  input('#/fr/first/target'); assert.equal(top,1500);
+  input('#/fr/second'); assert.equal(top,470);
+  viewer.destroy();
+});
+
+test('reading snapshots restore code scroll and late scroll restoration yields to user input', t => {
+  const { host, window, context } = dom(t);
+  host.innerHTML = '<main><figure class="cy-media"><details open><summary>Settings</summary></details></figure><details open><summary>More</summary><pre>Code</pre></details></main>';
+  host.querySelector('pre').scrollLeft = 130;
+  const view = captureReadingView(host);
+  assert.equal(view.details.length,1);host.querySelector('figure').remove();
+  host.querySelector('details').open = false; host.querySelector('pre').scrollLeft = 0;
+  restoreReadingView(host,view);
+  assert.equal(host.querySelector('pre').scrollLeft,130); assert.equal(host.querySelector('details').open,true);
+  let resize, disconnected = 0, calls = 0;
+  Object.defineProperty(globalThis,'ResizeObserver',{configurable:true,value:class { constructor(callback){resize=callback;} observe(){} disconnect(){disconnected++;} }});
+  window.scrollTo = () => { calls++; };
+  restoreScroll(900,0,host,context.signal);
+  assert.equal(calls,1);
+  resize(); assert.equal(calls,2);
+  window.dispatchEvent(new window.Event('wheel'));
+  assert.equal(disconnected,1);
+  resize(); assert.equal(calls,2);
+});
+
+test('minimal media expose icon controls and keep advanced tools in an accessible settings panel', t => {
+  const {host,context} = dom(t);
+  imageModule.mount(host,{src:'assets/a.svg',controls:'minimal'},context);
+  assert.ok(host.classList.contains('media-minimal'));
+  assert.equal(host.querySelector('.media-settings summary').getAttribute('aria-label'),'Réglages du média');
+  assert.ok(host.querySelector('.media-settings-panel .image-tool'));
+  assert.ok(host.querySelector('.media-toolbar > [data-action=expand]'));
+  assert.ok(host.querySelector('.media-settings-panel [data-action=in]'));
+  assert.match(commonStyles, /media-minimal:focus-within/);
+  assert.match(commonStyles, /pointer:coarse/);
+  assert.match(commonStyles, /inset:24px/);
+});
+
+test('in-window expansion is exclusive and abort removes the placeholder', t => {
+  const {host,context,window,abort} = dom(t);
+  const other = window.document.createElement('div'); host.after(other);
+  for (const element of [host,other]) {
+    element.className='cy-media cy-mesh'; element.innerHTML='<div class="media-toolbar">'+expandButton('en')+'</div><div class="media-stage"></div><form class="annotation-form"><input></form>';
+    watchExpansion(element,context.signal); mediaPresentation(element,{controls:'minimal'},context);
+  }
+  host.querySelector('[data-action=expand]').click();
+  other.querySelector('[data-action=expand]').click();
+  assert.equal(host.classList.contains('media-expanded'),false);
+  assert.equal(other.classList.contains('media-expanded'),true);
+  abort.abort();
+  assert.equal(window.document.querySelectorAll('.media-placeholder,.media-expanded').length,0);
+});
+
+test('selecting the active gallery tab keeps its reader mounted and minimal mode reaches children', async t => {
+  const {host,context}=dom(t); let mounts=0;
+  context.loadModule=async()=>({mount(element,config){mounts++;assert.equal(config.controls,'minimal');}});
+  const cleanup=galleryModule.mount(host,{controls:'minimal',items:[{type:'image',src:'assets/a.svg'}]},context);
+  await settle();host.querySelector('[role=tab]').click();await settle();
+  assert.equal(mounts,1);cleanup();
+});
+
+test('minimal GIF autoplay pauses offscreen, respects manual pause, reduced motion and explicit frames', async t => {
+  const {host,context,window}=dom(t);
+  const previous=Object.getOwnPropertyDescriptor(globalThis,'ImageData');
+  Object.defineProperty(globalThis,'ImageData',{configurable:true,value:class {constructor(data,width,height){Object.assign(this,{data,width,height});}}});
+  t.after(()=>{if(previous)Object.defineProperty(globalThis,'ImageData',previous);else delete globalThis.ImageData;});
+  Object.defineProperty(window.document,'hidden',{configurable:true,value:false});
+  window.HTMLCanvasElement.prototype.getContext=()=>({putImageData(){}});
+  const base64=(await readFile('assets/steps-a.gif')).toString('base64');context.loadAsset=async()=>({base64});
+  let visibility;
+  Object.defineProperty(globalThis,'IntersectionObserver',{configurable:true,value:class {constructor(callback){visibility=callback;}observe(){}disconnect(){}}});
+  let cleanup=await gifModule.mount(host,{src:'assets/steps-a.gif',controls:'minimal'},context);await settle();
+  assert.match(host.querySelector('[data-gif=play]').textContent,/Pause/);
+  visibility([{isIntersecting:false}]);assert.match(host.querySelector('[data-gif=play]').textContent,/Lire/);
+  visibility([{isIntersecting:true}]);assert.match(host.querySelector('[data-gif=play]').textContent,/Pause/);
+  host.querySelector('[data-gif=play]').click();visibility([{isIntersecting:false}]);visibility([{isIntersecting:true}]);
+  assert.match(host.querySelector('[data-gif=play]').textContent,/Lire/);cleanup();
+  window.matchMedia=()=>({matches:true});
+  cleanup=await gifModule.mount(host,{src:'assets/steps-a.gif',controls:'minimal'},context);await settle();
+  assert.match(host.querySelector('[data-gif=play]').textContent,/Lire/);cleanup();
+  window.matchMedia=()=>({matches:false});context.state={frame:'0'};
+  cleanup=await gifModule.mount(host,{src:'assets/steps-a.gif',controls:'minimal'},context);await settle();
+  assert.match(host.querySelector('[data-gif=play]').textContent,/Lire/);cleanup();
 });

@@ -5,7 +5,7 @@ description: An independent node graph module linked to your documentation pages
 section: Examples
 order: 17
 ---
-A node graph viewer with typed ports, curves, comment groups, selection, pan, zoom, and fullscreen. Select **Make Help Link** to open its API page.
+A node graph viewer with typed ports, curves, comment groups, selection, pan, zoom, and in-window enlargement. Select **Make Help Link** to open its API page.
 
 ## Interactive graph {#graph}
 

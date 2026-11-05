@@ -1,6 +1,7 @@
 import { createDocumentation, createLink, parseLink } from './index.js';
 import type { Documentation, DocPage, ViewerOptions, DocRoute } from './types.js';
 import { mountReaderTools, revealTarget } from './reader-tools.js';
+import { captureReadingView, restoreReadingView, restoreScroll } from './reading-view.js';
 
 import { icon } from './icons.js';
 import { themes, validTheme } from './themes.js';
@@ -25,6 +26,11 @@ export function mountViewer(root: HTMLElement, data: Documentation, options: Vie
   let locale = options.initialLocale || data.defaultLocale;
   let current: DocPage | undefined;
   let activeRoute: DocRoute = { locale, pageId: home };
+  const readingViews = new Map<string, ReturnType<typeof captureReadingView>>();
+  const navigationViews = new Map<string, { top: number; groups: boolean[] }>();
+  let cancelScrollRestore: (() => void) | undefined;
+  const previousScrollRestoration = window.history.scrollRestoration;
+  window.history.scrollRestoration = 'manual';
   const mountedHosts = new WeakSet<HTMLElement>();
   const mediaMounts = new Map<string, () => void>();
   let searchIndex = 0;
@@ -86,7 +92,7 @@ export function mountViewer(root: HTMLElement, data: Documentation, options: Vie
       } else if (event.key === 'Enter') { event.preventDefault(); links[searchIndex]?.click(); }
     }, { signal: pageSignal });
     const dialog = root.querySelector<HTMLDialogElement>('dialog')!;
-    dialog.addEventListener('close', () => lastFocus?.focus(), { signal: pageSignal });
+    dialog.addEventListener('close', () => lastFocus?.focus({ preventScroll: true }), { signal: pageSignal });
     dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); }, { signal: pageSignal });
   }
 
@@ -167,22 +173,31 @@ export function mountViewer(root: HTMLElement, data: Documentation, options: Vie
   }
 
   function render() {
+    cancelScrollRestore?.();
     const route = docs.canonicalRoute(parseLink(location.hash, options.initialLocale || storage.get('locale') || data.defaultLocale, home));
     activeRoute = route;
     const nextLocale = data.locales.some(item => item.code === route.locale) ? route.locale : data.defaultLocale;
     if (current?.id === route.pageId && locale === nextLocale && root.querySelector('main')) {
       const heading = route.anchor ? [...root.querySelectorAll<HTMLElement>('main [id]')].find(item => item.id === route.anchor) : undefined;
       if (heading) { revealTarget(heading); heading.scrollIntoView({ block: 'start' }); heading.tabIndex = -1; heading.focus({ preventScroll: true }); }
-      else if (!route.anchor && !route.state) window.scrollTo({ top: 0 });
       applyMediaRoute();
       return;
     }
+    if (current) readingViews.set(`${locale}:${current.id}`, captureReadingView(root));
+    const navigation = root.querySelector<HTMLElement>('.side-nav');
+    if (navigation) navigationViews.set(locale, { top: navigation.scrollTop, groups: [...navigation.querySelectorAll<HTMLDetailsElement>('.nav-group')].map(group => group.open) });
+    pageAbort?.abort();
     disposeMedia();
     locale = nextLocale;
     const resolved = docs.resolve(route.pageId, locale);
     current = resolved?.page;
     observer?.disconnect();
     shell();
+    const navView = navigationViews.get(locale);
+    if (navView) {
+      root.querySelectorAll<HTMLDetailsElement>('.nav-group').forEach((group, i) => { if (navView.groups[i] !== undefined) group.open = navView.groups[i]!; });
+      root.querySelector<HTMLElement>('.side-nav')!.scrollTop = navView.top;
+    }
     document.documentElement.lang = locale;
     document.title = `${current?.title || t('Page introuvable', 'Page not found')} — ${data.name}`;
     root.querySelector('#breadcrumb')!.textContent = current?.title || '404';
@@ -205,6 +220,8 @@ export function mountViewer(root: HTMLElement, data: Documentation, options: Vie
     main.innerHTML = isHome ? options.renderHome!(locale) : `<div class="article-header"><div class="eyebrow">${esc(page.section)}</div><div class="article-title"><h1>${esc(page.title)}</h1><button class="icon-button" type="button" data-copy-link aria-label="${t('Copier le lien de la page', 'Copy page link')}">${icon('link')}</button></div><p>${esc(page.description)}</p>${page.source ? `<span class="source-badge">${icon('terminal')}${t('Extraite du code', 'Extracted from source')} ${page.sourcePageId && page.sourcePageId !== page.id ? `<a href="${href(page.sourcePageId, `L${page.source.match(/:(\d+)$/)?.[1] || 1}`)}"><code>${esc(page.source)}</code></a>` : `<code>${esc(page.source)}</code>`}</span>` : ''}</div>${resolved?.fallback ? `<div class="callout">${t('Traduction indisponible. Cette page est affichée dans la langue par défaut.', 'Translation unavailable. This page is shown in the default language.')}</div>` : ''}<article class="prose" lang="${esc(page.locale)}">${page.html}</article><div class="page-feedback"><span>${t('Cette page vous a été utile ?', 'Was this page helpful?')}</span><button type="button" data-feedback="yes">${t('Oui, merci', 'Yes, thanks')}${icon('check')}</button><button type="button" data-feedback="no">${t('À améliorer', 'Needs work')}</button></div><nav class="page-pagination" aria-label="${t('Pages voisines', 'Adjacent pages')}">${previous ? `<a href="${href(previous.id)}"><span>← ${t('Précédent', 'Previous')}</span><strong>${esc(previous.title)}</strong></a>` : '<span></span>'}${next ? `<a href="${href(next.id)}"><span>${t('Suivant', 'Next')} →</span><strong>${esc(next.title)}</strong></a>` : ''}</nav>`;
     aside.innerHTML = isHome ? '' : `<div class="toc"><span class="toc-label">${t('SUR CETTE PAGE', 'ON THIS PAGE')}</span>${page.headings.filter(heading => heading.level <= 3).map(heading => `<a href="${href(page.id, heading.id)}" data-heading="${esc(heading.id)}" class="level-${heading.level}">${esc(heading.text)}</a>`).join('')}<div class="toc-actions"><button type="button" data-copy-link>${icon('link')}${t('Copier le lien', 'Copy link')}</button><button type="button" data-print>${icon('file')}${t('Imprimer la page', 'Print page')}</button></div><div class="aside-note">${icon('shield')}<strong>${t('Toujours à vos côtés', 'Always by your side')}</strong><p>${t('Cette documentation fonctionne sans connexion Internet.', 'This documentation works without an internet connection.')}</p></div></div>`;
     mountReaderTools(root, data, page, route, { signal: pageAbort!.signal, storageId: options.storageId, toast });
+    const readingView = readingViews.get(`${locale}:${page.id}`);
+    if (readingView) restoreReadingView(root, readingView);
     mountMedia(page);
     if ('IntersectionObserver' in window) {
       observer = new IntersectionObserver(entries => {
@@ -217,7 +234,7 @@ export function mountViewer(root: HTMLElement, data: Documentation, options: Vie
       const heading = [...main.querySelectorAll<HTMLElement>('[id]')].find(item => item.id === route.anchor);
       if (heading) { revealTarget(heading); heading.scrollIntoView({ block: 'start' }); }
       if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); }
-    } else if (!route.state) window.scrollTo({ top: 0 });
+    } else if (!route.state) cancelScrollRestore = restoreScroll(readingView?.top || 0, readingView?.left || 0, main, pageAbort!.signal);
   }
 
   root.addEventListener('click', async event => {
@@ -253,8 +270,8 @@ export function mountViewer(root: HTMLElement, data: Documentation, options: Vie
   window.addEventListener('hashchange', render, { signal });
   document.addEventListener('keydown', event => {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); openSearch(); }
-    if (event.key === 'Escape') { const picker = root.querySelector<HTMLDetailsElement>('.theme-picker'); if (picker) picker.open = false; root.classList.remove('menu-open'); root.querySelector('[data-menu]')?.setAttribute('aria-expanded', 'false'); root.querySelectorAll('.media-expanded').forEach(element => element.classList.remove('media-expanded')); }
+    if (event.key === 'Escape') { const picker = root.querySelector<HTMLDetailsElement>('.theme-picker'); if (picker) picker.open = false; root.classList.remove('menu-open'); root.querySelector('[data-menu]')?.setAttribute('aria-expanded', 'false'); }
   }, { signal });
   render();
-  return { ...docs, destroy() { disposeMedia(); abort.abort(); pageAbort?.abort(); observer?.disconnect(); clearTimeout(toastTimeout); root.innerHTML = ''; root.classList.remove('cydoc-viewer', 'menu-open'); } };
+  return { ...docs, destroy() { pageAbort?.abort(); disposeMedia(); abort.abort(); observer?.disconnect(); clearTimeout(toastTimeout); window.history.scrollRestoration = previousScrollRestoration; root.innerHTML = ''; root.classList.remove('cydoc-viewer', 'menu-open'); } };
 }

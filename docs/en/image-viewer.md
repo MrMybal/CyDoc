@@ -1,13 +1,13 @@
 ---
 id: image-viewer
 title: Single image
-description: Use the wheel or buttons to zoom, drag the image, and use the fullscreen icon. No second media is loaded.
+description: Use the wheel or buttons to zoom, drag the image, and use the in-window enlargement icon. No second media is loaded.
 section: Examples
 order: 13
 ---
 ## Try the viewer {#viewer}
 
-Use the wheel or buttons to zoom, drag the image, and use the fullscreen icon. No second media is loaded.
+Use the wheel or buttons to zoom, drag the image, and use the in-window enlargement icon. No second media is loaded.
 
 ```image
 {
@@ -46,3 +46,5 @@ Use the wheel or buttons to zoom, drag the image, and use the fullscreen icon. N
 ```
 
 [See comparisons](doc:media) · [See galleries](doc:galleries).
+
+[Try the minimal version](doc:minimal-media).

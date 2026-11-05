@@ -16,7 +16,7 @@ Première base fonctionnelle de la bibliothèque :
 - Recherche locale indépendante des accents.
 - Images, blocs vidéo et schémas SVG : flux, décisions, séquences, classes, dépendances et architectures.
 - Modules médias sélectionnables, chargés à la demande : zoom et comparaison d’images, vidéos annotées et synchronisées, meshes PBR annotés et comparables.
-- Poignées de comparaison directement dans les médias et boutons de plein écran à icônes.
+- Poignées de comparaison directement dans les médias et boutons d’agrandissement dans la fenêtre à icônes.
 - Exemples de lecteurs seuls et galeries d’images, vidéos, meshes et médias mixtes.
 - Graphe interactif à ports typés et import d’un sous-ensemble du texte Blueprint Unreal.
 - Catalogue de liens entre plusieurs documentations locales.

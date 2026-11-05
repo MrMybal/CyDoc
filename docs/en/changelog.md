@@ -16,7 +16,7 @@ The first functional foundation:
 - Accent-insensitive local search.
 - Images, video blocks, and SVG diagrams: flows, decisions, sequences, classes, dependencies, and architectures.
 - Optional media modules loaded on demand: image zoom and comparison, annotated synchronized videos, annotated PBR mesh comparison.
-- Comparison handles directly on media and icon fullscreen buttons.
+- Comparison handles directly on media and icon in-window enlargement buttons.
 - Standalone viewer examples and image, video, mesh, and mixed galleries.
 - Interactive typed-port graphs and support for a subset of Unreal Blueprint clipboard text.
 - Link catalog across multiple local documentation sets.

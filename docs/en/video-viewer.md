@@ -1,13 +1,13 @@
 ---
 id: video-viewer
 title: Single video
-description: A single video track with playback speed, annotations, and fullscreen. Add a note at the current time, or click the image to choose its position.
+description: A single video track with playback speed, annotations, and in-window enlargement. Add a note at the current time, or click the image to choose its position.
 section: Examples
 order: 14
 ---
 ## Try the viewer {#viewer}
 
-A single video track with playback speed, annotations, and fullscreen. Add a note at the current time, or click the image to choose its position.
+A single video track with playback speed, annotations, and in-window enlargement. Add a note at the current time, or click the image to choose its position.
 
 ```video
 {
@@ -60,3 +60,5 @@ A single video track with playback speed, annotations, and fullscreen. Add a not
 ```
 
 [See comparisons](doc:media) · [See galleries](doc:galleries).
+
+[Try the minimal version](doc:minimal-media).

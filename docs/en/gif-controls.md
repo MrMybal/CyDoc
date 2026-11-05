@@ -49,4 +49,6 @@ The optional `gif` module decodes frames locally for pause, scrubbing, frame ste
 
 ## Memory and playback {#memory}
 
-Playback starts on a reader action and pauses when the page is hidden. The decoder handles palettes, transparency, interlacing, and disposal methods 0–3. The decoded budget is 64 MiB per file, configurable with `maxDecodedMiB` up to 256 MiB. Oversized animations display an error; frames are released when the viewer closes.
+The full reader starts on user action. With `controls: "minimal"`, GIFs autoplay; set `autoplay: false` to disable it. Reduced-motion preferences and links to a specific frame prevent autoplay. Playback suspends outside the viewport or when the page is hidden, then resumes if it was playing. The decoder handles palettes, transparency, interlacing, and disposal methods 0–3. The decoded budget is 64 MiB per file, configurable with `maxDecodedMiB` up to 256 MiB. Oversized animations display an error; frames are released when the viewer closes.
+
+[Minimal readers](doc:minimal-media).

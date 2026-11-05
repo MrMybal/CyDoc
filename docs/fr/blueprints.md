@@ -5,7 +5,7 @@ description: Un module de graphe à nœuds autonome, lié à vos pages de docume
 section: Exemples
 order: 17
 ---
-Un lecteur de graphes à nœuds avec ports typés, courbes, zones de commentaire, sélection, déplacement, zoom et plein écran. Sélectionnez **Make Help Link** pour ouvrir sa page d’API.
+Un lecteur de graphes à nœuds avec ports typés, courbes, zones de commentaire, sélection, déplacement, zoom et agrandissement dans la fenêtre. Sélectionnez **Make Help Link** pour ouvrir sa page d’API.
 
 ## Graphe interactif {#graph}
 

@@ -19,7 +19,7 @@ Les exemples dédiés montrent une [image seule](doc:image-viewer), une [vidéo 
 
 Le module image permet d’agrandir, zoomer, déplacer et comparer deux images dans un même cadre. Les transformations sont synchronisées pour conserver l’alignement pendant la comparaison.
 
-Glissez la poignée directement sur la séparation A/B. Elle suit le curseur inférieur et accepte aussi les flèches du clavier. Le bouton à quatre coins ouvre le plein écran ; Échap le ferme. Ces contrôles sont communs aux comparaisons d’images, de vidéos et de meshes.
+Glissez la poignée directement sur la séparation A/B. Elle suit le curseur inférieur et accepte aussi les flèches du clavier. Le bouton à quatre coins agrandit le lecteur dans la fenêtre de documentation ; Échap le réduit. Ces contrôles sont communs aux comparaisons d’images, de vidéos et de meshes.
 
 ```image
 {"src":"assets/settings.svg","compare":"assets/settings-b.svg","alt":"Évolution des paramètres de l’application","labels":["Avant","Après"]}

@@ -81,7 +81,7 @@ export function mountReaderTools(root: HTMLElement, data: Documentation, page: D
     if (target.matches('[data-tabs] [role=tab]') && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
       event.preventDefault(); const tabs = [...target.parentElement!.querySelectorAll<HTMLElement>('[role=tab]')];
       const currentIndex = tabs.indexOf(target), next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : (currentIndex + (event.key === 'ArrowLeft' ? -1 : 1) + tabs.length) % tabs.length;
-      activateTab(tabs[next]!); tabs[next]!.focus();
+      activateTab(tabs[next]!); tabs[next]!.focus({ preventScroll: true });
     }
     if (event.key === 'Escape') root.querySelectorAll<HTMLElement>('[data-term][aria-expanded=true]').forEach(button => { button.setAttribute('aria-expanded', 'false'); const tooltip = document.getElementById(button.getAttribute('aria-describedby') || ''); if (tooltip) tooltip.hidden = true; });
   }, { signal });

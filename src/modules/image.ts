@@ -1,5 +1,5 @@
 import type { MediaModule } from '../types.js';
-import { addStyles, commonStyles, comparisonHandle, fullscreenButton, watchFullscreen, escape, localAsset, clamp, fullscreen, bindMediaState, readSaved, writeSaved, saveJson } from './shared.js';
+import { addStyles, commonStyles, comparisonHandle, expandButton, watchExpansion, escape, localAsset, clamp, mediaPresentation, bindMediaState, readSaved, writeSaved, saveJson } from './shared.js';
 
 const imageModule: MediaModule = {
   mount(host, config, context) {
@@ -9,8 +9,8 @@ const imageModule: MediaModule = {
     const labels = Array.isArray(config.labels) ? config.labels.map(String) : [t('Avant', 'Before'), t('Après', 'After')];
     addStyles('cydoc-image-style', commonStyles + `.cy-image .image-pan{position:absolute;inset:0;touch-action:none;cursor:grab}.cy-image .image-pan:active{cursor:grabbing}.cy-image .image-layer{position:absolute;inset:0}.cy-image .image-layer img{width:100%;height:100%;object-fit:contain;max-height:none!important;border:0!important;border-radius:0!important;background:transparent!important;pointer-events:none;user-select:none;transform-origin:center}.cy-image .zoom-value{font-variant-numeric:tabular-nums;font-size:10px;min-width:35px;text-align:center}`);
     host.className = 'cy-media cy-image';
-    host.innerHTML = `<div class="media-toolbar"><span class="media-title">${escape(config.title || config.alt || t('Image interactive', 'Interactive image'))}</span><button type="button" data-action="out" aria-label="${t('Dézoomer', 'Zoom out')}">−</button><output class="zoom-value">100%</output><button type="button" data-action="in" aria-label="${t('Zoomer', 'Zoom in')}">+</button><button type="button" data-action="reset">${t('Recentrer', 'Reset view')}</button>${fullscreenButton(locale)}</div><div class="media-stage" tabindex="0" aria-label="${t('Image : molette pour zoomer, glisser pour déplacer', 'Image: scroll to zoom, drag to pan')}"><div class="image-pan"><div class="image-layer"><img src="${escape(src)}" alt="${escape(config.alt)}" draggable="false"></div>${compare ? `<div class="image-layer image-compare"><img src="${escape(compare)}" alt="${escape(labels[1])}" draggable="false"></div>` : ''}</div>${compare ? `<span class="compare-label left">${escape(labels[0])}</span><span class="compare-label right">${escape(labels[1])}</span><div class="compare-divider"></div>` : ''}</div>${compare ? `<label class="media-compare-control"><span>${escape(labels[0])}</span><input type="range" min="0" max="100" value="50" aria-label="${t('Comparaison des images', 'Image comparison')}"><span>${escape(labels[1])}</span></label>` : ''}<div class="media-caption"><span>${t('Molette : zoom · Glisser : déplacer · Double-clic : recentrer', 'Scroll: zoom · Drag: pan · Double-click: reset')}</span><span>${compare ? 'A / B' : ''}</span></div><div class="media-error" role="status"></div>`;
-    watchFullscreen(host, signal);
+    host.innerHTML = `<div class="media-toolbar"><span class="media-title">${escape(config.title || config.alt || t('Image interactive', 'Interactive image'))}</span><button type="button" data-action="out" aria-label="${t('Dézoomer', 'Zoom out')}">−</button><output class="zoom-value">100%</output><button type="button" data-action="in" aria-label="${t('Zoomer', 'Zoom in')}">+</button><button type="button" data-action="reset">${t('Recentrer', 'Reset view')}</button>${expandButton(locale)}</div><div class="media-stage" tabindex="0" aria-label="${t('Image : molette pour zoomer, glisser pour déplacer', 'Image: scroll to zoom, drag to pan')}"><div class="image-pan"><div class="image-layer"><img src="${escape(src)}" alt="${escape(config.alt)}" draggable="false"></div>${compare ? `<div class="image-layer image-compare"><img src="${escape(compare)}" alt="${escape(labels[1])}" draggable="false"></div>` : ''}</div>${compare ? `<span class="compare-label left">${escape(labels[0])}</span><span class="compare-label right">${escape(labels[1])}</span><div class="compare-divider"></div>` : ''}</div>${compare ? `<label class="media-compare-control"><span>${escape(labels[0])}</span><input type="range" min="0" max="100" value="50" aria-label="${t('Comparaison des images', 'Image comparison')}"><span>${escape(labels[1])}</span></label>` : ''}<div class="media-caption"><span>${t('Molette : zoom · Glisser : déplacer · Double-clic : recentrer', 'Scroll: zoom · Drag: pan · Double-click: reset')}</span><span>${compare ? 'A / B' : ''}</span></div><div class="media-error" role="status"></div>`;
+    watchExpansion(host, signal);
     const stage = host.querySelector<HTMLElement>('.media-stage')!;
     const pan = host.querySelector<HTMLElement>('.image-pan')!;
     const images = [...host.querySelectorAll<HTMLImageElement>('.image-layer img')];
@@ -85,7 +85,6 @@ const imageModule: MediaModule = {
       if (action === 'in') setZoom(zoom * 1.25);
       if (action === 'out') setZoom(zoom / 1.25);
       if (action === 'reset') reset();
-      if (action === 'fullscreen') void fullscreen(host).catch(() => host.classList.toggle('media-expanded'));
     }, { signal });
     stage.addEventListener('wheel', event => { event.preventDefault(); const bounds = stage.getBoundingClientRect(); setZoom(zoom * Math.exp(-event.deltaY * 0.002), event.clientX - bounds.left, event.clientY - bounds.top); }, { passive: false, signal });
     stage.addEventListener('dblclick', reset, { signal });
@@ -120,6 +119,7 @@ const imageModule: MediaModule = {
       if (state.note) selectedMark = state.note;
       draw(); listMarks();
     }, () => ({ zoom:String(zoom), x:String(x/Math.max(stage.clientWidth,1)), y:String(y/Math.max(stage.clientHeight,1)), ...(slider ? {wipe:slider.value} : {}), ...(selectedMark ? {note:selectedMark} : {}) }));
+    mediaPresentation(host, config, context);
     for (const image of images) image.addEventListener('error' , () => { host.querySelector('.media-error')!.textContent = t('Impossible de charger une image locale.', 'A local image could not be loaded.'); }, { signal });
   }
 };

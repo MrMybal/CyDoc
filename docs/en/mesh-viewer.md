@@ -80,3 +80,5 @@ One model: orbit, zoom, pan, PBR, wireframe, scenes, and surface annotations. It
 ```
 
 [See comparisons](doc:media) · [See galleries](doc:galleries).
+
+[Try the minimal version](doc:minimal-media).

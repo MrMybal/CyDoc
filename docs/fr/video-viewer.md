@@ -1,13 +1,13 @@
 ---
 id: video-viewer
 title: Vidéo seule
-description: Une seule piste vidéo, avec vitesse de lecture, annotations et plein écran. Ajoutez une note au moment courant, ou cliquez dans l’image pour choisir sa position.
+description: Une seule piste vidéo, avec vitesse de lecture, annotations et agrandissement dans la fenêtre. Ajoutez une note au moment courant, ou cliquez dans l’image pour choisir sa position.
 section: Exemples
 order: 14
 ---
 ## Essayer le lecteur {#viewer}
 
-Une seule piste vidéo, avec vitesse de lecture, annotations et plein écran. Ajoutez une note au moment courant, ou cliquez dans l’image pour choisir sa position.
+Une seule piste vidéo, avec vitesse de lecture, annotations et agrandissement dans la fenêtre. Ajoutez une note au moment courant, ou cliquez dans l’image pour choisir sa position.
 
 ```video
 {
@@ -60,3 +60,5 @@ Une seule piste vidéo, avec vitesse de lecture, annotations et plein écran. Aj
 ```
 
 [Voir les comparaisons](doc:media) · [Voir les galeries](doc:galleries).
+
+[Essayer la version épurée](doc:minimal-media).

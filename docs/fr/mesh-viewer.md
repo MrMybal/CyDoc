@@ -80,3 +80,5 @@ Un seul modèle : orbite, zoom, déplacement, PBR, triangles, scènes et annotat
 ```
 
 [Voir les comparaisons](doc:media) · [Voir les galeries](doc:galleries).
+
+[Essayer la version épurée](doc:minimal-media).

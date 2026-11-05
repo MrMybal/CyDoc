@@ -87,11 +87,11 @@ The core and main reader do not import a media viewer or a 3D engine. The host s
 | Module | Capabilities |
 | --- | --- |
 | `image` | Fullscreen, zoom, pan, synchronized A/B transforms, draggable comparison handle, arrow/area annotations, local persistence, JSON export. Native GIF display also works here. |
-| `video` | Browser-supported codec variants, playback speed, timed annotations, fullscreen, synchronized A/B playback, and nominal frame stepping. |
+| `video` | Browser-supported codec variants, playback speed, timed annotations, in-window enlargement, synchronized A/B playback, and nominal frame stepping. |
 | `mesh` | GLB/glTF, PBR, orbit/pan/zoom, lighting presets, glTF scenes, wireframe, A/B comparison, surface annotations, and saved camera views. |
 | `gif` | Local GIF raster decoding, pause, scrubbing, frame stepping, zoom/pan, and time-synchronized comparison. |
 | `gallery` | Image, video, mesh, GIF, or mixed galleries. Only the active item's reader is mounted. |
-| `graph` | Typed ports, curved connections, comment groups, selection, pan/zoom, fullscreen, and documentation links. |
+| `graph` | Typed ports, curved connections, comment groups, selection, pan/zoom, in-window enlargement, and documentation links. |
 
 For generated exports:
 
@@ -121,6 +121,16 @@ const viewer = mountViewer(document.querySelector('#app')!, manifest, {
 `MediaModule.mount(host, config, context)` receives the locale, an `AbortSignal`, local asset/module providers, and optional reader state. It returns a cleanup function, optionally asynchronously. Custom modules can use this contract through the JavaScript API.
 
 GLB/glTF resources and controllable GIF files are packaged as classic local scripts loaded on demand. This avoids file-fetch restrictions when opening the generated reader through `file://`. A custom embedding supplies `loadAsset(src)`, returning `{ base64, resources? }`; the generated bootstrap configures it automatically.
+
+Media blocks support `"controls": "minimal"` for a clean reading view. Icons appear on hover or keyboard focus, and stay visible on touch devices. Advanced tools remain available in the settings popover. The default `"full"` presentation keeps all controls visible. A gallery can set this option once for its children, with per-item overrides.
+
+```json
+{"src":"assets/settings.svg","alt":"Workspace settings","controls":"minimal"}
+```
+
+Minimal GIF readers autoplay, unless `autoplay: false`, reduced-motion preferences, or a link to a specific frame prevents it. Full GIF readers can opt in with `autoplay: true`. Playback suspends outside the viewport or when the page is hidden. Enlargement stays inside the browser window, with window controls available; the reduce icon or Escape returns to the article. CyDoc does not invoke the native Fullscreen API.
+
+Page changes retain the menu scroll, open navigation groups, reading position, selected code tabs, and code scroll for each visited page during the viewer session. Explicit section and media links take priority over saved positions.
 
 Media limitations:
 
