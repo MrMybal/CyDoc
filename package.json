@@ -25,6 +25,9 @@
     "tools",
     "LICENSE",
     "README.md",
+    "AGENTS.md",
+    "llms.txt",
+    "ai",
     "examples/integrations",
     "examples/api"
   ],

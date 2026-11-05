@@ -1,0 +1,16 @@
+# CyDoc
+
+> Modular, multilingual, MIT-licensed application documentation, readable from local files without a web server. These guides describe the current 0.1.0 implementation.
+
+## Guides for AI coding assistants
+
+- [Start here](ai/README.md): scope, integration choices and verification.
+- [Integration](ai/INTEGRATION.md): consume a local package, build an offline manual and open contextual help.
+- [Authoring](ai/AUTHORING.md): page templates, translations, code extraction, media and diagrams.
+- [API reference](ai/API.md): core, viewer and optional module contracts.
+
+## Project references
+
+- [README](README.md): status, features, commands and limitations.
+- [Repository agent instructions](AGENTS.md): guidance for editing the CyDoc checkout.
+- [Structured API examples](examples/api/README.md): Doxygen, TypeDoc and neutral interchange format.

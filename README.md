@@ -6,6 +6,10 @@ CyDoc combines handwritten guides, documentation extracted from source annotatio
 
 **Status:** functional version 0.1.0. Not published to npm yet. Native integrations are provided as source examples; target-device validation is still required.
 
+## Guides for AI coding assistants
+
+Start with [ai/README.md](ai/README.md), then use the [integration guide](ai/INTEGRATION.md), [authoring guide](ai/AUTHORING.md), and [API reference](ai/API.md). These guides and the [llms.txt index](llms.txt) are included in the package. [AGENTS.md](AGENTS.md) covers changes to the CyDoc repository itself.
+
 ## Quick start
 
 Requirements: Node.js 22 or later and npm.
@@ -86,7 +90,7 @@ The core and main reader do not import a media viewer or a 3D engine. The host s
 
 | Module | Capabilities |
 | --- | --- |
-| `image` | Fullscreen, zoom, pan, synchronized A/B transforms, draggable comparison handle, arrow/area annotations, local persistence, JSON export. Native GIF display also works here. |
+| `image` | In-window enlargement, zoom, pan, synchronized A/B transforms, draggable comparison handle, arrow/area annotations, local persistence, JSON export. Native GIF display also works here. |
 | `video` | Browser-supported codec variants, playback speed, timed annotations, in-window enlargement, synchronized A/B playback, and nominal frame stepping. |
 | `mesh` | GLB/glTF, PBR, orbit/pan/zoom, lighting presets, glTF scenes, wireframe, A/B comparison, surface annotations, and saved camera views. |
 | `gif` | Local GIF raster decoding, pause, scrubbing, frame stepping, zoom/pan, and time-synchronized comparison. |
