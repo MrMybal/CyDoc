@@ -1,0 +1,118 @@
+{
+  "id": 0,
+  "name": "CyDocExample",
+  "kind": 1,
+  "children": [
+    {
+      "id": 1,
+      "name": "helpLink",
+      "kind": 64,
+      "signatures": [
+        {
+          "id": 2,
+          "name": "helpLink",
+          "kind": 4096,
+          "comment": {
+            "summary": [
+              {
+                "kind": "text",
+                "text": "Build a stable local documentation URL."
+              }
+            ],
+            "blockTags": [
+              {
+                "tag": "@returns",
+                "content": [
+                  {
+                    "kind": "text",
+                    "text": "A URL with encoded locale, page and section."
+                  }
+                ]
+              }
+            ]
+          },
+          "parameters": [
+            {
+              "id": 10,
+              "name": "base",
+              "type": {
+                "type": "intrinsic",
+                "name": "string"
+              },
+              "comment": {
+                "summary": [
+                  {
+                    "kind": "text",
+                    "text": "Reader file URL."
+                  }
+                ]
+              }
+            },
+            {
+              "id": 11,
+              "name": "locale",
+              "type": {
+                "type": "intrinsic",
+                "name": "string"
+              },
+              "comment": {
+                "summary": [
+                  {
+                    "kind": "text",
+                    "text": "Requested language."
+                  }
+                ]
+              }
+            },
+            {
+              "id": 12,
+              "name": "page",
+              "type": {
+                "type": "intrinsic",
+                "name": "string"
+              },
+              "comment": {
+                "summary": [
+                  {
+                    "kind": "text",
+                    "text": "Stable page id."
+                  }
+                ]
+              }
+            },
+            {
+              "id": 13,
+              "name": "section",
+              "type": {
+                "type": "intrinsic",
+                "name": "string"
+              },
+              "comment": {
+                "summary": [
+                  {
+                    "kind": "text",
+                    "text": "Optional section id."
+                  }
+                ]
+              },
+              "defaultValue": "\"\"",
+              "flags": {
+                "isOptional": true
+              }
+            }
+          ],
+          "type": {
+            "type": "intrinsic",
+            "name": "string"
+          },
+          "sources": [
+            {
+              "fileName": "examples/typescript/help.ts",
+              "line": 15
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

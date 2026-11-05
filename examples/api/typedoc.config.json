@@ -1,0 +1,6 @@
+{
+  "entryPoints": [
+    "examples/typescript/help.ts"
+  ],
+  "json": ".tmp/typedoc.json"
+}

@@ -1,0 +1,45 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtemp, mkdir, writeFile, readFile, rm, access } from 'node:fs/promises';
+import { resolve, join, dirname, basename } from 'node:path';
+import { buildSite } from '../tools/build.mjs';
+
+test('another application builds without CyDoc demo pages, and broken content fails', async t => {
+  const parent = resolve('.tmp');
+  await mkdir(parent, { recursive: true });
+  const root = await mkdtemp(join(parent, 'build-test-'));
+  t.after(async () => {
+    if (dirname(root) !== parent || !basename(root).startsWith('build-test-')) throw new Error('Unsafe test cleanup target');
+    await rm(root, { recursive: true, force: true });
+  });
+  await mkdir(join(root, 'content/en'), { recursive: true });
+  await mkdir(join(root, 'assets'));
+  const config = { name: 'Another app', version: '2', defaultLocale: 'en', locales: [{ code: 'en', label: 'English' }], content: 'content', assets: 'assets', out: 'output' };
+  const configPath = join(root, 'cydoc.config.json');
+  const pagePath = join(root, 'content/en/settings.md');
+  const metadata = '---\nid: settings\ntitle: Settings\nsection: Help\norder: 0\n---\n';
+  await writeFile(configPath, JSON.stringify(config));
+  await writeFile(pagePath, metadata + '## Your settings {#settings}\n\nReal content.');
+  const { data, output } = await buildSite(configPath);
+  assert.equal(data.pages.length, 1);
+  assert.equal(data.pages[0].id, 'settings');
+  const payload = await readFile(join(output, 'data.js'), 'utf8');
+  assert.match(payload, /"landingPage":false/);
+  for (const name of ['image', 'video', 'mesh']) await assert.rejects(access(join(output, `media-${name}.js`)));
+  assert.doesNotMatch(await readFile(join(output, 'viewer.js'), 'utf8'), /WebGLRenderer|image-pan|video-annotations/);
+  await writeFile(configPath, JSON.stringify({ ...config, modules: ['image'] }));
+  await buildSite(configPath);
+  await access(join(output, 'media-image.js'));
+  await assert.rejects(access(join(output, 'media-mesh.js')));
+  await writeFile(configPath, JSON.stringify(config));
+  await buildSite(configPath);
+  await assert.rejects(access(join(output, 'media-image.js')));
+  await writeFile(pagePath, metadata + '[Broken page](doc:missing)');
+  await assert.rejects(buildSite(configPath), /Broken link/);
+  await writeFile(pagePath, metadata + '## Real section\n\n[Broken anchor](doc:settings#missing)');
+  await assert.rejects(buildSite(configPath), /Broken section/);
+  await writeFile(pagePath, metadata + '![Missing image](assets/missing.png)');
+  await assert.rejects(buildSite(configPath), /Missing media/);
+  await writeFile(configPath, JSON.stringify({ ...config, out: '../outside' }));
+  await assert.rejects(buildSite(configPath), /subdirectory/);
+});

@@ -1,0 +1,37 @@
+{
+  "name": "CyDoc · Démo versions",
+  "version": "2-demo",
+  "defaultLocale": "fr",
+  "locales": [
+    {
+      "code": "fr",
+      "label": "Français"
+    },
+    {
+      "code": "en",
+      "label": "English"
+    }
+  ],
+  "content": "docs",
+  "assets": "assets",
+  "out": ".output",
+  "versions": [
+    {
+      "id": "1-demo",
+      "label": "Démo v1",
+      "base": "../v1/index.html"
+    },
+    {
+      "id": "2-demo",
+      "label": "Démo v2",
+      "base": "../v2/index.html"
+    },
+    {
+      "id": "0.1.0",
+      "label": "CyDoc 0.1.0",
+      "base": "../../index.html"
+    }
+  ],
+  "homePage": "overview",
+  "translationReport": true
+}

@@ -1,0 +1,73 @@
+[
+  {
+    "path": "assets/steps-a.gif",
+    "width": 320,
+    "height": 200,
+    "hashes": [
+      "d3291637c4ebe908aa910d5f4548e81277a6c851eb6861d5808cbf9f3c996fa2",
+      "85bb89de0a30628307247d38f5da33003d6b63a5037cd3551e460db85b3395a1",
+      "b2a5cecc59683a2171626783fccb5031c583d02e1c57b1acbcc16d10cf76648b",
+      "adac0c804b0d53e2a4fbdee4932964dd4dd784bb8fc96a781e242b99b27dc1a6",
+      "bc0f954f1cd61a813ea4bdbd8e3bf03d7a7358d286ffbd91891085c1010c19c9",
+      "3df5c3a66cda73ee70fcf77312b3c71a4141e9e1c2d22ab730b8b3d3fcf86f4b",
+      "7e82addfe8f04938ac93e97de0374370e00af020cad72790e20d1fd553defe1c",
+      "3552b50de8fe05cd6b5e85e2f99c9dacf5fe474ac447d7e9bbbc234522c42b75",
+      "c5dfb3ddea8eba408ec62da502dbee5890e335facbadec87e1e1d901b25d64b0",
+      "2f0d560a2583f6fe320dc5af849cb0c2eda53642f01500239513d7072e3bbaa2",
+      "80b5868f8b6de7b84e1c720a0dbe731dd63d83ed8505fac19ac5fddf5ccdbb39",
+      "039dd7720ddf3ef62edbd4e99fcd1f06e0447013a996d394b4844d8d050babd2"
+    ]
+  },
+  {
+    "path": "assets/steps-b.gif",
+    "width": 320,
+    "height": 200,
+    "hashes": [
+      "e55fbd0253054bfa938d9d8d5cd40ef0a605a5c5a3c909a4b090bd2ef8f23713",
+      "10efed8597d2acd0cf0500866ece140fcef0c3e95c05dc742a31a9daf4d0623e",
+      "eee8e16f4fa153adada46e62ca73f3b9895ffb4b5bbff684e4bd8b61014e4b79",
+      "5969413ee1a73a1cb2ebfe58fb3a1d646108b377675457a4ed9a2608e0908506",
+      "00859e44d51643597654cc0d0de750ff075231c45032e6430cd5382f812e3b1e",
+      "f28679a4a837b938012d9ca9130a0353f781e43311ebbfdc849ba0cdbcfbb260",
+      "28f4aed839bb29b6734c3324afe167531ea99d5ed35b8a6117100f0a4cf64b3d",
+      "c99a3f9342ea7aa7fc9ba6a68f6a54d624b2e9c60a69ddc92fe7efcf6bcba25e",
+      "8ffafa6989e045e530c95b18ea4fcad987777e67cc5a86f1f90b6eea2f611087",
+      "1b202ae55f1d2324748ad03dc0c57d1e181ea2676a60e713dfe6e40ce76d8f42",
+      "a059ecee9b5253d444fd80b0eeda214ab862721994b9f1bb921625aa4dcfa923",
+      "326c215f1d54d4f15c4bb60b478fd7a3aa57a73d3d0577316ca6e38bd3e2acd8"
+    ]
+  },
+  {
+    "path": "tests/fixtures/gif/disposal-1.gif",
+    "width": 32,
+    "height": 24,
+    "hashes": [
+      "585f7d56f39ceb836ac44612a20e1f0117feafe9a2b652e9b6b7eb5da809faf2",
+      "94975004ff324810ed895d11f95a861e2c1cbb0346631926466499bcf33fb4d5",
+      "bce0c2ba782dbc17b701050c841a01f83105dc58dd45665eece1bb0025087373",
+      "52014520dcf8226e773e35995ad6a0092ffb7edf2ba0b69cf27a6750736b435e"
+    ]
+  },
+  {
+    "path": "tests/fixtures/gif/disposal-2.gif",
+    "width": 32,
+    "height": 24,
+    "hashes": [
+      "585f7d56f39ceb836ac44612a20e1f0117feafe9a2b652e9b6b7eb5da809faf2",
+      "593088202be4ca621591c93985309781c75cbae880073a7d48868e8da5d56f86",
+      "eeaf73e4aaa71142e5cc2c5ba4b4987581f158f900ece138f5cfaf08d4cfef8d",
+      "ed442158c5240abeb7d76bdebc118b319e6b8150424e9b904cf9a67aea9d7e7d"
+    ]
+  },
+  {
+    "path": "tests/fixtures/gif/disposal-3.gif",
+    "width": 32,
+    "height": 24,
+    "hashes": [
+      "585f7d56f39ceb836ac44612a20e1f0117feafe9a2b652e9b6b7eb5da809faf2",
+      "593088202be4ca621591c93985309781c75cbae880073a7d48868e8da5d56f86",
+      "eeaf73e4aaa71142e5cc2c5ba4b4987581f158f900ece138f5cfaf08d4cfef8d",
+      "ed442158c5240abeb7d76bdebc118b319e6b8150424e9b904cf9a67aea9d7e7d"
+    ]
+  }
+]

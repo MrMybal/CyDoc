@@ -1,0 +1,90 @@
+{
+  "name": "CyDoc",
+  "version": "0.1.0",
+  "defaultLocale": "fr",
+  "homePage": "overview",
+  "landingPage": true,
+  "modules": [
+    "image",
+    "video",
+    "mesh",
+    "gallery",
+    "graph",
+    "gif"
+  ],
+  "sourceIndex": {
+    "enabled": true,
+    "includeDirs": [
+      "examples/cpp/include",
+      "examples/shaders"
+    ]
+  },
+  "locales": [
+    {
+      "code": "fr",
+      "label": "Français"
+    },
+    {
+      "code": "en",
+      "label": "English"
+    }
+  ],
+  "content": "docs",
+  "assets": "assets",
+  "sources": [
+    "examples"
+  ],
+  "out": "dist/site",
+  "aliases": {
+    "old-media": "media",
+    "old-settings": "quickstart#installation"
+  },
+  "versions": [
+    {
+      "id": "0.1.0",
+      "label": "0.1.0",
+      "base": "./index.html"
+    },
+    {
+      "id": "1-demo",
+      "label": "Démo v1",
+      "base": "versions/v1/index.html"
+    },
+    {
+      "id": "2-demo",
+      "label": "Démo v2",
+      "base": "versions/v2/index.html"
+    }
+  ],
+  "versionBuilds": [
+    {
+      "config": "examples/versions/v1/cydoc.config.json",
+      "destination": "versions/v1"
+    },
+    {
+      "config": "examples/versions/v2/cydoc.config.json",
+      "destination": "versions/v2"
+    }
+  ],
+  "apiImports": [
+    {
+      "format": "doxygen",
+      "prefix": "doxygen",
+      "path": "examples/api/doxygen"
+    },
+    {
+      "format": "typedoc",
+      "prefix": "typedoc",
+      "path": "examples/api/typedoc.json"
+    }
+  ],
+  "translationReport": true,
+  "glossary": {
+    "fr": {
+      "PBR": "Rendu basé sur des propriétés physiques des matériaux."
+    },
+    "en": {
+      "PBR": "Rendering based on physical material properties."
+    }
+  }
+}

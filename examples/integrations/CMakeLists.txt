@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.20)
+project(CyDocNativeExample LANGUAGES CXX)
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+add_executable(cydoc-qt qt_main.cpp)
+target_compile_features(cydoc-qt PRIVATE cxx_std_17)
+target_link_libraries(cydoc-qt PRIVATE Qt6::Widgets)
