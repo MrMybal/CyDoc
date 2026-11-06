@@ -4,7 +4,7 @@ Use Markdown as the source and the CyDoc compiler as the producer of reader HTML
 
 ## Pages and translations
 
-Save this page as `manual/en/overview.md` for the [integration configuration](INTEGRATION.md#build-the-applications-manual):
+Write English originals first. Save this page as `.CyDocBuild/manual/en/overview.md` for the [integration configuration](INTEGRATION.md#build-the-applications-manual):
 
 ```markdown
 ---
@@ -23,7 +23,7 @@ Open the application and choose a workspace.
 [Return to this section](doc:overview#getting-started).
 ```
 
-Save its translation as `manual/fr/overview.md`:
+The full French translation is required. Save it as `.CyDocBuild/manual/fr/overview.md`:
 
 ```markdown
 ---
@@ -44,13 +44,17 @@ Ouvrez l’application et choisissez un espace de travail.
 
 Metadata supports simple single-line values, not full YAML. Each page needs `id`, `title` and `section`; provide `description` and numeric `order` for useful navigation. The content directory determines the locale. Do not add a second handwritten page with the same ID/locale as an extracted or imported page.
 
-For nested page navigation, add `parent: overview` to a child page's metadata. The value is an existing page ID, never a file path or translated title. A parent may have its own parent; missing targets, self references and cycles fail validation. Keep parent IDs consistent across translations. Root pages can use a section path such as `section: Guides / Workspace` for nested folders. Children appear under their parent regardless of their own section. The hierarchy changes navigation, not routes: a child still uses `doc:child-id#section`, without a parent prefix. Source index pages are automatically grouped by directory.
+Organize the manual as a tree. Add `parent: overview` to a child page's metadata, using an existing page ID rather than a file path or title. A parent may have its own parent; missing targets, self references and cycles fail validation. Keep parent IDs consistent across translations. Root pages can use section paths such as `section: Guides / Workspace`. The hierarchy changes navigation, not routes: a child still uses `doc:child-id#section`. Group optional API references by their public functions, includes and modules.
 
 The reader's header searches prose, code and symbols with live results and content/language filters. Ctrl+K opens the search dialog. Keep useful descriptions and explicit anchors so search results and contextual links remain understandable.
 
 The navigation tooltip uses the complete page `title`, followed by its optional `description`. Write short, useful descriptions; no separate tooltip configuration is needed. Folder tooltips include their full navigation path. Code-tab items and gallery items may each add a plain-text `description`, displayed beneath their complete label when hovered or focused. These descriptions are text, not Markdown or HTML.
 
-Translate titles and prose while preserving the page ID and explicit anchor IDs. A missing translation falls back to the default content locale. Set `translationReport: true` to add a report page; every build writes `DocData/translation-report.json`. Update `revision` when the original meaning changes, and update `sourceRevision` only when the translation has caught up. Without an original revision, the build uses a content fingerprint.
+English is the source/default language; French is mandatory. Translate titles, descriptions, prose, captions, annotations and media explanations while preserving the page ID and explicit anchor IDs. Code and API identifiers keep their proper spelling. Missing/empty English or French pages, or explicitly outdated translation revisions, stop the build. Additional incomplete languages are withheld. Do not duplicate original-language paragraphs under another locale, add placeholders, or offer mixed-language fallback pages. Coverage checks do not judge translation quality; review the actual prose before publishing.
+
+Update `revision` when the original meaning changes, and update `sourceRevision` only when the translation has caught up. Without an original revision, the build uses a content fingerprint. `DocData/translation-report.json` is build metadata; it has no reader page, navigation item or search result. The legacy `translationReport` setting does not restore a report page.
+
+Keep human content focused on using the application. AI instructions belong in the separate `DocAI.md` sidecar; build instructions, audit logs, migration inventories and verification history belong outside the human manual. Existing Markdown can set `audience: internal` or `audience: ai` to be excluded from pages and search. Its old page ID redirects to the manual's home unless an explicit alias overrides it. The default audience is `user`; other values fail validation. Files named `DocAI.md` in content directories are ignored.
 
 ## Links are part of the application contract
 
@@ -171,6 +175,18 @@ Add explicit annotations in a block comment in a scanned source directory:
  * Describe the supported inputs here.
  */
 void openWorkspace();
+
+/**
+ * @doc workspace-api
+ * @locale fr
+ * @title API de l’espace de travail
+ * @section API
+ * @symbol openWorkspace
+ * Ouvrez un espace de travail depuis l’application.
+ *
+ * ## Paramètres {#parameters}
+ * Décrivez les paramètres pris en charge ici.
+ */
 ```
 
 Python uses a triple-quoted docstring with the same tags. Required tags are `@doc`, `@locale` and `@title`; `@section`, `@order` and `@symbol` are optional. The remainder is Markdown. Use separate annotated blocks with the same page ID and different locales for translations.
@@ -179,15 +195,17 @@ Configure the source scan:
 
 ```json
 {
-  "sources": ["src"],
-  "sourceIndex": { "enabled": true, "includeDirs": ["src/include"] }
+  "sources": ["../src"],
+  "apiIndex": { "enabled": true, "includeDirs": ["../src/include"] }
 }
 ```
 
-`sourceIndex` generates file pages and lexical include/import/module links. The requested C++, Python, HLSL, GLSL, C#, C, JavaScript, Java and TypeScript languages are supported. This is not a compiler: signatures, overloads, conditional compilation and macros are not inferred; C# XML documentation is not converted. Scan only directories whose source can be distributed with the manual, because a source index includes file contents.
+`apiIndex` generates API file references with documented symbols and lexical include/import/module links. It never publishes full source listings or implementation bodies. The former `sourceIndex` setting is accepted as an alias for this API-only index; it does not restore source browsing. The requested C++, Python, HLSL, GLSL, C#, C, JavaScript, Java and TypeScript languages are supported. This is not a compiler: signatures, overloads, conditional compilation and macros are not inferred; C# XML documentation is not converted. Only explicitly authored examples and public API signatures belong in the manual. Do not copy source trees into its assets.
 
 For structured declarations, generate Doxygen XML or TypeDoc JSON externally and configure `apiImports` with `format: "doxygen"` or `format: "typedoc"`, a `path` and a `prefix`. Other producers can use the neutral `cydoc` format. See [the packaged API examples](../examples/api/README.md) for its fields. These tools run during generation, never inside the reader.
 
+API imports use only their declared adapter `locale`, defaulting to English. Provide separate translated inputs with `locale: fr` and the same prefix/keys, or author matching French pages. Importing English descriptions does not translate them or duplicate them into French. The [API import examples](../examples/api/README.md) include English originals and French counterparts.
+
 ## Validate the result
 
-Run the local CLI build/check against the application's configuration. It validates pages, aliases, local links, explicit anchors, media IDs and asset files. Inspect each enabled reader, language fallback and contextual link through `file://` when possible. Do not hand-edit generated `data.js`, `manifest.json` or reader bundles to repair an authoring error; fix the source and regenerate.
+Run the local CLI build/check against `.CyDocBuild/cydoc.config.json`. It validates pages, aliases, local links, explicit anchors, media IDs, assets, and complete English/French publication. Inspect each enabled reader, both languages, tree navigation and contextual links through `file://` when possible. Do not hand-edit generated `data.js`, `manifest.json` or reader bundles to repair an authoring error; fix the source and regenerate.

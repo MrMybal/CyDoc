@@ -19,6 +19,10 @@ These instructions apply to the CyDoc checkout. To use CyDoc in another applicat
 - Enlargement stays inside the documentation window. Do not introduce native browser/OS fullscreen. Keep Escape, keyboard controls, touch access, reading positions and navigation scroll working.
 - Keep page IDs, explicit anchors, media IDs and annotation IDs stable. Translations share page IDs and explicit anchors. Preserve existing deep links or add validated aliases.
 - UI text needs French and English equivalents. Additional content locales are supported; additional UI translations and RTL are not yet implemented.
+- Design the reader for people using the application. Keep AI instructions in the separate `DocAI.md` sidecar and keep maintenance instructions, audits and verification histories out of human content, navigation and search. `audience: internal` / `audience: ai` pages are excluded by the compiler.
+- Exports require English originals (`defaultLocale: en`) and complete, nonempty, current French translations. Fail before publication when either is incomplete. Additional incomplete locales are withheld. Older/custom manifests show only complete languages, with no mixed-language fallback banner.
+- Application integrations keep documentation inputs and tooling in `App/.CyDocBuild/` and export to `App/Documentation/`. The default CLI lookup prefers `.CyDocBuild/cydoc.config.json`; its sibling output must stay inside the application root. This library checkout retains its own maintained demo/source layout.
+- Publish annotated/API documentation, includes and modules, never raw implementation listings. `apiIndex` generates API-only file references; legacy `sourceIndex` is a compatibility alias for that behavior.
 - Use an application's existing local logo through the optional configuration/manifest `logo` field. If it has none, omit the field and preserve the default book icon and loading-error fallback. Keep integration guidance explicit about this choice.
 - Preserve MIT licensing and dependency notices. Do not claim native, codec or WebGL compatibility without testing the target.
 

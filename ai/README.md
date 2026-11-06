@@ -7,6 +7,7 @@ Use this index when integrating CyDoc into an application, writing its documenta
 | Task | Read |
 | --- | --- |
 | Add offline help to an application | [Integration](INTEGRATION.md) |
+| Update or migrate an existing application's manual | [Update requirements](UPDATE.md) |
 | Write pages, media, translations or API documentation | [Authoring](AUTHORING.md) |
 | Call the core API or implement a module | [API reference](API.md) |
 | Change CyDoc itself | [Repository instructions](../AGENTS.md) and [README](../README.md) |
@@ -15,11 +16,13 @@ The host application's instructions and requested scope still apply. These guide
 
 ## Working assumptions
 
-- Documentation is local. Ship `Documentation.html` together with its `DocData/` directory, including optional version exports, and open the HTML with a file URL. No server is needed at reading time.
+- Documentation is designed for human readers. Ship `Documentation.html`, its `DocData/` directory and the separate `DocAI.md` assistant sidecar. Open the HTML with a file URL. No server is needed at reading time. Do not import AI/build instructions, audits or verification histories into the human manual.
 - Markdown, syntax highlighting, source indexing and API imports run at build time. Node.js 22 or later is a generation requirement, not a reader requirement.
 - Choose only the optional readers the application needs. A gallery also needs the modules for its item types. Three.js belongs only to mesh integration.
 - Use the application's existing logo through the optional `logo` configuration/manifest field. Copy it under `assets/`; if none is available, retain the default book icon. See [branding instructions](INTEGRATION.md).
 - Treat page IDs and explicit section/media IDs as public addresses. Use the same IDs across translations; do not rename them just because wording changes.
+- English originals and full French translations are required before publication. Never fill gaps with copied original-language prose or placeholders. Additional incomplete languages are withheld.
+- Keep documentation work in `.CyDocBuild/`, ship only `Documentation/`, and publish public API references rather than raw source listings. Update obsolete descriptions against the application's current behavior.
 - Keep content and assets application-owned and local. Compiled HTML is trusted input to the viewer; arbitrary HTML is not automatically sanitized by `mountViewer`.
 - Preserve the reader's keyboard and touch controls. Media enlargement is inside the window. Minimal controls appear on hover or focus and remain visible on touch devices.
 

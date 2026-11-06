@@ -73,6 +73,11 @@ export function createDocumentation(data: Documentation) {
     const text = normalize(`${page.text} ${page.symbol || ''}`);
     searchIndex.set(page, { title: normalize(page.title), description: normalize(page.description), text, words: [...new Set(normalize(`${page.title} ${page.description} ${text}`).split(/[^\p{L}\p{N}_]+/u).filter(word => word.length >= 3))] });
   }
+  const pageIds = [...new Set(data.pages.map(page => page.id))];
+  const completeLocales = data.locales.filter(locale => pageIds.length && pageIds.every(id => {
+    const page = index.get(`${locale.code}\0${id}`), original = index.get(`${data.defaultLocale}\0${id}`);
+    return page && !!(page.text.trim() || page.html.trim()) && (!page.sourceRevision || !original?.revision || String(page.sourceRevision) === String(original.revision));
+  }));
 
   function canonicalRoute(route: DocRoute): DocRoute {
     const visited = new Set<string>(); let result = { ...route };
@@ -99,7 +104,7 @@ export function createDocumentation(data: Documentation) {
   }
 
   function pages(locale = data.defaultLocale): DocPage[] {
-    return [...new Set(data.pages.map(page => page.id))]
+    return pageIds
       .map(id => resolve(id, locale)?.page).filter((page): page is DocPage => !!page)
       .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title, locale));
   }
@@ -138,5 +143,5 @@ export function createDocumentation(data: Documentation) {
       return [{ page, score, excerpt: `${start ? '…' : ''}${page.text.slice(start, start + 145)}${page.text.length > start + 145 ? '…' : ''}`, ...(line !== undefined && line >= 0 ? { anchor: `L${line + 1}` } : {}) }];
     }).sort((a, b) => b.score - a.score || a.page.order - b.page.order).slice(0, Math.max(0, limit));
   }
-  return { data, resolve, pages, search, link: createLink, canonicalRoute };
+  return { data, resolve, pages, search, link: createLink, canonicalRoute, availableLocales: () => [...completeLocales] };
 }

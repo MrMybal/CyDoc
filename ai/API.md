@@ -57,6 +57,8 @@ export function findHelp(manifest: Documentation) {
 
 `resolve` returns `{ page, requestedLocale, fallback }` or `undefined`. `pages` returns one resolved page per ID in navigation order. `search` returns `{ page, score, excerpt, anchor? }[]`; its fourth argument supports `language`, `kind` and `fuzzy`. Content kinds are `guide`, `api`, `source` and `media`. `canonicalRoute` applies configured aliases. `docs.link` is the same link constructor as `createLink`, not a page-validation operation.
 
+`docs.availableLocales()` returns the declared locales containing every nonempty page, without explicitly outdated `sourceRevision` values. The reader offers only these locales and requires a complete default locale; unavailable locale routes are normalized to that default while preserving their page, anchor and media state. A single available locale has no selector. The low-level `resolve` fallback remains available for tooling inspecting draft manifests; it does not publish a partial language in the reader. The CLI removes withheld locales and their pages from its manifest. These structural checks do not verify the language or quality of a translation.
+
 `hasAnchor(page, id)` checks heading IDs and additional compiled anchors. `normalize(text)` strips diacritics, lowercases and trims text for search.
 
 The minimum manifest shape is:
@@ -99,6 +101,8 @@ An optional `manifest` on a registry entry validates page and section targets. W
 
 ## Viewer contract
 
+The CLI requires `defaultLocale: en` and complete English and French editions before publishing; it fails if either required language is missing, empty or explicitly outdated. It prefers `.CyDocBuild/cydoc.config.json`, resolves its input paths from that workspace and allows the sibling `../Documentation` output inside the application root. `apiIndex` produces API-only references; legacy `sourceIndex` is an alias and never restores implementation listings. API adapters import only their declared `locale` (English by default); other languages need genuinely translated API inputs or matching authored pages. `source` remains a low-level compatibility content kind for older/custom manifests, and is not emitted by current exports.
+
 `mountViewer(root: HTMLElement, data: Documentation, options?: ViewerOptions)` returns the documentation core methods plus `destroy()`. Call it once per active dedicated reader page and destroy it on teardown. It owns the window hash, document title/language and scrolling behavior.
 
 | Option | Type/meaning |
@@ -112,7 +116,7 @@ An optional `manifest` on a registry entry validates page and section targets. W
 | `assetBase` | Directory prefix for display assets, e.g. `DocData/`; default is the reader's directory |
 | `renderHome` | Optional trusted `(locale: string) => string` HTML callback |
 
-Route locale/page information takes priority over the initial route defaults. Available storage and theme preferences can influence the initial reader state. Content falls back to the default content locale; built-in UI translations currently cover French and English.
+Route locale/page information takes priority over the initial route defaults when that locale is complete. Available storage and theme preferences can influence the initial reader state. Unavailable locale routes use the complete default language; built-in UI translations currently cover French and English. AI guidance is a separate `DocAI.md` sidecar, never reader content or a search result.
 
 Navigation preserves page reading positions, selected code tabs and menu scroll during the viewer session. Explicit anchors and media states take priority. Persistence of personal reading data depends on the host browser's local storage policy.
 

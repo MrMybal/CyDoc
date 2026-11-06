@@ -9,11 +9,11 @@ Languages are part of the content model. Every translation is a page linked to i
 
 ## Declare locales {#configuration}
 
-Configure the default locale and available languages in `cydoc.config.json`.
+English originals and full French translations are required. Configure the default locale and available languages in `cydoc.config.json`.
 
 ```json
 {
-  "defaultLocale": "fr",
+  "defaultLocale": "en",
   "locales": [
     { "code": "fr", "label": "Français" },
     { "code": "en", "label": "English" }
@@ -30,13 +30,13 @@ docs/fr/demarrage.md  → id: quickstart
 docs/en/quickstart.md → id: quickstart
 ```
 
-## Missing translations {#fallback}
+## Published languages {#fallback}
 
-When a translation is missing, the core tries the default locale. The viewer displays a fallback notice. If the page is also missing in that language, it shows a page-not-found screen.
+A language is offered only when every public page is translated and nonempty, with no explicitly outdated source revision. Missing, empty or explicitly outdated English or French pages stop the build. Additional incomplete languages are withheld. English is the source language; French is mandatory. When only one language is available, the reader shows no language selector. A link to an unavailable language opens the complete default language while preserving its page and section.
 
 ## Viewer interface {#interface}
 
 The included viewer translates its controls into French and English. The content format accepts other locale codes; additional UI translations and RTL layout remain to be implemented. The language preference is remembered on the device when local storage is available.
 
 
-[The translation report](doc:translation-report) flags missing pages and compares `sourceRevision` with the original `revision`. See also [versions and redirects](doc:versions).
+Translate titles, descriptions, prose, captions and annotations before publishing another language. Coverage checks cannot judge translation quality; review the actual content. See also [versions and redirects](doc:versions).

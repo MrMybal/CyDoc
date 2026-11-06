@@ -2,9 +2,9 @@
 id: overview
 title: Version demo
 section: Guide
-sourceRevision: 1
+revision: 2
 ---
-This small manual is **demo v2**. Links open local documentation.
+This small manual is **demo v2**. Version 2 adds a section about precise links.
 
 [Guide](doc:quickstart)
 

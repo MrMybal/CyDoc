@@ -1,0 +1,118 @@
+{
+  "id": 0,
+  "name": "CyDocExample",
+  "kind": 1,
+  "children": [
+    {
+      "id": 1,
+      "name": "helpLink",
+      "kind": 64,
+      "signatures": [
+        {
+          "id": 2,
+          "name": "helpLink",
+          "kind": 4096,
+          "comment": {
+            "summary": [
+              {
+                "kind": "text",
+                "text": "Construisez une URL locale stable vers la documentation."
+              }
+            ],
+            "blockTags": [
+              {
+                "tag": "@returns",
+                "content": [
+                  {
+                    "kind": "text",
+                    "text": "Une URL avec la langue, la page et la section encodées."
+                  }
+                ]
+              }
+            ]
+          },
+          "parameters": [
+            {
+              "id": 10,
+              "name": "base",
+              "type": {
+                "type": "intrinsic",
+                "name": "string"
+              },
+              "comment": {
+                "summary": [
+                  {
+                    "kind": "text",
+                    "text": "URL du fichier du lecteur."
+                  }
+                ]
+              }
+            },
+            {
+              "id": 11,
+              "name": "locale",
+              "type": {
+                "type": "intrinsic",
+                "name": "string"
+              },
+              "comment": {
+                "summary": [
+                  {
+                    "kind": "text",
+                    "text": "Langue demandée."
+                  }
+                ]
+              }
+            },
+            {
+              "id": 12,
+              "name": "page",
+              "type": {
+                "type": "intrinsic",
+                "name": "string"
+              },
+              "comment": {
+                "summary": [
+                  {
+                    "kind": "text",
+                    "text": "Identifiant stable de la page."
+                  }
+                ]
+              }
+            },
+            {
+              "id": 13,
+              "name": "section",
+              "type": {
+                "type": "intrinsic",
+                "name": "string"
+              },
+              "comment": {
+                "summary": [
+                  {
+                    "kind": "text",
+                    "text": "Identifiant facultatif de la section."
+                  }
+                ]
+              },
+              "defaultValue": "\"\"",
+              "flags": {
+                "isOptional": true
+              }
+            }
+          ],
+          "type": {
+            "type": "intrinsic",
+            "name": "string"
+          },
+          "sources": [
+            {
+              "fileName": "examples/typescript/help.ts",
+              "line": 15
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

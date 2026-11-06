@@ -3,11 +3,13 @@
 > Modular, multilingual, MIT-licensed application documentation, readable from local files without a web server. These guides describe the current 0.1.0 implementation.
 
 Exports open through `Documentation.html`; their scripts, media and manifests are contained in `DocData/`.
+The reader is for human users. Assistant guidance belongs in the separate `DocAI.md` sidecar, outside navigation and search. Publish secondary languages only when all public content is translated.
 
 ## Guides for AI coding assistants
 
 - [Start here](ai/README.md): scope, integration choices and verification.
 - [Integration](ai/INTEGRATION.md): consume a local package, build an offline manual and open contextual help.
+- [Update requirements](ai/UPDATE.md): human manual, English/French, private build workspace, tree navigation and API-only references.
 - [Authoring](ai/AUTHORING.md): page templates, translations, code extraction, media and diagrams.
 - [API reference](ai/API.md): core, viewer and optional module contracts.
 

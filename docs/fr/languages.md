@@ -9,11 +9,11 @@ Les langues font partie du modèle de contenu. Chaque traduction est une page à
 
 ## Déclarer les langues {#configuration}
 
-Configurez la langue par défaut et les langues disponibles dans `cydoc.config.json`.
+L’anglais est la langue d’origine et la traduction française complète est obligatoire. Configurez la langue par défaut et les langues disponibles dans `cydoc.config.json`.
 
 ```json
 {
-  "defaultLocale": "fr",
+  "defaultLocale": "en",
   "locales": [
     { "code": "fr", "label": "Français" },
     { "code": "en", "label": "English" }
@@ -30,13 +30,13 @@ docs/fr/demarrage.md  → id: quickstart
 docs/en/quickstart.md → id: quickstart
 ```
 
-## Traduction manquante {#fallback}
+## Langues publiées {#fallback}
 
-Si une traduction manque, le noyau cherche la page dans la langue par défaut. Le lecteur signale ce repli. Si la page manque aussi dans cette langue, il affiche un écran de page introuvable.
+Une langue est proposée uniquement lorsque toutes les pages publiques sont traduites et non vides, sans révision source explicitement dépassée. Une page anglaise ou française manquante, vide ou explicitement dépassée bloque la génération. Les langues supplémentaires incomplètes restent hors du manuel publié. L’anglais est la langue d’origine et le français est obligatoire. Avec une seule langue disponible, le lecteur n’affiche aucun sélecteur. Un lien vers une langue indisponible ouvre la langue par défaut complète en conservant la page et la section.
 
 ## Interface du lecteur {#interface}
 
 Le lecteur fourni traduit ses commandes en français et en anglais. Le format de contenu accepte d’autres codes de langue ; ajouter leur traduction d’interface et la prise en charge RTL reste à implémenter. Le choix de langue est mémorisé sur l’appareil lorsque le stockage local est autorisé.
 
 
-[Le rapport de traductions](doc:translation-report) signale les pages manquantes et compare `sourceRevision` à la `revision` de l’original. Consultez aussi les [versions et redirections](doc:versions).
+Traduisez les titres, descriptions, textes, légendes et annotations avant de publier une autre langue. Un contrôle de couverture ne juge pas la qualité d’une traduction : relisez le contenu. Consultez aussi les [versions et redirections](doc:versions).

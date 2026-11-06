@@ -46,6 +46,7 @@ The build produces a self-contained folder with the viewer, compiled pages, mani
 ```text
 App/Documentation/
   Documentation.html
+  DocAI.md
   DocData/
     viewer.css
     viewer.js

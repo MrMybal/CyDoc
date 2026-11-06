@@ -33,4 +33,4 @@ Le sélecteur de version conserve la page, la section et l’état du média. Le
 
 ## Traductions {#translations}
 
-[Consulter le rapport de traduction](doc:translation-report). `DocData/translation-report.json` contient les pages manquantes, les révisions dépassées et les traductions sans suivi. La démo v2 contient volontairement un exemple dépassé et un exemple manquant.
+Seules les langues complètes et à jour sont proposées. Terminez toutes les traductions avant de publier une deuxième langue ; le suivi interne des traductions n’ajoute aucune page au lecteur.

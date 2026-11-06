@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doxygen version="1.9.8"><compounddef id="base" kind="class"><compoundname>cydoc::DocSession</compoundname><briefdescription><para>Classe de base des sessions de documentation.</para></briefdescription><location file="examples/cpp/include/cydoc/session.hpp" line="5"/></compounddef></doxygen>

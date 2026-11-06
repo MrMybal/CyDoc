@@ -48,7 +48,7 @@ Le champ `sources` de la configuration indique les répertoires à parcourir. Le
 ```json
 {
   "sources": ["examples"],
-  "sourceIndex": {
+  "apiIndex": {
     "enabled": true,
     "includeDirs": ["examples/cpp/include", "examples/shaders"]
   }
@@ -59,7 +59,7 @@ La génération échoue si deux pages partagent le même couple langue/identifia
 
 ## Fichiers et dépendances {#dependencies}
 
-`sourceIndex.enabled` génère une page par fichier et par langue, avec son code coloré, les liens vers ses symboles documentés et les dépendances reconnues. Les `include` C/C++ et shaders, les modules C++20, les imports Python/JavaScript/TypeScript/Java et les espaces de noms C# sont reliés aux fichiers locaux lorsque leur chemin peut être résolu. Les dépendances externes restent affichées comme non résolues. Un import TypeScript en `.js` peut pointer vers le fichier `.ts` correspondant.
+`apiIndex.enabled` génère une page par fichier et par langue, avec les liens vers ses symboles d’API documentés et les dépendances reconnues, sans listing complet ni corps d’implémentation. Les `include` C/C++ et shaders, les modules C++20, les imports Python/JavaScript/TypeScript/Java et les espaces de noms C# sont reliés aux fichiers locaux lorsque leur chemin peut être résolu. Les dépendances externes restent affichées comme non résolues. Un import TypeScript en `.js` peut pointer vers le fichier `.ts` correspondant.
 
 Consultez les [exemples dans les neuf langages](doc:code-languages) et le [parcours entre API, header, implémentation et module](doc:api-tour).
 

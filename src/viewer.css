@@ -53,6 +53,9 @@
 @media print{.personal-trigger,.personal-notes,.personal-dialog,.version-control,.search-filters{display:none!important}.content-tabs>[role=tabpanel][hidden]{display:block!important}.content-tabs>[role=tablist]{display:none}.content-details>div{display:block!important}}
 
 /* Header search and nested documentation navigation. */
+.cydoc-viewer{--sidebar-width:330px}.sidebar{width:var(--sidebar-width)}.workspace{margin-left:var(--sidebar-width)}.toast{left:calc(50% + var(--sidebar-width)/2)}
+@media(max-width:1200px){.cydoc-viewer{--sidebar-width:297.5px}}
+@media(max-width:780px){.cydoc-viewer{--sidebar-width:min(331.25px,calc(100vw - 24px))}.workspace{margin-left:0}.toast{left:50%}}
 .sidebar{padding-bottom:22px}.sidebar .brand{margin-bottom:22px}.side-nav{padding:0 0 20px;scrollbar-gutter:stable}
 .side-nav ul{list-style:none;margin:0;padding:0}.side-nav .nav-tree>.nav-branch{margin:0 0 15px}.side-nav .nav-group{margin:0}.side-nav .nav-group>summary{display:flex;align-items:center;justify-content:flex-start;gap:8px;min-height:36px;margin:0;padding:7px 8px;color:var(--text);font-size:12px;font-weight:600;letter-spacing:0;border-radius:6px;cursor:pointer;list-style:none}.side-nav .nav-group>summary::after{display:none}.side-nav .nav-group>summary::-webkit-details-marker{display:none}.side-nav .nav-group>summary:hover{background:var(--surface)}
 .side-nav .nav-group>summary>.icon{width:15px;height:15px;flex-shrink:0;color:var(--muted)}.side-nav .nav-group>summary>.nav-chevron{width:12px;height:12px;transition:transform .14s}.side-nav .nav-group[open]>summary>.nav-chevron{transform:rotate(90deg)}.side-nav .nav-group>summary>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -66,6 +69,8 @@
 @media(prefers-reduced-motion:reduce){.side-nav .nav-chevron{transition:none}}
 
 /* Application identity and compact personal tools. */
+.side-nav .nav-tree a,.side-nav .nav-group>summary{min-width:0}.side-nav .nav-tree a span{flex:1;white-space:normal;overflow-wrap:anywhere;line-height:1.5}.side-nav .nav-group>summary>span{min-width:0;flex:1}.side-nav .nav-children{min-width:0}.article-title h1{min-width:0;overflow-wrap:anywhere}.article-title .icon-button{flex-shrink:0}.page-pagination strong,.feature-card h3,.footer>span{min-width:0;overflow-wrap:anywhere}.topbar-actions{min-width:0}
+.content-tabs>[role=tablist]>button{flex:0 0 auto;max-width:min(320px,80vw);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .brand-mark.has-logo{background:transparent;box-shadow:none}.brand-logo{display:block;width:34px;height:38px;object-fit:contain;flex-shrink:0}.brand-fallback{display:grid;place-items:center}.topbar .personal-trigger{display:grid;place-items:center;flex-shrink:0;width:32px;height:32px;margin:0;padding:0;border:0;border-radius:6px;background:transparent;color:var(--muted)}.topbar .personal-trigger:hover{background:var(--surface);color:var(--text)}.topbar .personal-trigger .icon{width:17px;height:17px}
 
 /* One floating tooltip clears sidebar clipping and preserves full labels. */

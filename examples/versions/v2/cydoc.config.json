@@ -1,15 +1,15 @@
 {
   "name": "CyDoc · Démo versions",
   "version": "2-demo",
-  "defaultLocale": "fr",
+  "defaultLocale": "en",
   "locales": [
-    {
-      "code": "fr",
-      "label": "Français"
-    },
     {
       "code": "en",
       "label": "English"
+    },
+    {
+      "code": "fr",
+      "label": "Français"
     }
   ],
   "content": "docs",
@@ -33,5 +33,7 @@
     }
   ],
   "homePage": "overview",
-  "translationReport": true
+  "aliases": {
+    "translation-report": "overview"
+  }
 }

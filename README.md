@@ -6,10 +6,6 @@ CyDoc combines handwritten guides, documentation extracted from source annotatio
 
 **Status:** functional version 0.1.0. Not published to npm yet. Native integrations are provided as source examples; target-device validation is still required.
 
-## Guides for AI coding assistants
-
-Start with [ai/README.md](ai/README.md), then use the [integration guide](ai/INTEGRATION.md), [authoring guide](ai/AUTHORING.md), and [API reference](ai/API.md). These guides and the [llms.txt index](llms.txt) are included in the package. [AGENTS.md](AGENTS.md) covers changes to the CyDoc repository itself.
-
 ## Quick start
 
 Requirements: Node.js 22 or later and npm.
@@ -31,6 +27,7 @@ Copy the entire generated `dist/site/` directory into your application's `Docume
 App/
   Documentation/
     Documentation.html
+    DocAI.md                    # Separate assistant guidance, never a reader page
     DocData/
       viewer.js
       viewer.css
@@ -43,7 +40,7 @@ App/
       versions/                 # When versionBuilds is configured
 ```
 
-`Documentation.html` is the actual reader page; its address stays unchanged while reading. Set `out` to choose the export directory (default: `Documentation`). Source Markdown and authoring assets stay in their configured input directories. Builds recognize the previous flat CyDoc export, move its generated files into `DocData/`, and retain an `index.html` redirect for existing links, including their query and fragment. Unrelated output files are preserved; use a fresh output directory when packaging only the current generated files.
+`Documentation.html` is the actual reader page; its address stays unchanged while reading. Set `out` to choose the export directory (default: `Documentation`). Application authoring, assets and tooling belong in `App/.CyDocBuild/`, using `.CyDocBuild/cydoc.config.json` and a sibling `Documentation/` output. The CLI prefers that private configuration; legacy root configurations remain readable. This library checkout keeps its own maintained demo layout. Builds recognize the previous flat CyDoc export, move its generated files into `DocData/`, and retain an `index.html` redirect for existing links, including their query and fragment. Unrelated output files are preserved; use a fresh output directory when packaging only the current generated files.
 
 ```sh
 npm run dev    # Rebuild on local changes; refresh the file in your browser
@@ -57,7 +54,7 @@ npm run size   # Measure core, reader, data, and optional module bundles
 ## Features
 
 - Stable links to pages, sections, source lines, annotations, playback times, graph nodes, and 3D views.
-- French and English example content, locale fallback, and translation revision reports.
+- French and English example content, with only complete and current translations offered to readers.
 - Local search across prose, code, and symbols, with language/content filters and typo tolerance.
 - Build-time syntax highlighting for C++, Python, HLSL, GLSL, C#, C, JavaScript, Java, and TypeScript. Native examples also use Kotlin and Swift.
 - Code tabs, step-by-step guides, callouts, collapsible content, glossary tooltips, and code diffs.
@@ -202,7 +199,7 @@ order: 10
 
 Translated pages share the same `id`. Explicit section anchors keep contextual links stable across languages. The metadata format does not support advanced YAML.
 
-To nest a page below another page in the sidebar, add `parent: settings` to its metadata, using the parent's stable page ID. Parents may themselves have parents. Missing parents and cycles fail validation. Keep parent IDs consistent across translations. Pages without a parent can use a section path such as `section: Guides / Workspace` to create nested folders. Generated source files are grouped by directory. This navigation hierarchy does not change page URLs or depend on Markdown filenames.
+To nest a page below another page in the sidebar, add `parent: settings` to its metadata, using the parent's stable page ID. Parents may themselves have parents. Missing parents and cycles fail validation. Keep parent IDs consistent across translations. Pages without a parent can use a section path such as `section: Guides / Workspace` to create nested folders. Optional API references group documented functions, includes and modules without displaying source listings. This navigation hierarchy does not change page URLs or depend on Markdown filenames.
 
 The header searches documentation terms, code and symbols while typing. Results support content/language filters, arrow keys and Enter; Ctrl+K opens the search dialog. Escape or a click outside closes the search popover. Navigation branches retain their open state and scroll position between pages.
 
@@ -264,12 +261,12 @@ Add explicit Markdown documentation to source comments:
 
 Python triple-quoted docstrings accept the same tags. Declare source directories in `sources` in `cydoc.config.json`.
 
-Enable a source index to generate highlighted file pages, documented-symbol links, and resolvable local dependencies:
+Enable an API index to generate documented-symbol references and resolvable includes/imports/modules without full source listings:
 
 ```json
 {
   "sources": ["examples"],
-  "sourceIndex": {
+  "apiIndex": {
     "enabled": true,
     "includeDirs": ["examples/cpp/include", "examples/shaders"]
   }
@@ -289,7 +286,7 @@ Structured API imports run at build time:
 }
 ```
 
-Adapters consume common [Doxygen XML](https://www.doxygen.nl/manual/output.html) and [TypeDoc JSON](https://typedoc.org/documents/Options.Output.html) declarations, including signatures, parameters, returns, inheritance, references, and indexed source lines. Doxygen and TypeDoc are not included in the reader.
+Adapters consume common [Doxygen XML](https://www.doxygen.nl/manual/output.html) and [TypeDoc JSON](https://typedoc.org/documents/Options.Output.html) declarations, including signatures, parameters, returns, inheritance, references, and API file links. Doxygen and TypeDoc are not included in the reader.
 
 The neutral `cydoc` format lets other producers supply the same information for additional languages. Its illustrative schema and generation configurations are in `examples/api/README.md`. Demo snapshots are small interchange examples maintained alongside their source; adapters do not cover all plugin-specific metadata.
 
@@ -304,8 +301,7 @@ Declare local versions:
     { "id": "1.0", "label": "1.0", "base": "../v1/Documentation.html" },
     { "id": "2.0", "label": "2.0", "base": "./Documentation.html" }
   ],
-  "aliases": { "old-page": "new-page#section" },
-  "translationReport": true
+  "aliases": { "old-page": "new-page#section" }
 }
 ```
 
@@ -313,7 +309,9 @@ The current version's `id` matches `version`. Switching versions preserves the l
 
 The repository includes two small **Demo v1 / Demo v2** manuals to demonstrate switching and translation freshness. They are not historical CyDoc releases. Optional `versionBuilds` entries build child projects and copy their exports into controlled subdirectories of `DocData/`. For a destination `versions/v1`, use `DocData/versions/v1/Documentation.html` as the version base.
 
-Every build writes `DocData/translation-report.json`. Set `translationReport: true` to include a report page. Put `revision` on an original page and the translated revision in `sourceRevision` on its translation. Missing, outdated, and untracked translations are reported separately. Without an explicit original revision, the generator uses a content fingerprint.
+English is the required source/default language and French is mandatory. The build fails before publishing when either has a missing, empty or explicitly outdated page. Additional incomplete languages are withheld. Older/custom manifests show only complete languages; one complete language has no selector. Complete titles, prose, descriptions and media explanations before publishing a second language. Coverage and revision checks cannot judge translation quality.
+
+`DocData/translation-report.json` is build metadata and never a reader page. The former `translationReport` option no longer adds a page. Put `revision` on originals and `sourceRevision` on translations to track freshness. Keep AI instructions in `DocAI.md`, and keep audits, build instructions and verification histories outside the human manual. Existing internal Markdown can use `audience: internal` or `audience: ai`; it is excluded from the export's pages and search, with old page IDs redirected to the manual's home.
 
 Link to another manual with `[Export](doc://editor/settings#export)` and a host-owned catalog:
 
@@ -364,6 +362,10 @@ Both commands build and validate the export. Paths are relative to the configura
 `homePage` selects the initial page. The repository's `landingPage: true` enables the CyDoc demo landing page; omit it for your own manual. A custom JavaScript embedding can provide trusted `renderHome(locale)` HTML.
 
 Generated data and disabled module scripts are updated during a build. Old copied media assets are not automatically removed; use a fresh output directory for a clean application distribution.
+
+## Assistant integration reference
+
+The reader is designed for people using the host application. Every export places assistant guidance in a separate `DocAI.md` sidecar, outside the manual's navigation and search. For integration tooling, [ai/README.md](ai/README.md) indexes the packaged [integration guide](ai/INTEGRATION.md), [authoring guide](ai/AUTHORING.md), and [API reference](ai/API.md). [AGENTS.md](AGENTS.md) covers changes to CyDoc itself.
 
 ## Compatibility and limits
 

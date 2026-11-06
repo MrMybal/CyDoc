@@ -46,6 +46,7 @@ La commande de génération produit un dossier autonome contenant le lecteur, le
 ```text
 App/Documentation/
   Documentation.html
+  DocAI.md
   DocData/
     viewer.css
     viewer.js

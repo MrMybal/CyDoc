@@ -12,7 +12,7 @@ Ces liens ouvrent un état réel des exemples. L’icône de lien d’un lecteur
 - [Nœud Make Help Link](doc:blueprints?media=media-1&node=link)
 - [Caméra et triangles 3D](doc:mesh-viewer?media=media-1&camera=3,2,4&target=0,0,0&wire=true&scene=0)
 - [Zone annotée de l’image](doc:image-viewer?media=media-1&note=settings-area&zoom=1.5)
-- [Ligne du header C++](doc:source-examples-cpp-include-cydoc-session-hpp#L11)
+- [API du header C++](doc:source-examples-cpp-include-cydoc-session-hpp#symbols)
 - [Deuxième élément de galerie](doc:galleries?media=gallery-images&item=1)
 - [Image 6 du GIF](doc:gif-controls?media=animation&frame=5)
 

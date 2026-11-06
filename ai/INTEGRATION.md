@@ -15,23 +15,27 @@ npm pack
 `npm pack` also runs the build through `prepack`. Install the resulting archive from the application project, using its actual path and version:
 
 ```sh
-npm install /path/to/cydoc-0.1.0.tgz
+npm install --prefix .CyDocBuild /path/to/cydoc-0.1.0.tgz
 ```
 
 The path above is a placeholder. A bare `npm install cydoc` is not the current distribution workflow. The core and generated-reader workflows do not require Three.js; install the optional `three` peer when using mesh support.
 
 ## Build the application's manual
 
-Create this layout in the application project. The asset directory must exist even for text-only manuals. Each configured locale needs its own content directory.
+Keep all documentation authoring, tooling and build work inside `App/.CyDocBuild/`. The asset directory must exist even for text-only manuals. English originals and full French translations are required.
 
 ```text
-cydoc.config.json
-manual/en/overview.md
-manual/fr/overview.md
-assets/
+App/
+  .CyDocBuild/
+    cydoc.config.json
+    manual/en/overview.md
+    manual/fr/overview.md
+    assets/
+    package.json              # Documentation toolchain, when maintained separately
+  Documentation/             # Generated reader only
 ```
 
-Use this minimal `cydoc.config.json`:
+Use this minimal `.CyDocBuild/cydoc.config.json`:
 
 ```json
 {
@@ -45,14 +49,15 @@ Use this minimal `cydoc.config.json`:
   "homePage": "overview",
   "content": "manual",
   "assets": "assets",
-  "out": "build/Documentation",
+  "out": "../Documentation",
   "modules": []
 }
 ```
 
-Paths resolve relative to this configuration file. `out` must be a subdirectory of that project, not the project root or a parent directory. Omit the demo-only `landingPage` setting. Write both `overview.md` files using the [page template](AUTHORING.md#pages-and-translations), then run from the application project:
+Input paths resolve relative to this configuration file. When it is directly inside `.CyDocBuild/`, the application root is its parent; `../Documentation` is the public output next to the private workspace. Output must remain inside the application root and cannot replace that root. Omit the demo-only `landingPage` setting. Write both `overview.md` files using the [page template](AUTHORING.md#pages-and-translations), then run from the private workspace with its documentation toolchain:
 
 ```sh
+cd .CyDocBuild
 npx --no-install cydoc build cydoc.config.json
 npx --no-install cydoc check cydoc.config.json
 ```
@@ -70,6 +75,7 @@ Install the exported folder as `App/Documentation/`:
 ```text
 App/Documentation/
   Documentation.html
+  DocAI.md
   DocData/
     data.js
     manifest.json
@@ -82,11 +88,15 @@ App/Documentation/
     versions/                # Optional version builds
 ```
 
-The default `out` is `Documentation`; the example above explicitly builds into `build/Documentation`. `Documentation.html` is the reader itself, with no iframe or redirect to an internal page. Point new application help links at it. Rebuilding a recognized previous flat CyDoc export relocates its generated files and preserves the old `index.html` as a redirect with its query and fragment. Unrelated files are left intact; do not delete application-owned files to force the layout.
+The default output is `App/Documentation/`. Without an explicit configuration argument, the CLI first looks for `.CyDocBuild/cydoc.config.json` and accepts the former root configuration as a compatibility fallback. `Documentation.html` is the reader itself, with no iframe or redirect to an internal page. Point new application help links at it. Rebuilding a recognized previous flat CyDoc export relocates its generated files and preserves the old `index.html` as a redirect with its query and fragment. Unrelated files are left intact; do not delete application-owned files to force the layout.
+
+Write the human manual for people using the application. The generated `DocAI.md` is separate assistant guidance, with no navigation entry or search results. Keep build/maintenance instructions, audit reports, migration inventories and verification histories out of human content. Store working records outside the generated manual. Use `audience: internal` or `audience: ai` on existing internal Markdown that cannot yet be moved; those pages are excluded. `DocAI.md` files under the content directories are also ignored.
+
+English is the required source/default language, and a full French translation is mandatory. A missing, empty or explicitly outdated English/French public page stops the build before publishing. Other locales are optional and withheld when incomplete. The reader also hides incomplete locales in older or custom manifests. Do not copy original-language prose into another locale or add placeholders to satisfy coverage; translate and review all human-facing content first. Coverage checks cannot judge the language or quality of prose.
 
 Keep source Markdown and assets outside this generated tree. Authored media and `logo` still use `assets/...`; the generated reader resolves those paths inside `DocData/`. Do not add `DocData/` to authored media paths. `linkedDocs.base` and `versions[].base` are relative to `Documentation.html`; `linkedDocs.manifest` points to the other export's `DocData/manifest.json` and resolves relative to the build configuration. `versionBuilds[].destination` resolves inside `DocData/`, for example `versions/v1` exports to `DocData/versions/v1/Documentation.html`.
 
-Distribute **all** of `build/Documentation/`, including module scripts, asset data scripts, styles, dependency notices and media. Keep the directory structure. Rebuild into a fresh output directory for a clean distribution because old copied assets are not automatically removed. Open the resulting `Documentation.html` directly; do not introduce an HTTP server or a CDN to make it work.
+Distribute **all** of `App/Documentation/`, including module scripts, asset data scripts, styles, dependency notices and media. Keep `.CyDocBuild/` out of the distributed manual. Keep the generated directory structure. Rebuild into a fresh output directory for a clean distribution because old copied assets are not automatically removed. Open the resulting `Documentation.html` directly; do not introduce an HTTP server or a CDN to make it work.
 
 To add readers, set e.g. `"modules": ["image", "video", "gallery"]`. Include every gallery child type. GIF frame controls need `gif`; ordinary animated GIF display in an image needs only `image`. Mesh exports need `mesh` and the Three.js build dependency. Generated scripts for disabled modules are removed on rebuild.
 

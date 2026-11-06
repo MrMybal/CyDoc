@@ -12,7 +12,7 @@ These links open real example states. A viewer’s link icon copies its current 
 - [Make Help Link node](doc:blueprints?media=media-1&node=link)
 - [3D camera and wireframe](doc:mesh-viewer?media=media-1&camera=3,2,4&target=0,0,0&wire=true&scene=0)
 - [Annotated image area](doc:image-viewer?media=media-1&note=settings-area&zoom=1.5)
-- [C++ header line](doc:source-examples-cpp-include-cydoc-session-hpp#L11)
+- [C++ header API](doc:source-examples-cpp-include-cydoc-session-hpp#symbols)
 - [Second gallery item](doc:galleries?media=gallery-images&item=1)
 - [GIF frame 6](doc:gif-controls?media=animation&frame=5)
 

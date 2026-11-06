@@ -38,7 +38,7 @@ The C++20 module exports a wrapper around the portable C++17 function. Compile t
   "sources": [
     "examples"
   ],
-  "sourceIndex": {
+  "apiIndex": {
     "enabled": true,
     "includeDirs": [
       "examples/cpp/include",

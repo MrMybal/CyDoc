@@ -46,10 +46,10 @@ test('rich blocks preserve safe nested Markdown, code line anchors, glossary, an
   assert.throws(()=>compileMarkdown(image+'\n\n'+image,{locale:'fr',pageId:'duplicate'}),/Duplicate media id/);
 });
 
-test('Doxygen and TypeDoc adapters preserve parameters, returns, inheritance and source lines', async () => {
+test('Doxygen and TypeDoc adapters preserve parameters, returns, inheritance and file API links', async () => {
   const pages=await importApi([{format:'doxygen',prefix:'doxygen',path:'examples/api/doxygen'},{format:'typedoc',prefix:'typedoc',path:'examples/api/typedoc.json'}],{base:process.cwd(),locales:[{code:'en'}],sourceFiles:new Set(['examples/cpp/include/cydoc/session.hpp','examples/typescript/help.ts'])});
   const method=pages.find(page=>page.id==='doxygen-cydoc-helpsession-open-open');
-  assert.match(method.markdown,/\| `page` \| `std::string_view`/);assert.match(method.markdown,/## Returns/);assert.match(method.markdown,/#L11/);
+  assert.match(method.markdown,/\| `page` \| `std::string_view`/);assert.match(method.markdown,/## Returns/);assert.match(method.markdown,/source-examples-cpp-include-cydoc-session-hpp/);assert.doesNotMatch(method.markdown,/#L11/);
   assert.match(pages.find(page=>page.id==='doxygen-cydoc-helpsession-session').markdown,/doc:doxygen-cydoc-docsession-base/);
   assert.match(pages.find(page=>page.id==='typedoc-helplink-2').markdown,/section\?/);
   const typed=typedocSymbols({id:0,name:'Test',children:[{id:1,name:'Base',kind:128},{id:2,name:'Child',kind:128,extendedTypes:[{type:'reference',name:'Base',target:1}]}]});
@@ -99,7 +99,7 @@ test('demo version exports are distinct local manuals with real freshness exampl
   assert.equal(v1.version,'1-demo');assert.equal(v2.version,'2-demo');assert.notEqual(v1.pages[0].text,v2.pages[0].text);
   assert.equal(createDocumentation(v2).resolve('media').page.id,'overview');
   const report=JSON.parse(await readFile('dist/site/DocData/versions/v2/DocData/translation-report.json','utf8'));
-  assert.ok(report.missing.some(page=>page.id==='new-feature'));assert.ok(report.outdated.some(page=>page.id==='overview'));
+  assert.deepEqual(report.missing,[]);assert.deepEqual(report.outdated,[]);assert.equal(v1.locales.length,2);assert.equal(v2.locales.length,2);assert.ok(!v2.pages.some(page=>page.id==='translation-report'));
   const main=JSON.parse(await readFile('dist/site/DocData/manifest.json','utf8'));
   for (const [manifest, entry] of [[main,'../dist/site/Documentation.html'],[v1,'../dist/site/DocData/versions/v1/Documentation.html'],[v2,'../dist/site/DocData/versions/v2/Documentation.html']]) {
     for (const version of manifest.versions) {

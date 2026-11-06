@@ -1,7 +1,7 @@
 {
   "name": "CyDoc",
   "version": "0.1.0",
-  "defaultLocale": "fr",
+  "defaultLocale": "en",
   "homePage": "overview",
   "landingPage": true,
   "modules": [
@@ -12,21 +12,14 @@
     "graph",
     "gif"
   ],
-  "sourceIndex": {
-    "enabled": true,
-    "includeDirs": [
-      "examples/cpp/include",
-      "examples/shaders"
-    ]
-  },
   "locales": [
-    {
-      "code": "fr",
-      "label": "Français"
-    },
     {
       "code": "en",
       "label": "English"
+    },
+    {
+      "code": "fr",
+      "label": "Français"
     }
   ],
   "content": "docs",
@@ -37,7 +30,8 @@
   "out": "dist/site",
   "aliases": {
     "old-media": "media",
-    "old-settings": "quickstart#installation"
+    "old-settings": "quickstart#installation",
+    "translation-report": "overview"
   },
   "versions": [
     {
@@ -70,15 +64,28 @@
     {
       "format": "doxygen",
       "prefix": "doxygen",
-      "path": "examples/api/doxygen"
+      "path": "examples/api/doxygen",
+      "locale": "en"
+    },
+    {
+      "format": "doxygen",
+      "prefix": "doxygen",
+      "path": "examples/api/doxygen-fr",
+      "locale": "fr"
     },
     {
       "format": "typedoc",
       "prefix": "typedoc",
-      "path": "examples/api/typedoc.json"
+      "path": "examples/api/typedoc.json",
+      "locale": "en"
+    },
+    {
+      "format": "typedoc",
+      "prefix": "typedoc",
+      "path": "examples/api/typedoc-fr.json",
+      "locale": "fr"
     }
   ],
-  "translationReport": true,
   "glossary": {
     "fr": {
       "PBR": "Rendu basé sur des propriétés physiques des matériaux."
@@ -86,5 +93,12 @@
     "en": {
       "PBR": "Rendering based on physical material properties."
     }
+  },
+  "apiIndex": {
+    "enabled": true,
+    "includeDirs": [
+      "examples/cpp/include",
+      "examples/shaders"
+    ]
   }
 }

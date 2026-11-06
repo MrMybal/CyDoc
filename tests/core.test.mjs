@@ -30,6 +30,17 @@ test('search is accent-insensitive, requires every term and ranks the title', ()
   assert.equal(docs.search('   ').length, 0);
   assert.equal(docs.search('start', 'en')[0].page.locale, 'en');
 });
+
+test('only complete nonempty and current locales are available for publication', () => {
+  const data=fixture();
+  assert.deepEqual(createDocumentation(data).availableLocales().map(locale=>locale.code),['fr']);
+  data.pages.push(page('only-fr','en','Settings','Advanced settings'));
+  assert.deepEqual(createDocumentation(data).availableLocales().map(locale=>locale.code),['fr','en']);
+  data.pages[0].revision='2';data.pages[1].sourceRevision='1';
+  assert.deepEqual(createDocumentation(data).availableLocales().map(locale=>locale.code),['fr']);
+  data.pages[1].sourceRevision='2';data.pages.at(-1).text='';
+  assert.deepEqual(createDocumentation(data).availableLocales().map(locale=>locale.code),['fr']);
+});
 test('duplicate pages and unsupported manifests fail instead of silently overwriting', () => {
   const data = fixture(); data.pages.push(data.pages[0]);
   assert.throws(() => createDocumentation(data), /Duplicate page/);

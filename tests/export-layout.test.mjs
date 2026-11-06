@@ -10,7 +10,7 @@ test('legacy exports regroup generated files and preserve deep links and unrelat
   const root = await mkdtemp(join(parent, 'layout-test-'));
   t.after(async () => {
     if (dirname(root) !== parent || !basename(root).startsWith('layout-test-')) throw new Error('Unsafe cleanup target');
-    await rm(root, { recursive: true, force: true });
+    await rm(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 40 });
   });
   const output = join(root, 'Documentation'), data = join(output, 'DocData');
   await mkdir(join(output, 'assets/nested'), { recursive: true });

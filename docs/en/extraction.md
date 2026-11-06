@@ -48,7 +48,7 @@ The `sources` configuration lists directories to scan. Hidden directories, `node
 ```json
 {
   "sources": ["examples"],
-  "sourceIndex": {
+  "apiIndex": {
     "enabled": true,
     "includeDirs": ["examples/cpp/include", "examples/shaders"]
   }
@@ -59,7 +59,7 @@ Generation fails when two pages share the same locale/identifier pair. Generated
 
 ## Files and dependencies {#dependencies}
 
-`sourceIndex.enabled` generates a page per file and locale, containing highlighted code, links to documented symbols, and recognized dependencies. C/C++ and shader includes, C++20 modules, Python/JavaScript/TypeScript/Java imports, and C# namespaces link to local files when resolvable. External dependencies remain visible as unresolved. TypeScript `.js` imports can resolve to their corresponding `.ts` file.
+`apiIndex.enabled` generates a page per file and locale, containing links to documented API symbols and recognized dependencies, without full source listings or implementation bodies. C/C++ and shader includes, C++20 modules, Python/JavaScript/TypeScript/Java imports, and C# namespaces link to local files when resolvable. External dependencies remain visible as unresolved. TypeScript `.js` imports can resolve to their corresponding `.ts` file.
 
 See the [nine language examples](doc:code-languages) and the [tour between API, header, implementation, and module](doc:api-tour).
 

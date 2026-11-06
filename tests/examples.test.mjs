@@ -6,14 +6,14 @@ import { parseBlueprint, validateGraph } from '../tools/blueprint.mjs';
 import { extractComments } from '../tools/extract.mjs';
 import { sourceDependencies } from '../tools/source-index.mjs';
 
-test('nine source languages have extracted API pages and highlighted code', async () => {
+test('nine languages have extracted API pages and file references without source listings', async () => {
   const data = JSON.parse(await readFile('dist/site/DocData/manifest.json', 'utf8'));
   for (const locale of ['fr', 'en']) for (const language of ['cpp', 'python', 'c', 'csharp', 'javascript', 'typescript', 'java', 'hlsl', 'glsl']) {
     const page = data.pages.find(page => page.locale === locale && page.id === `api-${language}`);
     assert.ok(page, `Missing API ${locale}/${language}`);
     assert.ok(page.sourcePageId);
     const source = data.pages.find(source => source.id === page.sourcePageId && source.locale === locale);
-    assert.match(source.html, /class="token /);
+    assert.equal(source.kind,'api');assert.ok(source.languages.includes(language));assert.doesNotMatch(source.html,/class="code-block"|Code source/);assert.ok(!source.code);
     assert.ok(page.symbol);
   }
 });

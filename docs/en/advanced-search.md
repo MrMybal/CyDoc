@@ -12,5 +12,5 @@ Search now includes code and symbols. Filter results by content type and languag
 Try `make_help_link`, then filter **Source code** and **cpp**. Results open the matching line. Try `configuraton` to find `configuration`.
 
 ```typescript
-"const results = docs.search(\"make_help_link\", \"fr\", 20, {\n  language: \"cpp\", kind: \"source\", fuzzy: true\n});"
+"const results = docs.search(\"make_help_link\", \"fr\", 20, {\n  language: \"cpp\", kind: \"api\", fuzzy: true\n});"
 ```

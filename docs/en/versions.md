@@ -33,4 +33,4 @@ The version selector preserves page, section, and media state. **Demo v1** and *
 
 ## Translations {#translations}
 
-[View the translation report](doc:translation-report). `DocData/translation-report.json` contains missing pages, outdated revisions, and untracked translations. Demo v2 intentionally includes an outdated example and a missing example.
+Only complete, current language editions are offered. Finish every translation before publishing a second language; no reader page is added for internal translation tracking.

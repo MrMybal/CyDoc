@@ -301,12 +301,12 @@ test('minimal GIF autoplay pauses offscreen, respects manual pause, reduced moti
 });
 
 
-test('header search finds terms and source lines, filters results and keeps typing focus', t => {
+test('header search finds terms and API symbols, filters results and keeps typing focus', t => {
   const {host,window}=dom(t);
   const data={schemaVersion:1,name:'Search fixture',version:'1',defaultLocale:'fr',locales:[{code:'fr',label:'Français'}],pages:[
     {id:'home',locale:'fr',title:'Accueil',description:'',section:'Guide',order:0,html:'<p>Home</p>',text:'Home',headings:[]},
     {id:'lighting',locale:'fr',title:'Éclairage',description:'PBR configuration',section:'Guide',order:1,html:'<p>PBR</p>',text:'Éclairage PBR',headings:[]},
-    {id:'source',locale:'fr',title:'session.cpp',description:'Source configuration',section:'Source files',order:2,html:'<p>Code</p>',text:'Header configure();',code:'Header\nconfigure();',kind:'source',languages:['cpp'],source:'src/session.cpp:1',headings:[]}
+    {id:'source',locale:'fr',title:'session.hpp',description:'API configuration',section:'API',order:2,html:'<p>Code</p>',text:'Header configure();',kind:'api',languages:['cpp'],source:'src/session.cpp:1',headings:[]}
   ]};
   const viewer=mountViewer(host,data,{homePage:'home'});
   const input=host.querySelector('[data-header-search]'),dialog=host.querySelector('.search-dialog');
@@ -316,9 +316,9 @@ test('header search finds terms and source lines, filters results and keeps typi
   assert.equal(dialog.open,true);assert.ok(dialog.classList.contains('search-popover'));
   assert.equal(window.document.activeElement,input);assert.equal(input.getAttribute('aria-expanded'),'true');
   assert.equal(host.querySelectorAll('.search-result').length,1);assert.equal(host.querySelector('.search-result').getAttribute('href'),'#/fr/lighting');
-  query('configure');host.querySelector('[data-search-kind]').value='source';host.querySelector('[data-search-language]').value='cpp';
+  query('configure');host.querySelector('[data-search-kind]').value='api';host.querySelector('[data-search-language]').value='cpp';
   host.querySelector('[data-search-language]').dispatchEvent(new window.Event('change',{bubbles:true}));
-  assert.equal(host.querySelector('.search-result').getAttribute('href'),'#/fr/source/L2');
+  assert.equal(host.querySelector('.search-result').getAttribute('href'),'#/fr/source');
   query('term-with-no-match');assert.ok(host.querySelector('.search-empty'));assert.equal(input.hasAttribute('aria-activedescendant'),false);
   input.dispatchEvent(new window.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));assert.equal(dialog.open,false);assert.equal(window.document.activeElement,input);
   assert.equal(host.querySelector('.sidebar-bottom,.local-note,.sidebar-foot,.aside-note,.workspace-label'),null);
@@ -351,9 +351,9 @@ test('header results support keyboard selection, modal shortcut and deliberate d
 test('nested page navigation preserves routes, opens active ancestors and exposes keyboard disclosures', t => {
   const {host,window}=dom(t);
   const data={schemaVersion:1,name:'Tree fixture',version:'1',defaultLocale:'en',locales:[{code:'en',label:'English'}],pages:[
-    {id:'guide',locale:'en',title:'Workspace',description:'',section:'Guides / Editor',order:0,html:'',text:'',headings:[]},
-    {id:'install',parent:'guide',locale:'en',title:'Install',description:'',section:'Other',order:1,html:'',text:'',headings:[]},
-    {id:'cpp-source',locale:'en',title:'doc.hpp',description:'',section:'Source files',kind:'source',source:'include/editor/doc.hpp:1',order:2,html:'',text:'',headings:[]}
+    {id:'guide',locale:'en',title:'Workspace',description:'',section:'Guides / Editor',order:0,html:'<p>Example help.</p>',text:'Example help.',headings:[]},
+    {id:'install',parent:'guide',locale:'en',title:'Install',description:'',section:'Other',order:1,html:'<p>Example help.</p>',text:'Example help.',headings:[]},
+    {id:'cpp-source',locale:'en',title:'doc.hpp',description:'',section:'Source files',kind:'source',source:'include/editor/doc.hpp:1',order:2,html:'<p>Example help.</p>',text:'Example help.',headings:[]}
   ]};
   const viewer=mountViewer(host,data,{homePage:'install'});
   const parent=host.querySelector('[data-nav-key="page:guide"]');
@@ -410,6 +410,25 @@ test('reader assets resolve from DocData while routes and authored paths remain 
   assert.equal(host.querySelector('article > p > a').getAttribute('href'),'#/en/home/details');
   assert.equal(JSON.parse(host.querySelector('[data-cydoc-module=video]').dataset.config).src,'assets/movie.webm');
   assert.equal(data.logo,'assets/logo.svg');assert.match(data.pages[0].html,/src="assets\/image.svg"/);
+  viewer.destroy();
+});
+
+test('the human reader withholds partial languages and normalizes their deep links without mixing languages', t => {
+  const {host,window}=dom(t);
+  const page=(id,locale,title)=>({id,locale,title,description:'',section:'Guide',order:0,html:`<h2 id="details">${title}</h2>`,text:title,headings:[{id:'details',text:title,level:2}]});
+  const data={schemaVersion:1,name:'Example',version:'1',defaultLocale:'fr',locales:[{code:'fr',label:'Français'},{code:'en',label:'English'}],pages:[page('start','fr','Démarrer'),page('settings','fr','Paramètres'),page('start','en','Get started')]};
+  window.history.replaceState(null,'','#/en/settings/details?media=demo');
+  let viewer=mountViewer(host,data);
+  assert.equal(host.querySelector('.locale-control'),null);
+  assert.equal(window.document.documentElement.lang,'fr');
+  assert.equal(window.location.hash,'#/fr/settings/details?media=demo');
+  assert.match(host.querySelector('main').textContent,/Paramètres/);
+  assert.doesNotMatch(host.textContent,/Translation unavailable|Traduction indisponible/);
+  assert.deepEqual(viewer.availableLocales().map(locale=>locale.code),['fr']);
+  viewer.destroy();
+  data.pages.push(page('settings','en','Settings'));
+  viewer=mountViewer(host,data);
+  assert.deepEqual([...host.querySelectorAll('.locale-control option')].map(option=>option.value),['fr','en']);
   viewer.destroy();
 });
 
@@ -481,7 +500,7 @@ test('navigation folders, parent pages, code tabs and gallery tabs expose full n
   const content=compileMarkdown('```tabs\n{"items":[{"label":"Complete C++ example title","description":"C++ details","code":"open();","lang":"cpp"},{"label":"Python","code":"open()","lang":"python"}]}\n```',{locale:'en',pageId:'parent'});
   const data={schemaVersion:1,name:'Tooltip fixture',version:'1',defaultLocale:'en',locales:[{code:'en',label:'English'}],pages:[
     {id:'parent',locale:'en',title:'The complete parent title',description:'Parent description',section:'Guides / Workspace',order:0,...content},
-    {id:'child',parent:'parent',locale:'en',title:'The complete child title',description:'Child description',section:'Guides',order:1,html:'',text:'',headings:[]}
+    {id:'child',parent:'parent',locale:'en',title:'The complete child title',description:'Child description',section:'Guides',order:1,html:'<p>Example help.</p>',text:'Example help.',headings:[]}
   ]};
   const viewer=mountViewer(host,data,{homePage:'parent'});await settle();
   const tooltip=host.querySelector('.reader-tooltip');

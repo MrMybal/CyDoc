@@ -23,7 +23,7 @@ export function sourceDependencies(source, language) {
   return dependencies;
 }
 
-export function buildSourcePages(records, { base, includeDirs = [], locales }) {
+export function buildApiFilePages(records, { base, includeDirs = [], locales }) {
   const files = new Map(records.map(record => [resolve(record.file), record]));
   const modules = new Map();
   for (const record of records) {
@@ -59,9 +59,8 @@ export function buildSourcePages(records, { base, includeDirs = [], locales }) {
         const label = target ? `[\`${dependency.name}\`](doc:${target.id})` : `\`${dependency.name}\``;
         return `| ${dependency.kind}${dependency.exported ? ' export' : ''} | ${label} | ${target ? t('Fichier local', 'Local file') : t('Externe ou non résolu', 'External or unresolved')} |`;
       });
-      const fence = '`'.repeat(Math.max(3, ...[...record.source.matchAll(/`+/g)].map(match => match[0].length + 1)));
-      const markdown = `${t('Page de fichier générée depuis', 'File page generated from')} \`${record.relative}\`.\n\n## ${t('Symboles documentés', 'Documented symbols')} {#symbols}\n\n${symbols.length ? symbols.map(page => `- [${page.symbol || page.title}](doc:${page.id})`).join('\n') : t('Aucun symbole annoté dans ce fichier.', 'No annotated symbols in this file.')}\n\n## ${t('Dépendances et modules', 'Dependencies and modules')} {#dependencies}\n\n${rows.length ? `| ${t('Type', 'Kind')} | ${t('Dépendance', 'Dependency')} | ${t('Résolution', 'Resolution')} |\n| --- | --- | --- |\n${rows.join('\n')}` : t('Aucune dépendance reconnue.', 'No recognized dependencies.')}\n\n## Code source {#source}\n\n${fence}${record.language}\n${record.source}\n${fence}\n`;
-      pages.push({ id: record.id, locale: locale.code, title: record.relative.split('/').pop(), description: `${record.language} · ${record.relative}`, section: t('Fichiers source', 'Source files'), order: 300 + pages.length, markdown, source: `${record.relative}:1` });
+      const markdown = `${t('Référence API de', 'API reference for')} \`${record.relative}\`.\n\n## ${t('Symboles documentés', 'Documented symbols')} {#symbols}\n\n${symbols.length ? symbols.map(page => `- [${page.symbol || page.title}](doc:${page.id})`).join('\n') : t('Aucun symbole annoté dans ce fichier.', 'No annotated symbols in this file.')}\n\n## ${t('Includes, imports et modules', 'Includes, imports and modules')} {#dependencies}\n\n${rows.length ? `| ${t('Type', 'Kind')} | ${t('Dépendance', 'Dependency')} | ${t('Résolution', 'Resolution')} |\n| --- | --- | --- |\n${rows.join('\n')}` : t('Aucune dépendance reconnue.', 'No recognized dependencies.')}\n`;
+      pages.push({ id: record.id, locale: locale.code, title: record.relative.split('/').pop(), description: `${record.language} · ${record.relative}`, section: t('API / Includes et modules', 'API / Includes and modules'), kind: 'api', languages: [record.language], order: 300 + pages.length, markdown, source: `${record.relative}:1` });
     }
   }
   return pages;

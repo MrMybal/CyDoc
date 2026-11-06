@@ -2,7 +2,7 @@
 id: overview
 title: Démo versions
 section: Guide
-revision: 2
+sourceRevision: 2
 ---
 Ce petit manuel est la **démo v2**. La version 2 ajoute une section sur les liens précis.
 

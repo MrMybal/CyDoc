@@ -12,5 +12,5 @@ La recherche inclut maintenant le code et les symboles. Filtrez les résultats p
 Essayez `make_help_link`, puis filtrez **Code source** et **cpp**. Le résultat ouvre la ligne correspondante. Essayez `configuraton` pour retrouver `configuration`.
 
 ```typescript
-"const results = docs.search(\"make_help_link\", \"fr\", 20, {\n  language: \"cpp\", kind: \"source\", fuzzy: true\n});"
+"const results = docs.search(\"make_help_link\", \"fr\", 20, {\n  language: \"cpp\", kind: \"api\", fuzzy: true\n});"
 ```

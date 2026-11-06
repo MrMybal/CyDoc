@@ -38,7 +38,7 @@ Le module C++20 réexporte un wrapper de la fonction portable C++17. Il faut com
   "sources": [
     "examples"
   ],
-  "sourceIndex": {
+  "apiIndex": {
     "enabled": true,
     "includeDirs": [
       "examples/cpp/include",

@@ -103,7 +103,7 @@ for locale in ['fr','en']:
     body = t('Le sélecteur de version conserve la page, la section et l’état du média. Les deux éditions **Démo v1** et **Démo v2** sont de petits manuels distincts pour tester le changement de version ; ce ne sont pas des anciennes versions publiées de CyDoc. Les pages absentes y redirigent vers leur accueil.','The version selector preserves page, section, and media state. **Demo v1** and **Demo v2** are distinct small manuals for trying version switching; they are not historical CyDoc releases. Missing pages redirect to their overview.')+'\n\n'
     body += '## '+t('Redirections','Redirects')+' {#redirects}\n\n'+block('json',{'aliases':{'old-media':'media','old-settings':'quickstart#installation'},'versions':[{'id':'1.0','label':'1.0','base':'../v1/Documentation.html'},{'id':'2.0','label':'2.0','base':'../v2/Documentation.html'}]})
     body += t('[Essayez une ancienne adresse](doc:old-media). Les cycles et les destinations manquantes font échouer la génération.','[Try an old address](doc:old-media). Cycles and missing destinations fail generation.')
-    body += '\n\n## '+t('Traductions','Translations')+' {#translations}\n\n'+t('[Consulter le rapport de traduction](doc:translation-report). `DocData/translation-report.json` contient les pages manquantes, les révisions dépassées et les traductions sans suivi. La démo v2 contient volontairement un exemple dépassé et un exemple manquant.','[View the translation report](doc:translation-report). `DocData/translation-report.json` contains missing pages, outdated revisions, and untracked translations. Demo v2 intentionally includes an outdated example and a missing example.')
+    body += '\n\n## '+t('Traductions','Translations')+' {#translations}\n\n'+t('L’anglais et sa traduction française complète sont obligatoires avant publication.','English originals and full French translations are required before publication.')
     page(locale,'versions',t('Versions et traductions','Versions and translations'),t('Versions locales, redirections et suivi des révisions traduites.','Local versions, redirects, and translation revision tracking.'),body,34)
     body = t('Ouvrez **Mon espace** dans la navigation pour retrouver vos favoris et pages récentes. Le cœur à côté du titre ajoute la page aux favoris. **Mes notes sur cette page** conserve vos remarques privées et permet leur export depuis Mon espace.','Open **My space** in the navigation to find bookmarks and recent pages. The heart beside the title bookmarks a page. **My notes on this page** stores private notes, exportable from My space.')+'\n\n'
     body += t('La position de lecture est mémorisée. Lorsque vous revenez sur une page, **Reprendre ma lecture** dans le sommaire vous ramène à cette position. Un lien explicite vers une section ou un média conserve sa priorité.','Reading position is remembered. When returning to a page, **Resume reading** in the contents returns to that position. Explicit section or media links retain priority.')+'\n\n'
@@ -139,26 +139,28 @@ for locale in ['fr','en']:
 versions=[{'id':'1-demo','label':'Démo v1','base':'../v1/Documentation.html'},{'id':'2-demo','label':'Démo v2','base':'../v2/Documentation.html'},{'id':'0.1.0','label':'CyDoc 0.1.0','base':'../../../Documentation.html'}]
 for version in [1,2]:
     base=f'examples/versions/v{version}'
-    config={'name':'CyDoc · Démo versions','version':f'{version}-demo','defaultLocale':'fr','locales':[{'code':'fr','label':'Français'},{'code':'en','label':'English'}],'content':'docs','assets':'assets','out':'.output','versions':versions,'homePage':'overview','translationReport':True}
+    config={'name':'CyDoc · Démo versions','version':f'{version}-demo','defaultLocale':'en','locales':[{'code':'fr','label':'Français'},{'code':'en','label':'English'}],'content':'docs','assets':'assets','out':'.output','versions':versions,'homePage':'overview'}
     write(f'{base}/cydoc.config.json',json.dumps(config,ensure_ascii=False,indent=2))
     (ROOT/f'{base}/assets').mkdir(parents=True,exist_ok=True)
     (ROOT/f'{base}/assets/favicon.svg').write_bytes((ROOT/'assets/favicon.svg').read_bytes())
     for locale in ['fr','en']:
         is_fr=locale=='fr'
-        metadata='revision: '+str(version)+'\n' if is_fr else 'sourceRevision: 1\n'
+        metadata='revision: '+str(version)+'\n' if not is_fr else 'sourceRevision: '+str(version)+'\n'
         text=(f'Ce petit manuel est la **démo v{version}**. ' if is_fr else f'This small manual is **demo v{version}**. ')+('La version 2 ajoute une section sur les liens précis.' if is_fr and version==2 else 'Les liens ouvrent la documentation locale.' if is_fr else 'Links open local documentation.')
         write(f'{base}/docs/{locale}/overview.md',f'---\nid: overview\ntitle: '+('Démo versions' if is_fr else 'Version demo')+f'\nsection: Guide\n{metadata}---\n{text}\n\n[Guide](doc:quickstart)\n\n## Installation {{#installation}}\n\n'+('Copiez le dossier de documentation.' if is_fr else 'Copy the documentation folder.')+'\n')
         write(f'{base}/docs/{locale}/quickstart.md','---\nid: quickstart\ntitle: Guide\nsection: Guide\n'+metadata+'---\n## Installation {#installation}\n\n'+('Ouvrez `Documentation.html` sans serveur.' if is_fr else 'Open `Documentation.html` without a server.')+'\n')
-    if version==2: write(f'{base}/docs/fr/new-feature.md','---\nid: new-feature\ntitle: Nouvelle fonction\nsection: Guide\nrevision: 1\n---\nCette page n’a volontairement pas encore de traduction anglaise.\n')
+    if version==2:
+        write(f'{base}/docs/fr/new-feature.md','---\nid: new-feature\ntitle: Nouvelle fonction\nsection: Guide\nsourceRevision: 1\n---\nCette édition ajoute l’ouverture directe d’une section par un lien stable.\n')
+        write(f'{base}/docs/en/new-feature.md','---\nid: new-feature\ntitle: New feature\nsection: Guide\nrevision: 1\n---\nThis edition adds direct access to a section through a stable link.\n')
 
 config_file=ROOT/'cydoc.config.json'
 config=json.loads(config_file.read_text(encoding='utf-8'))
 config['modules']=list(dict.fromkeys(config['modules']+['gif']))
-config['aliases']={'old-media':'media','old-settings':'quickstart#installation'}
+config['aliases']={'old-media':'media','old-settings':'quickstart#installation','translation-report':'overview'}
 config['versions']=[{'id':'0.1.0','label':'0.1.0','base':'./Documentation.html'},{'id':'1-demo','label':'Démo v1','base':'DocData/versions/v1/Documentation.html'},{'id':'2-demo','label':'Démo v2','base':'DocData/versions/v2/Documentation.html'}]
 config['versionBuilds']=[{'config':f'examples/versions/v{i}/cydoc.config.json','destination':f'versions/v{i}'} for i in [1,2]]
-config['apiImports']=[{'format':'doxygen','prefix':'doxygen','path':'examples/api/doxygen'},{'format':'typedoc','prefix':'typedoc','path':'examples/api/typedoc.json'}]
-config['translationReport']=True
+config['apiImports']=[{'format':fmt,'prefix':fmt,'path':path,'locale':locale} for fmt,paths in [('doxygen',['examples/api/doxygen','examples/api/doxygen-fr']),('typedoc',['examples/api/typedoc.json','examples/api/typedoc-fr.json'])] for path,locale in zip(paths,['en','fr'])]
+config.pop('translationReport', None)
 config['glossary']={'fr':{'PBR':'Rendu basé sur des propriétés physiques des matériaux.'},'en':{'PBR':'Rendering based on physical material properties.'}}
 config_file.write_text(json.dumps(config,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 
