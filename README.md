@@ -86,6 +86,8 @@ The reader uses the URL fragment and a global CSS reset. Use a dedicated page or
 
 ## Application branding
 
+The sidebar keeps long application names within its width, using an ellipsis when needed. Hover or focus the brand to read the complete name and version. The version badge sits below the name, beside the documentation label.
+
 Use the application's existing logo when one is available. Copy it into the documentation asset directory and set `"logo": "assets/app-logo.svg"` in the build configuration. SVG, PNG and WebP are suitable choices. The logo is included in the generated manifest and needs no optional image module. Custom embeddings supply the same `logo` field on `Documentation`.
 
 If the application has no logo, omit this setting to keep the default book icon. An image that fails at reading time also falls back to that icon. The build rejects invalid or missing configured logo files. The reader footer does not label the host application's license; document that license in the application's own content. CyDoc itself remains MIT licensed.

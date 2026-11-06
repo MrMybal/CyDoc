@@ -369,7 +369,7 @@ test('nested page navigation preserves routes, opens active ancestors and expose
 });
 
 
-test('application branding falls back gracefully and personal tools occupy only a header icon', t => {
+test('application branding retains its full name and version, falls back gracefully and keeps personal tools in the header', t => {
   const {host,window}=dom(t);
   const data={schemaVersion:1,name:'Example App',version:'1',defaultLocale:'en',locales:[{code:'en',label:'English'}],pages:[{id:'home',locale:'en',title:'Home',description:'',section:'Guides',order:0,html:'<p>Example content.</p>',text:'Example content.',headings:[]}]};
   let viewer=mountViewer(host,data);
@@ -379,7 +379,19 @@ test('application branding falls back gracefully and personal tools occupy only 
   personal.click();assert.equal(host.querySelector('.personal-dialog').open,true);
   assert.doesNotMatch(host.querySelector('.footer').textContent,/MIT/);
   viewer.destroy();
-  viewer=mountViewer(host,{...data,logo:'assets/app-logo.svg'});
+  const name='CyTools_MeshStudio <Preview> & Tools';
+  viewer=mountViewer(host,{...data,name,version:'0.1.3',logo:'assets/app-logo.svg'});
+  const brand=host.querySelector('.brand');
+  assert.equal(brand.querySelector('.brand-name').textContent,name);
+  assert.equal(brand.querySelector('.brand-name').childElementCount,0);
+  assert.equal(brand.querySelector('.brand-meta .brand-version').textContent,'v0.1.3');
+  assert.equal(brand.getAttribute('aria-label'),`${name} — Documentation, v0.1.3`);
+  brand.focus();
+  const tooltip=host.querySelector('.reader-tooltip');
+  assert.equal(tooltip.hidden,false);
+  assert.equal(tooltip.querySelector('.reader-tooltip-title').textContent,name);
+  assert.equal(tooltip.querySelector('.reader-tooltip-description').textContent,'v0.1.3');
+  assert.equal(brand.getAttribute('aria-describedby'),tooltip.id);
   const logo=host.querySelector('.brand-logo');assert.equal(logo.getAttribute('src'),'assets/app-logo.svg');assert.equal(logo.getAttribute('alt'),'');assert.ok(host.querySelector('.brand-mark.has-logo'));
   logo.dispatchEvent(new window.Event('error'));
   assert.equal(host.querySelector('.brand-logo'),null);assert.equal(host.querySelector('.brand-mark.has-logo'),null);assert.equal(host.querySelector('.brand-fallback').hidden,false);assert.ok(host.querySelector('.brand-fallback .icon'));
