@@ -298,3 +298,71 @@ test('minimal GIF autoplay pauses offscreen, respects manual pause, reduced moti
   cleanup=await gifModule.mount(host,{src:'assets/steps-a.gif',controls:'minimal'},context);await settle();
   assert.match(host.querySelector('[data-gif=play]').textContent,/Lire/);cleanup();
 });
+
+
+test('header search finds terms and source lines, filters results and keeps typing focus', t => {
+  const {host,window}=dom(t);
+  const data={schemaVersion:1,name:'Search fixture',version:'1',defaultLocale:'fr',locales:[{code:'fr',label:'Français'}],pages:[
+    {id:'home',locale:'fr',title:'Accueil',description:'',section:'Guide',order:0,html:'<p>Home</p>',text:'Home',headings:[]},
+    {id:'lighting',locale:'fr',title:'Éclairage',description:'PBR configuration',section:'Guide',order:1,html:'<p>PBR</p>',text:'Éclairage PBR',headings:[]},
+    {id:'source',locale:'fr',title:'session.cpp',description:'Source configuration',section:'Source files',order:2,html:'<p>Code</p>',text:'Header configure();',code:'Header\nconfigure();',kind:'source',languages:['cpp'],source:'src/session.cpp:1',headings:[]}
+  ]};
+  const viewer=mountViewer(host,data,{homePage:'home'});
+  const input=host.querySelector('[data-header-search]'),dialog=host.querySelector('.search-dialog');
+  assert.ok(input.closest('.topbar'));input.focus();
+  const query=value=>{input.value=value;input.dispatchEvent(new window.Event('input',{bubbles:true}));};
+  query('eclairage');
+  assert.equal(dialog.open,true);assert.ok(dialog.classList.contains('search-popover'));
+  assert.equal(window.document.activeElement,input);assert.equal(input.getAttribute('aria-expanded'),'true');
+  assert.equal(host.querySelectorAll('.search-result').length,1);assert.equal(host.querySelector('.search-result').getAttribute('href'),'#/fr/lighting');
+  query('configure');host.querySelector('[data-search-kind]').value='source';host.querySelector('[data-search-language]').value='cpp';
+  host.querySelector('[data-search-language]').dispatchEvent(new window.Event('change',{bubbles:true}));
+  assert.equal(host.querySelector('.search-result').getAttribute('href'),'#/fr/source/L2');
+  query('term-with-no-match');assert.ok(host.querySelector('.search-empty'));assert.equal(input.hasAttribute('aria-activedescendant'),false);
+  input.dispatchEvent(new window.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));assert.equal(dialog.open,false);assert.equal(window.document.activeElement,input);
+  assert.equal(host.querySelector('.sidebar-bottom,.local-note,.sidebar-foot,.aside-note,.workspace-label'),null);
+  assert.ok(host.querySelector('[data-personal]'));viewer.destroy();
+});
+
+test('header results support keyboard selection, modal shortcut and deliberate dismissal', async t => {
+  const {host,window}=dom(t);
+  const data={schemaVersion:1,name:'Keyboard search fixture',version:'1',defaultLocale:'en',locales:[{code:'en',label:'English'}],pages:['first','second'].map((id,i)=>({id,locale:'en',title:id,description:'Workspace help',section:'Guides',order:i,html:'<p>Workspace</p>',text:'Workspace',headings:[]}))};
+  const viewer=mountViewer(host,data);
+  const input=host.querySelector('[data-header-search]'),dialog=host.querySelector('.search-dialog');
+  input.focus();input.value='Workspace';input.dispatchEvent(new window.Event('input',{bubbles:true}));
+  let activated;
+  host.addEventListener('click',event=>{const result=event.target.closest('.search-result');if(result){event.preventDefault();activated=result.getAttribute('href');}});
+  input.dispatchEvent(new window.KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true}));
+  assert.equal(host.querySelector('.search-result.selected').getAttribute('href'),'#/en/second');
+  input.dispatchEvent(new window.KeyboardEvent('keydown',{key:'Enter',bubbles:true}));
+  assert.equal(activated,'#/en/second');assert.equal(dialog.open,false);
+  window.document.dispatchEvent(new window.KeyboardEvent('keydown',{key:'k',ctrlKey:true,bubbles:true}));
+  assert.equal(dialog.open,true);assert.equal(dialog.classList.contains('search-popover'),false);
+  assert.equal(window.document.activeElement,host.querySelector('.search-form input'));
+  host.querySelector('.search-close').click();await settle();
+  assert.equal(dialog.open,false);assert.equal(input.getAttribute('aria-expanded'),'false');
+  assert.equal(window.document.activeElement,input);
+  input.blur();input.focus();assert.equal(dialog.open,true);
+  window.document.body.dispatchEvent(new window.PointerEvent('pointerdown',{bubbles:true}));assert.equal(dialog.open,false);
+  viewer.destroy();
+});
+
+test('nested page navigation preserves routes, opens active ancestors and exposes keyboard disclosures', t => {
+  const {host,window}=dom(t);
+  const data={schemaVersion:1,name:'Tree fixture',version:'1',defaultLocale:'en',locales:[{code:'en',label:'English'}],pages:[
+    {id:'guide',locale:'en',title:'Workspace',description:'',section:'Guides / Editor',order:0,html:'',text:'',headings:[]},
+    {id:'install',parent:'guide',locale:'en',title:'Install',description:'',section:'Other',order:1,html:'',text:'',headings:[]},
+    {id:'cpp-source',locale:'en',title:'doc.hpp',description:'',section:'Source files',kind:'source',source:'include/editor/doc.hpp:1',order:2,html:'',text:'',headings:[]}
+  ]};
+  const viewer=mountViewer(host,data,{homePage:'install'});
+  const parent=host.querySelector('[data-nav-key="page:guide"]');
+  assert.ok(parent.open);assert.equal(parent.querySelector('[data-page=install]').getAttribute('href'),'#/en/install');
+  assert.equal(parent.querySelector('[data-page=install]').getAttribute('aria-current'),'page');
+  assert.ok(host.querySelector('[data-nav-key="section:/Guides/Editor"]'));
+  assert.ok(host.querySelector('[data-nav-key="section:/Source files/include/editor"] [data-page=cpp-source]'));
+  const summary=parent.querySelector('summary');summary.focus();summary.dispatchEvent(new window.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true}));
+  assert.equal(parent.open,false);
+  summary.dispatchEvent(new window.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));assert.equal(parent.open,true);
+  summary.dispatchEvent(new window.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));assert.equal(window.document.activeElement,parent.querySelector('[data-page=install]'));
+  viewer.destroy();
+});

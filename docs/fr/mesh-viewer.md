@@ -3,6 +3,7 @@ id: mesh-viewer
 title: Mesh seul
 description: Un seul modèle : orbite, zoom, déplacement, PBR, triangles, scènes et annotations sur la surface. Il est empaqueté pour une lecture locale sans serveur.
 section: Exemples
+parent: media
 order: 15
 ---
 ## Essayer le lecteur {#viewer}

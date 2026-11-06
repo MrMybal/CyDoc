@@ -44,7 +44,7 @@ npm run size   # Measure core, reader, data, and optional module bundles
 - Build-time syntax highlighting for C++, Python, HLSL, GLSL, C#, C, JavaScript, Java, and TypeScript. Native examples also use Kotlin and Swift.
 - Code tabs, step-by-step guides, callouts, collapsible content, glossary tooltips, and code diffs.
 - SVG flow, decision, sequence, class, dependency, and architecture diagrams compiled at build time.
-- Six themes, keyboard navigation, a page outline, code copying, and print support.
+- Header search with live results, nested page navigation, six themes, keyboard navigation, a page outline, code copying, and print support.
 - Local bookmarks, recent pages, reading positions, and exportable private notes.
 - Independent media modules loaded on demand.
 - Local documentation versions, redirects, cross-documentation links, and source file indexes.
@@ -175,6 +175,10 @@ order: 10
 ```
 
 Translated pages share the same `id`. Explicit section anchors keep contextual links stable across languages. The metadata format does not support advanced YAML.
+
+To nest a page below another page in the sidebar, add `parent: settings` to its metadata, using the parent's stable page ID. Parents may themselves have parents. Missing parents and cycles fail validation. Keep parent IDs consistent across translations. Pages without a parent can use a section path such as `section: Guides / Workspace` to create nested folders. Generated source files are grouped by directory. This navigation hierarchy does not change page URLs or depend on Markdown filenames.
+
+The header searches documentation terms, code and symbols while typing. Results support content/language filters, arrow keys and Enter; Ctrl+K opens the search dialog. Escape or a click outside closes the search popover. Navigation branches retain their open state and scroll position between pages.
 
 Media blocks accept JSON, for example:
 

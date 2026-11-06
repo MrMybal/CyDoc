@@ -2,6 +2,7 @@ import { createDocumentation, createLink, parseLink } from './index.js';
 import type { Documentation, DocPage, ViewerOptions, DocRoute } from './types.js';
 import { mountReaderTools, revealTarget } from './reader-tools.js';
 import { captureReadingView, restoreReadingView, restoreScroll } from './reading-view.js';
+import { navigationTree, containsPage, type NavigationNode } from './navigation.js';
 
 import { icon } from './icons.js';
 import { themes, validTheme } from './themes.js';
@@ -27,7 +28,7 @@ export function mountViewer(root: HTMLElement, data: Documentation, options: Vie
   let current: DocPage | undefined;
   let activeRoute: DocRoute = { locale, pageId: home };
   const readingViews = new Map<string, ReturnType<typeof captureReadingView>>();
-  const navigationViews = new Map<string, { top: number; groups: boolean[] }>();
+  const navigationViews = new Map<string, { top: number; groups: Record<string, boolean> }>();
   let cancelScrollRestore: (() => void) | undefined;
   const previousScrollRestoration = window.history.scrollRestoration;
   window.history.scrollRestoration = 'manual';
@@ -35,6 +36,9 @@ export function mountViewer(root: HTMLElement, data: Documentation, options: Vie
   const mediaMounts = new Map<string, () => void>();
   let searchIndex = 0;
   let lastFocus: HTMLElement | null = null;
+  let searchMode: 'modal' | 'popover' = 'modal';
+  let searchQuery = '';
+  let suppressSearchFocus = false;
   const preferredTheme = options.initialTheme || storage.get('theme');
   const initialTheme = (validTheme(preferredTheme) ? preferredTheme : null) || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   root.dataset.theme = initialTheme;
@@ -55,21 +59,27 @@ export function mountViewer(root: HTMLElement, data: Documentation, options: Vie
     }
   }
 
+  function renderNavigation(nodes: NavigationNode[], depth = 0): string {
+    return `<ul class="${depth ? 'nav-children' : 'nav-tree'}">${nodes.map(node => {
+      const link = node.page ? `<a href="${href(node.page.id)}" data-page="${esc(node.page.id)}" title="${esc(node.page.description)}">${icon(navIcon[node.page.id] || 'file')}<span>${esc(node.label)}</span></a>` : '';
+      if (!node.children.length) return `<li class="nav-leaf">${link}</li>`;
+      const saved = navigationViews.get(locale)?.groups[node.key];
+      const open = saved ?? (containsPage(node, current?.id) || (!node.page && depth === 0 && !['Fichiers source', 'Source files'].includes(node.label)));
+      return `<li class="nav-branch"><details class="nav-group" data-nav-key="${esc(node.key)}" ${open ? 'open' : ''}><summary>${icon('chevron', 'nav-chevron')}${node.page ? link : `${icon('folder')}<span>${esc(node.label)}</span>`}</summary>${renderNavigation(node.children, depth + 1)}</details></li>`;
+    }).join('')}</ul>`;
+  }
+
   function shell() {
     pageAbort?.abort();
     pageAbort = new AbortController();
     const pageSignal = pageAbort.signal;
     const allPages = docs.pages(locale);
-    const sections = [...new Set(allPages.map(page => page.section))];
     root.innerHTML = `<a class="skip-link" href="#main-content">${t('Aller au contenu', 'Skip to content')}</a><div class="sidebar-backdrop" data-dismiss-menu></div>
       <aside class="sidebar" aria-label="${t('Navigation principale', 'Main navigation')}"><a class="brand" href="${href(home)}"><span class="brand-mark">${icon('book')}</span><span>${esc(data.name)}<small>DOCUMENTATION</small></span><span class="brand-version">v${esc(data.version)}</span></a>
-      <button class="search-trigger" type="button" data-search>${icon('search')}<span>${t('Rechercher…', 'Search…')}</span><kbd>Ctrl K</kbd></button>
-      <div class="workspace-label"><span class="green-dot"></span>${t('Espace documentation', 'Documentation workspace')}</div>
-      <nav class="side-nav">${sections.map(section => `<details class="nav-group" ${!['Fichiers source', 'Source files'].includes(section) || current?.section === section ? 'open' : ''}><summary>${esc(section)}</summary>${allPages.filter(page => page.section === section).map(page => `<a href="${href(page.id)}" data-page="${esc(page.id)}" title="${esc(page.description)}">${icon(navIcon[page.id] || 'file')}<span>${esc(page.title)}</span>${page.id === 'quickstart' ? `<span class="nav-pill">${t('Départ', 'Start')}</span>` : ''}</a>`).join('')}</details>`).join('')}</nav>
-      <div class="sidebar-bottom"><div class="local-note">${icon('shield')}<div><strong>${t('Votre doc reste chez vous.', 'Your docs stay with you.')}</strong><span>${t('Locale. Accessible. Indépendante.', 'Local. Accessible. Independent.')}</span></div></div><div class="sidebar-foot"><span class="green-dot"></span>${t('Disponible hors ligne', 'Available offline')}<span class="mit-tag">MIT</span></div></div></aside>
-      <div class="workspace"><header class="topbar"><div class="topbar-start"><button type="button" class="icon-button mobile-menu" data-menu aria-label="${t('Ouvrir le menu', 'Open menu')}" aria-expanded="false">${icon('menu')}</button><span class="breadcrumb-root">Documentation</span>${icon('chevron')}<span id="breadcrumb"></span></div><div class="topbar-actions">${docs.resolve('quickstart', locale) ? `<a class="top-link" href="${href('quickstart')}">Guides</a>` : ''}${docs.resolve('api-links', locale) ? `<a class="top-link" href="${href('api-links')}">API</a>` : ''}<span class="topbar-divider"></span><label class="locale-control">${icon('globe')}<select aria-label="${t('Langue de la documentation', 'Documentation language')}">${data.locales.map(item => `<option value="${esc(item.code)}" ${item.code === locale ? 'selected' : ''}>${esc(item.label)}</option>`).join('')}</select></label><details class="theme-picker"><summary class="icon-button" aria-label="${t('Choisir un thème', 'Choose theme')}" title="${t('Choisir un thème', 'Choose theme')}">${icon('palette')}</summary><div class="theme-menu">${themes.map(theme => `<button type="button" data-set-theme="${theme.id}" aria-pressed="${root.dataset.theme === theme.id}"><span style="background:${theme.color}"></span>${fr() ? theme.fr : theme.en}</button>`).join('')}</div></details></div></header>
+      <nav class="side-nav" aria-label="${t('Sommaire de la documentation', 'Documentation contents')}">${renderNavigation(navigationTree(allPages))}</nav></aside>
+      <div class="workspace"><header class="topbar"><div class="topbar-start"><button type="button" class="icon-button mobile-menu" data-menu aria-label="${t('Ouvrir le menu', 'Open menu')}" aria-expanded="false">${icon('menu')}</button><span class="breadcrumb-root">Documentation</span>${icon('chevron')}<span id="breadcrumb"></span></div><form class="header-search" role="search">${icon('search')}<input data-header-search type="search" autocomplete="off" placeholder="${t('Rechercher dans la documentation…', 'Search documentation…')}" aria-label="${t('Rechercher dans la documentation', 'Search documentation')}" aria-controls="search-results" aria-haspopup="dialog" aria-expanded="false" value="${esc(searchQuery)}"><kbd>Ctrl K</kbd></form><div class="topbar-actions"><label class="locale-control">${icon('globe')}<select aria-label="${t('Langue de la documentation', 'Documentation language')}">${data.locales.map(item => `<option value="${esc(item.code)}" ${item.code === locale ? 'selected' : ''}>${esc(item.label)}</option>`).join('')}</select></label><details class="theme-picker"><summary class="icon-button" aria-label="${t('Choisir un thème', 'Choose theme')}" title="${t('Choisir un thème', 'Choose theme')}">${icon('palette')}</summary><div class="theme-menu">${themes.map(theme => `<button type="button" data-set-theme="${theme.id}" aria-pressed="${root.dataset.theme === theme.id}"><span style="background:${theme.color}"></span>${fr() ? theme.fr : theme.en}</button>`).join('')}</div></details></div></header>
       <div class="page-layout"><main id="main-content" tabindex="-1"></main><aside class="page-aside" aria-label="${t('Sur cette page', 'On this page')}"></aside></div><footer class="footer"><span>${esc(data.name)} <span class="footer-dot">·</span> ${t('La connaissance, à portée de main.', 'Knowledge, within reach.')}</span><div><a href="${href(docs.resolve('changelog',locale)?'changelog':home)}">v${esc(data.version)}</a><span>${t('Libre sous licence MIT', 'Open source under MIT')}</span></div></footer></div>
-      <dialog class="search-dialog" aria-label="${t('Recherche dans la documentation', 'Search documentation')}"><form method="dialog" class="search-form">${icon('search')}<input type="search" autocomplete="off" placeholder="${t('Que cherchez-vous ?', 'What are you looking for?')}" aria-label="${t('Rechercher', 'Search')}" aria-controls="search-results"><button value="cancel" class="search-close" aria-label="${t('Fermer', 'Close')}">Esc</button></form><div id="search-results" class="search-results"></div><div class="search-footer"><span>↑ ↓ ${t('naviguer', 'navigate')} <b>↵</b> ${t('ouvrir', 'open')}</span><span>${t('Recherche locale', 'Local search')}${icon('shield')}</span></div></dialog><div class="toast" role="status" aria-live="polite"></div>`;
+      <dialog id="documentation-search" class="search-dialog" aria-label="${t('Recherche dans la documentation', 'Search documentation')}"><form method="dialog" class="search-form">${icon('search')}<input type="search" autocomplete="off" placeholder="${t('Que cherchez-vous ?', 'What are you looking for?')}" aria-label="${t('Rechercher', 'Search')}" aria-controls="search-results"><button value="cancel" class="search-close" aria-label="${t('Fermer', 'Close')}">Esc</button></form><div id="search-results" class="search-results"></div><div class="search-footer"><span>↑ ↓ ${t('naviguer', 'navigate')} <b>↵</b> ${t('ouvrir', 'open')}</span><span>${t('Échap pour fermer', 'Esc to close')}</span></div></dialog><div class="toast" role="status" aria-live="polite"></div>`;
     root.querySelector<HTMLSelectElement>('select')!.addEventListener('change', event => {
       const value = (event.target as HTMLSelectElement).value;
       const route = parseLink(location.hash, locale, home);
@@ -80,41 +90,94 @@ export function mountViewer(root: HTMLElement, data: Documentation, options: Vie
     const languages = [...new Set(data.pages.flatMap(page => page.languages || []))].sort();
     filters.innerHTML = `<select data-search-kind aria-label="${t('Type de contenu', 'Content type')}"><option value="">${t('Tous les contenus', 'All content')}</option><option value="guide">Guides</option><option value="api">API</option><option value="source">${t('Code source', 'Source code')}</option><option value="media">${t('Médias', 'Media')}</option></select><select data-search-language aria-label="${t('Langage du code', 'Code language')}"><option value="">${t('Tous les langages', 'All languages')}</option>${languages.map(language => `<option>${esc(language)}</option>`).join('')}</select>`;
     root.querySelector('#search-results')!.before(filters);
-    filters.addEventListener('change', () => { searchIndex = 0; renderSearch(root.querySelector<HTMLInputElement>('.search-form input')!.value); }, { signal: pageSignal });
+    filters.addEventListener('change', () => { searchIndex = 0; renderSearch(searchQuery); }, { signal: pageSignal });
     const input = root.querySelector<HTMLInputElement>('.search-form input')!;
-    input.addEventListener('input', () => { searchIndex = 0; renderSearch(input.value); }, { signal: pageSignal });
-    input.addEventListener('keydown', event => {
+    const headerInput = root.querySelector<HTMLInputElement>('[data-header-search]')!;
+    input.value = searchQuery;
+    const searchKeydown = (event: KeyboardEvent) => {
+      if (event.isComposing) return;
       const links = [...root.querySelectorAll<HTMLAnchorElement>('.search-result')];
       if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
         event.preventDefault();
+        if (!root.querySelector<HTMLDialogElement>('.search-dialog')!.open) openSearch('popover');
         searchIndex = (searchIndex + (event.key === 'ArrowDown' ? 1 : -1) + links.length) % Math.max(1, links.length);
         highlightSearch();
       } else if (event.key === 'Enter') { event.preventDefault(); links[searchIndex]?.click(); }
+      else if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); closeSearch(true); }
+      else if (event.key === 'Tab' && !event.shiftKey && event.target === headerInput && root.querySelector<HTMLDialogElement>('.search-dialog')!.open) { event.preventDefault(); filters.querySelector('select')?.focus(); }
+    };
+    for (const field of [input, headerInput]) {
+      field.addEventListener('input', () => { searchQuery = field.value; input.value = headerInput.value = searchQuery; searchIndex = 0; if (field === headerInput) openSearch('popover'); renderSearch(searchQuery); }, { signal: pageSignal });
+      field.addEventListener('keydown', searchKeydown, { signal: pageSignal });
+    }
+    headerInput.addEventListener('focus', () => { if (!suppressSearchFocus) openSearch('popover'); }, { signal: pageSignal });
+    root.querySelector('.header-search')!.addEventListener('submit', event => event.preventDefault(), { signal: pageSignal });
+    const dialog = root.querySelector<HTMLDialogElement>('.search-dialog')!;
+    dialog.addEventListener('close', () => headerInput.setAttribute('aria-expanded', String(dialog.open)), { signal: pageSignal });
+    dialog.addEventListener('cancel', event => { event.preventDefault(); closeSearch(true); }, { signal: pageSignal });
+    dialog.addEventListener('click', event => { if (event.target === dialog) closeSearch(true); }, { signal: pageSignal });
+    document.addEventListener('pointerdown', event => {
+      if (searchMode === 'popover' && dialog.open && !dialog.contains(event.target as Node) && !headerInput.closest('form')!.contains(event.target as Node)) closeSearch();
     }, { signal: pageSignal });
-    const dialog = root.querySelector<HTMLDialogElement>('dialog')!;
-    dialog.addEventListener('close', () => lastFocus?.focus({ preventScroll: true }), { signal: pageSignal });
-    dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); }, { signal: pageSignal });
+    window.addEventListener('resize', () => { if (dialog.open && searchMode === 'popover') positionSearch(); }, { signal: pageSignal });
+    root.querySelector('.side-nav')!.addEventListener('keydown', ((event: KeyboardEvent) => {
+      if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+      const target = event.target as HTMLElement, group = target.closest<HTMLDetailsElement>('.nav-group'); if (!group) return;
+      event.preventDefault();
+      const summary = target.closest('summary');
+      if (!summary) { if (event.key === 'ArrowLeft') group.querySelector<HTMLElement>('summary')?.focus({ preventScroll: true }); return; }
+      if (event.key === 'ArrowRight') { if (!group.open) group.open = true; else group.querySelector<HTMLElement>(':scope > .nav-children summary,:scope > .nav-children a')?.focus({ preventScroll: true }); }
+      else if (group.open) group.open = false;
+      else group.parentElement?.closest('details')?.querySelector<HTMLElement>('summary')?.focus({ preventScroll: true });
+    }) as EventListener, { signal: pageSignal });
   }
 
   function highlightSearch() {
     const results = root.querySelectorAll<HTMLAnchorElement>('.search-result');
     results.forEach((result, i) => result.classList.toggle('selected', i === searchIndex));
+    for (const field of root.querySelectorAll<HTMLInputElement>('[data-header-search],.search-form input')) {
+      if (results[searchIndex]) field.setAttribute('aria-activedescendant', results[searchIndex]!.id); else field.removeAttribute('aria-activedescendant');
+    }
     results[searchIndex]?.scrollIntoView({ block: 'nearest' });
   }
   function renderSearch(query: string) {
     const filters = { kind: root.querySelector<HTMLSelectElement>('[data-search-kind]')?.value, language: root.querySelector<HTMLSelectElement>('[data-search-language]')?.value };
-    const results = query.trim() ? docs.search(query, locale, 30, filters) : docs.pages(locale).filter(page => (!filters.kind || page.kind === filters.kind) && (!filters.language || page.languages?.includes(filters.language))).slice(0, 5).map(page => ({ page, excerpt: page.description, anchor: undefined }));
-    root.querySelector('#search-results')!.innerHTML = `<div class="search-caption">${query.trim() ? `${results.length} ${t('résultat(s)', 'result(s)')}` : t('POUR COMMENCER', 'GET STARTED')}</div>${results.length ? results.map(({ page, excerpt, anchor }) => `<a class="search-result" href="${href(page.id, anchor)}">${icon(navIcon[page.id] || 'file')}<div><strong>${esc(page.title)}</strong><p>${esc(excerpt)}</p><small>${esc(page.kind || 'guide')} ${esc((page.languages || []).join(' · '))}</small></div>${icon('arrow')}</a>`).join('') : `<div class="search-empty">${icon('search')}<strong>${t('Aucun résultat', 'No results')}</strong><p>${t('Essayez un autre mot ou une expression plus courte.', 'Try another word or a shorter phrase.')}</p></div>`}`;
+    const results = query.trim() ? docs.search(query, locale, 30, filters) : docs.pages(locale).filter(page => (!filters.kind || (page.kind || (page.sourcePageId ? 'api' : 'guide')) === filters.kind) && (!filters.language || page.languages?.includes(filters.language))).slice(0, 5).map(page => ({ page, excerpt: page.description, anchor: undefined }));
+    root.querySelector('#search-results')!.innerHTML = `<div class="search-caption" role="status" aria-live="polite">${query.trim() ? `${results.length} ${t('résultat(s)', 'result(s)')}` : t('POUR COMMENCER', 'GET STARTED')}</div>${results.length ? results.map(({ page, excerpt, anchor }, i) => `<a id="search-result-${i}" class="search-result" href="${href(page.id, anchor)}">${icon(navIcon[page.id] || 'file')}<div><strong>${esc(page.title)}</strong><p>${esc(excerpt)}</p><small>${esc(page.kind || 'guide')} ${esc((page.languages || []).join(' · '))}</small></div>${icon('arrow')}</a>`).join('') : `<div class="search-empty">${icon('search')}<strong>${t('Aucun résultat', 'No results')}</strong><p>${t('Essayez un autre mot ou une expression plus courte.', 'Try another word or a shorter phrase.')}</p></div>`}`;
     highlightSearch();
   }
-  function openSearch() {
-    const dialog = root.querySelector<HTMLDialogElement>('dialog')!;
-    if (dialog.open) return;
-    lastFocus = document.activeElement as HTMLElement;
+  function positionSearch() {
+    const dialog = root.querySelector<HTMLDialogElement>('.search-dialog')!;
+    const bounds = root.querySelector('.header-search')!.getBoundingClientRect();
+    const width = Math.min(Math.max(bounds.width, 440), window.innerWidth - 32);
+    dialog.style.setProperty('--search-left', `${Math.max(16, Math.min(bounds.left, window.innerWidth - width - 16))}px`);
+    dialog.style.setProperty('--search-top', `${bounds.bottom + 8}px`);
+    dialog.style.setProperty('--search-width', `${width}px`);
+  }
+  function closeSearch(restoreFocus = false) {
+    const dialog = root.querySelector<HTMLDialogElement>('.search-dialog')!;
+    const modal = searchMode === 'modal';
+    dialog.close();
+    root.querySelector('[data-header-search]')?.setAttribute('aria-expanded', 'false');
+    if (restoreFocus) {
+      const target = modal ? lastFocus : root.querySelector<HTMLElement>('[data-header-search]');
+      suppressSearchFocus = true;
+      try { target?.focus({ preventScroll: true }); } finally { suppressSearchFocus = false; }
+    }
+  }
+  function openSearch(mode: 'modal' | 'popover' = 'modal') {
+    const dialog = root.querySelector<HTMLDialogElement>('.search-dialog')!;
+    if (dialog.open && searchMode === mode) return;
+    if (mode === 'modal') lastFocus = document.activeElement as HTMLElement;
+    if (dialog.open) dialog.close();
+    searchMode = mode;
     searchIndex = 0;
-    dialog.showModal();
+    dialog.classList.toggle('search-popover', mode === 'popover');
+    if (mode === 'popover') { positionSearch(); dialog.show(); } else dialog.showModal();
+    root.querySelector('[data-header-search]')?.setAttribute('aria-expanded', 'true');
     const input = root.querySelector<HTMLInputElement>('.search-form input')!;
-    renderSearch(input.value); input.focus();
+    input.value = searchQuery; renderSearch(searchQuery);
+    if (mode === 'modal') input.focus();
   }
   let toastTimeout: ReturnType<typeof setTimeout>;
   function disposeMedia() {
@@ -185,7 +248,7 @@ export function mountViewer(root: HTMLElement, data: Documentation, options: Vie
     }
     if (current) readingViews.set(`${locale}:${current.id}`, captureReadingView(root));
     const navigation = root.querySelector<HTMLElement>('.side-nav');
-    if (navigation) navigationViews.set(locale, { top: navigation.scrollTop, groups: [...navigation.querySelectorAll<HTMLDetailsElement>('.nav-group')].map(group => group.open) });
+    if (navigation) navigationViews.set(locale, { top: navigation.scrollTop, groups: Object.fromEntries([...navigation.querySelectorAll<HTMLDetailsElement>('[data-nav-key]')].map(group => [group.dataset.navKey!, group.open])) });
     pageAbort?.abort();
     disposeMedia();
     locale = nextLocale;
@@ -195,7 +258,6 @@ export function mountViewer(root: HTMLElement, data: Documentation, options: Vie
     shell();
     const navView = navigationViews.get(locale);
     if (navView) {
-      root.querySelectorAll<HTMLDetailsElement>('.nav-group').forEach((group, i) => { if (navView.groups[i] !== undefined) group.open = navView.groups[i]!; });
       root.querySelector<HTMLElement>('.side-nav')!.scrollTop = navView.top;
     }
     document.documentElement.lang = locale;
@@ -218,7 +280,7 @@ export function mountViewer(root: HTMLElement, data: Documentation, options: Vie
     const index = ordered.findIndex(item => item.id === page.id);
     const previous = ordered[index - 1]; const next = ordered[index + 1];
     main.innerHTML = isHome ? options.renderHome!(locale) : `<div class="article-header"><div class="eyebrow">${esc(page.section)}</div><div class="article-title"><h1>${esc(page.title)}</h1><button class="icon-button" type="button" data-copy-link aria-label="${t('Copier le lien de la page', 'Copy page link')}">${icon('link')}</button></div><p>${esc(page.description)}</p>${page.source ? `<span class="source-badge">${icon('terminal')}${t('Extraite du code', 'Extracted from source')} ${page.sourcePageId && page.sourcePageId !== page.id ? `<a href="${href(page.sourcePageId, `L${page.source.match(/:(\d+)$/)?.[1] || 1}`)}"><code>${esc(page.source)}</code></a>` : `<code>${esc(page.source)}</code>`}</span>` : ''}</div>${resolved?.fallback ? `<div class="callout">${t('Traduction indisponible. Cette page est affichée dans la langue par défaut.', 'Translation unavailable. This page is shown in the default language.')}</div>` : ''}<article class="prose" lang="${esc(page.locale)}">${page.html}</article><div class="page-feedback"><span>${t('Cette page vous a été utile ?', 'Was this page helpful?')}</span><button type="button" data-feedback="yes">${t('Oui, merci', 'Yes, thanks')}${icon('check')}</button><button type="button" data-feedback="no">${t('À améliorer', 'Needs work')}</button></div><nav class="page-pagination" aria-label="${t('Pages voisines', 'Adjacent pages')}">${previous ? `<a href="${href(previous.id)}"><span>← ${t('Précédent', 'Previous')}</span><strong>${esc(previous.title)}</strong></a>` : '<span></span>'}${next ? `<a href="${href(next.id)}"><span>${t('Suivant', 'Next')} →</span><strong>${esc(next.title)}</strong></a>` : ''}</nav>`;
-    aside.innerHTML = isHome ? '' : `<div class="toc"><span class="toc-label">${t('SUR CETTE PAGE', 'ON THIS PAGE')}</span>${page.headings.filter(heading => heading.level <= 3).map(heading => `<a href="${href(page.id, heading.id)}" data-heading="${esc(heading.id)}" class="level-${heading.level}">${esc(heading.text)}</a>`).join('')}<div class="toc-actions"><button type="button" data-copy-link>${icon('link')}${t('Copier le lien', 'Copy link')}</button><button type="button" data-print>${icon('file')}${t('Imprimer la page', 'Print page')}</button></div><div class="aside-note">${icon('shield')}<strong>${t('Toujours à vos côtés', 'Always by your side')}</strong><p>${t('Cette documentation fonctionne sans connexion Internet.', 'This documentation works without an internet connection.')}</p></div></div>`;
+    aside.innerHTML = isHome ? '' : `<div class="toc"><span class="toc-label">${t('SUR CETTE PAGE', 'ON THIS PAGE')}</span>${page.headings.filter(heading => heading.level <= 3).map(heading => `<a href="${href(page.id, heading.id)}" data-heading="${esc(heading.id)}" class="level-${heading.level}">${esc(heading.text)}</a>`).join('')}<div class="toc-actions"><button type="button" data-copy-link>${icon('link')}${t('Copier le lien', 'Copy link')}</button><button type="button" data-print>${icon('file')}${t('Imprimer la page', 'Print page')}</button></div></div>`;
     mountReaderTools(root, data, page, route, { signal: pageAbort!.signal, storageId: options.storageId, toast });
     const readingView = readingViews.get(`${locale}:${page.id}`);
     if (readingView) restoreReadingView(root, readingView);
@@ -242,6 +304,7 @@ export function mountViewer(root: HTMLElement, data: Documentation, options: Vie
     if (!target) return;
     if (target.matches('.skip-link')) { event.preventDefault(); root.querySelector<HTMLElement>('main')?.focus(); return; }
     if (target.hasAttribute('data-search')) openSearch();
+    if (target.matches('.search-close')) { event.preventDefault(); closeSearch(true); }
     if (target.dataset.setTheme && validTheme(target.dataset.setTheme)) {
       root.dataset.theme = target.dataset.setTheme; storage.set('theme', target.dataset.setTheme);
       root.querySelectorAll('[data-set-theme]').forEach(button => button.setAttribute('aria-pressed', String((button as HTMLElement).dataset.setTheme === root.dataset.theme)));
@@ -264,13 +327,13 @@ export function mountViewer(root: HTMLElement, data: Documentation, options: Vie
       root.querySelector('.page-feedback')!.innerHTML = `${icon('check')}<span>${t('Merci ! Votre avis est enregistré sur cet appareil.', 'Thank you! Your feedback is saved on this device.')}</span>`;
     }
     if (target.matches('a[href^="#/"]')) {
-      root.querySelector<HTMLDialogElement>('dialog')?.close(); root.classList.remove('menu-open');
+      closeSearch(); root.classList.remove('menu-open');
     }
   }, { signal });
   window.addEventListener('hashchange', render, { signal });
   document.addEventListener('keydown', event => {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); openSearch(); }
-    if (event.key === 'Escape') { const picker = root.querySelector<HTMLDetailsElement>('.theme-picker'); if (picker) picker.open = false; root.classList.remove('menu-open'); root.querySelector('[data-menu]')?.setAttribute('aria-expanded', 'false'); }
+    if (event.key === 'Escape') { if (root.querySelector<HTMLDialogElement>('.search-dialog')?.open) closeSearch(true); const picker = root.querySelector<HTMLDetailsElement>('.theme-picker'); if (picker) picker.open = false; root.classList.remove('menu-open'); root.querySelector('[data-menu]')?.setAttribute('aria-expanded', 'false'); }
   }, { signal });
   render();
   return { ...docs, destroy() { pageAbort?.abort(); disposeMedia(); abort.abort(); observer?.disconnect(); clearTimeout(toastTimeout); window.history.scrollRestoration = previousScrollRestoration; root.innerHTML = ''; root.classList.remove('cydoc-viewer', 'menu-open'); } };

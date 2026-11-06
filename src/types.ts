@@ -6,6 +6,8 @@ export interface DocPage {
   title: string;
   description: string;
   section: string;
+  /** Optional parent page ID for nested navigation; page routes remain unchanged. */
+  parent?: string;
   order: number;
   html: string;
   text: string;

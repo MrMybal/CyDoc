@@ -99,6 +99,18 @@ export function createDocumentation(data: Documentation) {
       .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title, locale));
   }
 
+  for (const page of data.pages) {
+    const visited = new Set<string>([page.id]);
+    let ancestor = page;
+    while (ancestor.parent !== undefined) {
+      if (typeof ancestor.parent !== 'string' || !ancestor.parent || visited.has(ancestor.parent)) throw new Error(`Invalid navigation parent: ${page.id}`);
+      visited.add(ancestor.parent);
+      const parent = index.get(`${page.locale}\0${ancestor.parent}`) ?? index.get(`${data.defaultLocale}\0${ancestor.parent}`);
+      if (!parent) throw new Error(`Missing navigation parent: ${ancestor.parent}`);
+      ancestor = parent;
+    }
+  }
+
   function search(query: string, locale = data.defaultLocale, limit = 12, options: SearchOptions = {}): SearchResult[] {
     const terms = normalize(query).slice(0, 200).split(/\s+/).filter(Boolean).slice(0, 12);
     if (!terms.length) return [];

@@ -3,6 +3,7 @@ id: minimal-media
 title: Lecteurs épurés
 description: Images, vidéos, modèles et GIF avec commandes discrètes et agrandissement dans la fenêtre.
 section: Exemples
+parent: media
 order: 33
 ---
 

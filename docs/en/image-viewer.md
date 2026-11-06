@@ -3,6 +3,7 @@ id: image-viewer
 title: Single image
 description: Use the wheel or buttons to zoom, drag the image, and use the in-window enlargement icon. No second media is loaded.
 section: Examples
+parent: media
 order: 13
 ---
 ## Try the viewer {#viewer}

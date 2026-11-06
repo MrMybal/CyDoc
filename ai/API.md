@@ -80,6 +80,8 @@ The minimum manifest shape is:
 
 Generate real manifests rather than maintaining compiled HTML by hand. `createDocumentation` validates the schema version, declared locales, duplicate page/locale pairs and aliases; it does not sanitize supplied HTML or verify every media file.
 
+`DocPage.parent?: string` names another page ID for the navigation tree. The core validates parent existence and rejects cycles, using the same default-locale fallback as page resolution. Parent IDs are exact page IDs, not aliases. A child's URL remains based on its own ID. Root pages may use slash-separated `section` paths for nested folders. Source pages are additionally grouped by their source directory. Navigation does not change the `pages()` ordering or the route format.
+
 For cross-manual addressing:
 
 ```typescript
@@ -110,6 +112,8 @@ An optional `manifest` on a registry entry validates page and section targets. W
 Route locale/page information takes priority over the initial route defaults. Available storage and theme preferences can influence the initial reader state. Content falls back to the default content locale; built-in UI translations currently cover French and English.
 
 Navigation preserves page reading positions, selected code tabs and menu scroll during the viewer session. Explicit anchors and media states take priority. Persistence of personal reading data depends on the host browser's local storage policy.
+
+The header search field displays results while typing. Ctrl+K opens a modal search dialog using the same query, content filters and language filters. The sidebar uses nested lists with native disclosure controls and page links. Tab/Enter and left/right arrows work on navigation branches; branch state is retained by stable node keys during the session.
 
 ## Optional reader contract
 

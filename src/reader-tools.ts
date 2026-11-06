@@ -48,7 +48,7 @@ export function mountReaderTools(root: HTMLElement, data: Documentation, page: D
   }
   const personalButton = document.createElement('button'); personalButton.type = 'button'; personalButton.className = 'personal-trigger'; personalButton.dataset.personal = '';
   personalButton.innerHTML = `${icon('book')}<span>${t('Mon espace', 'My space')}</span><small>${t('Favoris et notes', 'Bookmarks & notes')}</small>`;
-  root.querySelector('.workspace-label')?.before(personalButton);
+  root.querySelector('.side-nav')?.before(personalButton);
   const bookmark = document.createElement('button'); bookmark.type = 'button'; bookmark.className = 'icon-button'; bookmark.dataset.bookmark = ''; bookmark.innerHTML = icon('heart'); bookmark.title = t('Ajouter aux favoris', 'Bookmark page'); bookmark.setAttribute('aria-label', bookmark.title);
   (root.querySelector('.article-title') || root.querySelector('.topbar-actions'))?.append(bookmark);
   const updateBookmark = () => bookmark.setAttribute('aria-pressed', String(saved.bookmarks.some(item => item.id === page.id && item.locale === route.locale)));
@@ -91,7 +91,7 @@ export function mountReaderTools(root: HTMLElement, data: Documentation, page: D
   const position = saved.positions[pageKey];
   if (!route.anchor && !route.state && position && position > 100) {
     const resume = document.createElement('button'); resume.type = 'button'; resume.className = 'resume-reading'; resume.textContent = t('Reprendre ma lecture', 'Resume reading');
-    root.querySelector('.aside-note')?.before(resume); resume.addEventListener('click', () => window.scrollTo({ top: position, behavior: 'smooth' }), { signal });
+    root.querySelector('.toc')?.append(resume); resume.addEventListener('click', () => window.scrollTo({ top: position, behavior: 'smooth' }), { signal });
   }
   signal.addEventListener('abort', () => { clearTimeout(timer); remember(); dialog.remove(); }, { once: true });
 }

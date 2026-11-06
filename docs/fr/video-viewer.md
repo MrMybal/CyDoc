@@ -3,6 +3,7 @@ id: video-viewer
 title: Vidéo seule
 description: Une seule piste vidéo, avec vitesse de lecture, annotations et agrandissement dans la fenêtre. Ajoutez une note au moment courant, ou cliquez dans l’image pour choisir sa position.
 section: Exemples
+parent: media
 order: 14
 ---
 ## Essayer le lecteur {#viewer}

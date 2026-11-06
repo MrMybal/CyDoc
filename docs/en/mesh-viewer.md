@@ -3,6 +3,7 @@ id: mesh-viewer
 title: Single mesh
 description: One model: orbit, zoom, pan, PBR, wireframe, scenes, and surface annotations. It is packaged for local viewing without a server.
 section: Examples
+parent: media
 order: 15
 ---
 ## Try the viewer {#viewer}

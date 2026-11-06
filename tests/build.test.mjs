@@ -34,6 +34,13 @@ test('another application builds without CyDoc demo pages, and broken content fa
   await writeFile(configPath, JSON.stringify(config));
   await buildSite(configPath);
   await assert.rejects(access(join(output, 'media-image.js')));
+  const childPath = join(root, 'content/en/advanced.md');
+  await writeFile(childPath, '---\nid: advanced\ntitle: Advanced\nsection: Help / Editor\nparent: settings\n---\nAdvanced help.');
+  const nested = await buildSite(configPath);
+  assert.equal(nested.data.pages.find(page => page.id === 'advanced').parent, 'settings');
+  await writeFile(childPath, '---\nid: advanced\ntitle: Advanced\nsection: Help\nparent: advanced\n---\nInvalid parent.');
+  await assert.rejects(buildSite(configPath), /Invalid navigation parent/);
+  await rm(childPath);
   await writeFile(pagePath, metadata + '[Broken page](doc:missing)');
   await assert.rejects(buildSite(configPath), /Broken link/);
   await writeFile(pagePath, metadata + '## Real section\n\n[Broken anchor](doc:settings#missing)');

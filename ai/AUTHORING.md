@@ -44,6 +44,10 @@ Ouvrez l’application et choisissez un espace de travail.
 
 Metadata supports simple single-line values, not full YAML. Each page needs `id`, `title` and `section`; provide `description` and numeric `order` for useful navigation. The content directory determines the locale. Do not add a second handwritten page with the same ID/locale as an extracted or imported page.
 
+For nested page navigation, add `parent: overview` to a child page's metadata. The value is an existing page ID, never a file path or translated title. A parent may have its own parent; missing targets, self references and cycles fail validation. Keep parent IDs consistent across translations. Root pages can use a section path such as `section: Guides / Workspace` for nested folders. Children appear under their parent regardless of their own section. The hierarchy changes navigation, not routes: a child still uses `doc:child-id#section`, without a parent prefix. Source index pages are automatically grouped by directory.
+
+The reader's header searches prose, code and symbols with live results and content/language filters. Ctrl+K opens the search dialog. Keep useful descriptions and explicit anchors so search results and contextual links remain understandable.
+
 Translate titles and prose while preserving the page ID and explicit anchor IDs. A missing translation falls back to the default content locale. Set `translationReport: true` to add a report page; every build writes `translation-report.json`. Update `revision` when the original meaning changes, and update `sourceRevision` only when the translation has caught up. Without an original revision, the build uses a content fingerprint.
 
 ## Links are part of the application contract

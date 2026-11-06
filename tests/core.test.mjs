@@ -42,3 +42,15 @@ test('a documentation catalog addresses another local manual with stable page ID
   assert.throws(() => catalog.link({ documentationId: 'other', locale: 'en', pageId: 'start' }), /Unknown documentation/);
   assert.throws(() => catalog.link({ documentationId: 'editor', locale: 'en', pageId: 'missing' }), /Unknown page/);
 });
+
+
+test('navigation parents validate missing targets and cycles while preserving locale fallback', () => {
+  const data=fixture();
+  data.pages.push({...page('child','en','Child'),parent:'only-fr'});
+  const docs=createDocumentation(data);
+  assert.equal(docs.resolve('child','en').page.parent,'only-fr');
+  assert.equal(docs.resolve('only-fr','en').fallback,true);
+  assert.throws(()=>createDocumentation({...data,pages:[...data.pages,{...page('bad','fr','Bad'),parent:'missing'}]}),/Missing navigation parent/);
+  assert.throws(()=>createDocumentation({...data,pages:[...data.pages,{...page('self','fr','Self'),parent:'self'}]}),/Invalid navigation parent/);
+  assert.throws(()=>createDocumentation({...data,pages:[...data.pages,{...page('a','fr','A'),parent:'b'},{...page('b','fr','B'),parent:'a'}]}),/Invalid navigation parent/);
+});

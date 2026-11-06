@@ -3,6 +3,7 @@ id: gif-controls
 title: GIF controls
 description: Pause, frame stepping, zoom, comparison, and GIF galleries.
 section: Examples
+parent: media
 order: 32
 ---
 The optional `gif` module decodes frames locally for pause, scrubbing, frame stepping, and time-synchronized comparison. A GIF in an `image` block keeps native browser playback.

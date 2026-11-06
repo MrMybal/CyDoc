@@ -3,6 +3,7 @@ id: image-viewer
 title: Image seule
 description: Zoomez avec la molette ou les boutons, déplacez l’image et utilisez l’icône d’agrandissement dans la fenêtre. Aucun second média n’est chargé.
 section: Exemples
+parent: media
 order: 13
 ---
 ## Essayer le lecteur {#viewer}

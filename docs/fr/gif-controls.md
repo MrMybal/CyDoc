@@ -3,6 +3,7 @@ id: gif-controls
 title: GIF contrôlables
 description: Pause, image par image, zoom, comparaison et galeries de GIF.
 section: Exemples
+parent: media
 order: 32
 ---
 Le module `gif` décode localement les images pour permettre pause, déplacement dans l’animation et comparaison synchronisée en temps. Il est optionnel. Un GIF utilisé dans un bloc `image` conserve la lecture native du navigateur.

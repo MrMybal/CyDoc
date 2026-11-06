@@ -3,6 +3,7 @@ id: galleries
 title: Media galleries
 description: Images, videos, meshes, or mixed content, with only one active viewer.
 section: Examples
+parent: media
 order: 16
 ---
 A gallery mounts only its active item. Switching items pauses video and releases the previous mesh resources. Tabs also support keyboard navigation.

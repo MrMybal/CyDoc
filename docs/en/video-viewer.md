@@ -3,6 +3,7 @@ id: video-viewer
 title: Single video
 description: A single video track with playback speed, annotations, and in-window enlargement. Add a note at the current time, or click the image to choose its position.
 section: Examples
+parent: media
 order: 14
 ---
 ## Try the viewer {#viewer}

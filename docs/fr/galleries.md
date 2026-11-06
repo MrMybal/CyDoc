@@ -3,6 +3,7 @@ id: galleries
 title: Galeries de médias
 description: Images, vidéos, meshes ou contenus mixtes, avec un seul lecteur actif.
 section: Exemples
+parent: media
 order: 16
 ---
 Une galerie monte uniquement son élément actif. Quand vous changez de média, la vidéo s’arrête et les ressources du mesh précédent sont libérées. La navigation fonctionne aussi au clavier dans les onglets.

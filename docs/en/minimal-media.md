@@ -3,6 +3,7 @@ id: minimal-media
 title: Minimal readers
 description: Images, videos, models and GIFs with discreet controls and in-window enlargement.
 section: Examples
+parent: media
 order: 33
 ---
 
