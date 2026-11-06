@@ -16,7 +16,7 @@ npm install
 npm run build
 ```
 
-Open **dist/site/index.html** directly in a browser using a `file:///…` address. `npm run dev` watches sources and rebuilds local files while editing; it starts no web server. Generation requires Node.js 22 or later; the exported viewer does not require Node.js.
+Open **dist/site/Documentation.html** directly in a browser using a `file:///…` address. `npm run dev` watches sources and rebuilds local files while editing; it starts no web server. Generation requires Node.js 22 or later; the exported viewer does not require Node.js.
 
 > This package is being developed in this repository. It has not yet been published to npm.
 
@@ -41,16 +41,19 @@ Add its French translation to `docs/fr/` with the same `id`. Read about [languag
 
 ## Build and embed {#build}
 
-The build produces a self-contained folder with the viewer, compiled pages, manifest, and local media. Copy **the entire folder**, then open `index.html` in a browser or WebView.
+The build produces a self-contained folder with the viewer, compiled pages, manifest, and local media. Copy **the entire folder**, then open `Documentation.html` in a browser or WebView.
 
 ```text
-dist/site/
-  index.html
-  viewer.css
-  viewer.js
-  data.js
-  manifest.json
-  assets/
+App/Documentation/
+  Documentation.html
+  DocData/
+    viewer.css
+    viewer.js
+    data.js
+    manifest.json
+    translation-report.json
+    assets/
+    media-*.js
 ```
 
 ## Open contextual help {#contextual-help}
@@ -58,7 +61,7 @@ dist/site/
 A link opens the right page and section, including from an application's help button.
 
 ```text
-help/index.html#/en/quickstart/installation
+Documentation/Documentation.html#/en/quickstart/installation
 ```
 
 This format works across platforms. See the [integration examples](doc:integration).

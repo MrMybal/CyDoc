@@ -49,6 +49,8 @@ export interface ViewerOptions {
   modules?: Record<string, () => Promise<MediaModule>>;
   /** Local classic-script assets, or the host application's own binary provider. */
   loadAsset?: (src: string) => Promise<PackedAsset>;
+  /** Directory containing assets/, relative to the reader page. Defaults to the page directory. */
+  assetBase?: string;
   initialTheme?: string;
   /** Namespace for this application's local reading data. Defaults to the documentation name. */
   storageId?: string;
@@ -59,6 +61,8 @@ export interface MediaContext {
   signal: AbortSignal;
   storageKey: string;
   loadAsset?: (src: string) => Promise<PackedAsset>;
+  /** Resolve a logical assets/ path for display; keep logical paths for loadAsset and persistence. */
+  assetUrl?: (src: string) => string;
   loadModule?: (name: string) => Promise<MediaModule>;
   state?: ReaderState;
   linkState?: (state: ReaderState) => void;

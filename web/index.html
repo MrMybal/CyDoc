@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>CyDoc — Ouvrir la documentation</title>
   <script>
-    const reader = new URL('../dist/site/index.html', location.href);
+    const reader = new URL('../dist/site/Documentation.html', location.href);
     reader.search = location.search;
     reader.hash = location.hash;
     location.replace(reader.href);
   </script>
 </head>
 <body>
-  <p><a href="../dist/site/index.html">Ouvrir la documentation CyDoc</a></p>
+  <p><a href="../dist/site/Documentation.html">Ouvrir la documentation CyDoc</a></p>
   <p>Si l’export est absent, exécutez <code>npm run build</code> à la racine du projet.</p>
 </body>
 </html>

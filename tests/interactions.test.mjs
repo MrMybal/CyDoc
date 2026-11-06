@@ -399,6 +399,41 @@ test('application branding retains its full name and version, falls back gracefu
 });
 
 
+test('reader assets resolve from DocData while routes and authored paths remain stable', t => {
+  const {host}=dom(t);
+  const compiled=compileMarkdown('![Example](assets/image.svg)\n\n```video\n{"src":"assets/movie.webm"}\n```\n\n[Section](doc:home#details)\n\n## Details {#details}',{locale:'en',pageId:'home'});
+  const data={schemaVersion:1,name:'Example',logo:'assets/logo.svg',version:'1',defaultLocale:'en',locales:[{code:'en',label:'English'}],pages:[{id:'home',locale:'en',title:'Home',description:'',section:'Guides',order:0,...compiled}]};
+  const viewer=mountViewer(host,data,{assetBase:'DocData/'});
+  assert.equal(host.querySelector('.brand-logo').getAttribute('src'),'DocData/assets/logo.svg');
+  assert.equal(host.querySelector('article img').getAttribute('src'),'DocData/assets/image.svg');
+  assert.equal(host.querySelector('[data-cydoc-module] a').getAttribute('href'),'DocData/assets/movie.webm');
+  assert.equal(host.querySelector('article > p > a').getAttribute('href'),'#/en/home/details');
+  assert.equal(JSON.parse(host.querySelector('[data-cydoc-module=video]').dataset.config).src,'assets/movie.webm');
+  assert.equal(data.logo,'assets/logo.svg');assert.match(data.pages[0].html,/src="assets\/image.svg"/);
+  viewer.destroy();
+});
+
+test('media display URLs use the asset provider without changing annotation or binary asset identities', async t => {
+  const {host,context}=dom(t);
+  context.assetUrl=src=>`DocData/${src.replace(/^\.\//,'')}`;
+  const image=host.ownerDocument.createElement('div');host.append(image);
+  imageModule.mount(image,{src:'assets/a.svg',compare:'./assets/b.svg'},context);
+  assert.deepEqual([...image.querySelectorAll('.image-layer img')].map(img=>img.getAttribute('src')),['DocData/assets/a.svg','DocData/assets/b.svg']);
+  const video=host.ownerDocument.createElement('div');host.append(video);
+  const dispose=videoModule.mount(video,{src:'assets/a.webm',sources:[{src:'assets/a.webm',type:'video/webm'},{src:'assets/a.mp4',type:'video/mp4'}],compare:'assets/b.webm'},context);
+  assert.deepEqual([...video.querySelectorAll('source')].map(source=>source.getAttribute('src')),['DocData/assets/a.webm','DocData/assets/a.mp4','DocData/assets/b.webm']);
+  const gallery=host.ownerDocument.createElement('div');host.append(gallery);
+  let mountedSrc;
+  context.loadModule=async()=>({mount(_host,config,child){mountedSrc=config.src;assert.equal(child.assetUrl(config.src),'DocData/assets/a.svg');}});
+  const cleanup=galleryModule.mount(gallery,{items:[{type:'image',src:'assets/a.svg'}]},context);await settle();
+  assert.equal(gallery.querySelector('img').getAttribute('src'),'DocData/assets/a.svg');assert.equal(mountedSrc,'assets/a.svg');
+  let binarySrc;const gif=host.ownerDocument.createElement('div');host.append(gif);
+  context.loadAsset=async src=>{binarySrc=src;return {base64:(await readFile('assets/steps-a.gif')).toString('base64')};};
+  const gifCleanup=await gifModule.mount(gif,{src:'assets/steps-a.gif',autoplay:false},context);await settle();
+  assert.equal(binarySrc,'assets/steps-a.gif');
+  cleanup?.();dispose?.();gifCleanup?.();
+});
+
 test('fast tooltips show complete text safely outside clipped navigation and preserve existing descriptions', async t => {
   const {host,window,context}=dom(t);
   host.innerHTML='<nav class="side-nav" style="overflow:hidden"><a data-tooltip-title="Very long complete documentation name" data-tooltip-description="Optional description" aria-describedby="existing-help"><span>Very long…</span></a></nav><span id="existing-help">Existing help</span>';

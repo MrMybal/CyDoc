@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, access } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { createDocumentation, createLink, parseLink } from '../dist/index.js';
 import { compileMarkdown } from '../tools/compiler.mjs';
@@ -94,10 +94,18 @@ test('local reading data persists bookmarks, notes and positions and rejects mal
 });
 
 test('demo version exports are distinct local manuals with real freshness examples', async () => {
-  const v1=JSON.parse(await readFile('dist/site/versions/v1/manifest.json','utf8'));
-  const v2=JSON.parse(await readFile('dist/site/versions/v2/manifest.json','utf8'));
+  const v1=JSON.parse(await readFile('dist/site/DocData/versions/v1/DocData/manifest.json','utf8'));
+  const v2=JSON.parse(await readFile('dist/site/DocData/versions/v2/DocData/manifest.json','utf8'));
   assert.equal(v1.version,'1-demo');assert.equal(v2.version,'2-demo');assert.notEqual(v1.pages[0].text,v2.pages[0].text);
   assert.equal(createDocumentation(v2).resolve('media').page.id,'overview');
-  const report=JSON.parse(await readFile('dist/site/versions/v2/translation-report.json','utf8'));
+  const report=JSON.parse(await readFile('dist/site/DocData/versions/v2/DocData/translation-report.json','utf8'));
   assert.ok(report.missing.some(page=>page.id==='new-feature'));assert.ok(report.outdated.some(page=>page.id==='overview'));
+  const main=JSON.parse(await readFile('dist/site/DocData/manifest.json','utf8'));
+  for (const [manifest, entry] of [[main,'../dist/site/Documentation.html'],[v1,'../dist/site/DocData/versions/v1/Documentation.html'],[v2,'../dist/site/DocData/versions/v2/Documentation.html']]) {
+    for (const version of manifest.versions) {
+      const url=new URL(version.base,new URL(entry,import.meta.url));
+      assert.ok(url.pathname.endsWith('/Documentation.html'));
+      await access(url);
+    }
+  }
 });

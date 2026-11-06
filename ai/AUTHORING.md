@@ -50,7 +50,7 @@ The reader's header searches prose, code and symbols with live results and conte
 
 The navigation tooltip uses the complete page `title`, followed by its optional `description`. Write short, useful descriptions; no separate tooltip configuration is needed. Folder tooltips include their full navigation path. Code-tab items and gallery items may each add a plain-text `description`, displayed beneath their complete label when hovered or focused. These descriptions are text, not Markdown or HTML.
 
-Translate titles and prose while preserving the page ID and explicit anchor IDs. A missing translation falls back to the default content locale. Set `translationReport: true` to add a report page; every build writes `translation-report.json`. Update `revision` when the original meaning changes, and update `sourceRevision` only when the translation has caught up. Without an original revision, the build uses a content fingerprint.
+Translate titles and prose while preserving the page ID and explicit anchor IDs. A missing translation falls back to the default content locale. Set `translationReport: true` to add a report page; every build writes `DocData/translation-report.json`. Update `revision` when the original meaning changes, and update `sourceRevision` only when the translation has caught up. Without an original revision, the build uses a content fingerprint.
 
 ## Links are part of the application contract
 
@@ -59,7 +59,7 @@ Translate titles and prose while preserving the page ID and explicit anchor IDs.
 - Another manual: `[Settings](doc://editor/settings#export)` requires a host `linkedDocs.editor` catalog entry. An optional destination manifest validates page and section IDs.
 - Renamed page: add `"aliases": { "old-page": "new-page#section" }` in the build configuration. The destination must exist. Aliases cannot shadow real page IDs or form cycles.
 
-Use `createLink` for programmatic addresses. Its state query belongs inside the fragment, e.g. `index.html#/en/walkthrough?media=intro&time=1.25`. Do not move media state before `#`, use history-path routing, or derive public IDs from translated headings. Code line anchors are `L1` in the first code block and `code-2-L1` in the second; confirm generated IDs before linking.
+Use `createLink` for programmatic addresses. Its state query belongs inside the fragment, e.g. `Documentation.html#/en/walkthrough?media=intro&time=1.25`. Do not move media state before `#`, use history-path routing, or derive public IDs from translated headings. Code line anchors are `L1` in the first code block and `code-2-L1` in the second; confirm generated IDs before linking.
 
 ## Code examples and rich blocks
 

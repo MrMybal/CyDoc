@@ -56,7 +56,7 @@ test('metadata requires a stable page id', () => {
   assert.throws(() => readFrontmatter('---\nid: bad id\ntitle: Test\nsection: Guide\n---\nBody'), /stable/);
 });
 test('real export includes both languages, extracted pages and local resources', async () => {
-  const data = JSON.parse(await readFile('dist/site/manifest.json', 'utf8'));
+  const data = JSON.parse(await readFile('dist/site/DocData/manifest.json', 'utf8'));
   assert.ok(data.pages.length >= 90);
   for (const locale of ['fr', 'en']) {
     assert.equal(data.pages.filter(page => page.locale === locale).length, data.pages.length / 2);
@@ -64,8 +64,8 @@ test('real export includes both languages, extracted pages and local resources',
     assert.match(api.source, /^examples\/contextual-help.ts:/);
     assert.match(api.html, /createLink/);
   }
-  const index = await readFile('dist/site/index.html', 'utf8');
+  const index = await readFile('dist/site/Documentation.html', 'utf8');
   assert.doesNotMatch(index, /(?:src|href)="https?:/);
-  assert.match(index, /<script src="data.js" defer>/);
+  assert.match(index, /<script src="DocData\/data\.js" defer>/);
   assert.doesNotMatch(index, /type="module"/);
 });

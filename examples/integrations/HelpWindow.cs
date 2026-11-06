@@ -23,7 +23,7 @@ public sealed class HelpWindow : Form
         KeyDown += delegate(object sender, KeyEventArgs e) {
             if (e.KeyCode != Keys.F1) return;
             e.Handled = true;
-            string url = HelpUrl(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "help", "index.html"), "fr", "video-viewer", null,
+            string url = HelpUrl(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Documentation", "Documentation.html"), "fr", "video-viewer", null,
                 new Dictionary<string, string> { { "media", "media-1" }, { "time", "1.25" } });
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
         };

@@ -25,7 +25,7 @@ public final class HelpWindow {
                     try {
                         Path appDir = Path.of(HelpWindow.class.getProtectionDomain().getCodeSource().getLocation().toURI());
                         if (!java.nio.file.Files.isDirectory(appDir)) appDir = appDir.getParent();
-                        Desktop.getDesktop().browse(helpUri(appDir.resolve("help/index.html"), "fr", "precise-links", Map.of()));
+                        Desktop.getDesktop().browse(helpUri(appDir.resolve("Documentation/Documentation.html"), "fr", "precise-links", Map.of()));
                     }
                     catch (Exception error) { JOptionPane.showMessageDialog(frame, error.getMessage(), "Documentation", JOptionPane.ERROR_MESSAGE); }
                 }

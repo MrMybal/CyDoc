@@ -11,7 +11,7 @@ Les neuf langages ci-dessous ont un exemple source réel, une coloration au buil
 
 ```cpp
 #include "cydoc/help.hpp"
-const auto help = cydoc::make_help_link("file:///D:/Help/index.html", "fr", "quickstart", "installation");
+const auto help = cydoc::make_help_link("file:///D:/Documentation/Documentation.html", "fr", "quickstart", "installation");
 ```
 
 [Ouvrir l’API extraite C++](doc:api-cpp#signature).
@@ -20,7 +20,7 @@ const auto help = cydoc::make_help_link("file:///D:/Help/index.html", "fr", "qui
 
 ```python
 from help_link import help_link
-url = help_link("file:///home/user/help/index.html", "fr", "quickstart")
+url = help_link("file:///home/user/Documentation/Documentation.html", "fr", "quickstart")
 ```
 
 [Ouvrir l’API extraite Python](doc:api-python#signature).
@@ -39,7 +39,7 @@ cydoc_help_link(route, sizeof route, "fr", "quickstart");
 
 ```csharp
 using CyDoc.Examples;
-string url = HelpLink.Create("file:///D:/Help/index.html", "fr", "quickstart");
+string url = HelpLink.Create("file:///D:/Documentation/Documentation.html", "fr", "quickstart");
 ```
 
 [Ouvrir l’API extraite C#](doc:api-csharp#signature).
@@ -48,7 +48,7 @@ string url = HelpLink.Create("file:///D:/Help/index.html", "fr", "quickstart");
 
 ```javascript
 import { helpLink } from "./help.js";
-const url = helpLink("./help/index.html", "fr", "quickstart");
+const url = helpLink("./Documentation/Documentation.html", "fr", "quickstart");
 ```
 
 [Ouvrir l’API extraite JavaScript](doc:api-javascript#signature).
@@ -57,7 +57,7 @@ const url = helpLink("./help/index.html", "fr", "quickstart");
 
 ```typescript
 import { helpLink } from "./help.js";
-const url: string = helpLink("./help/index.html", "fr", "quickstart");
+const url: string = helpLink("./Documentation/Documentation.html", "fr", "quickstart");
 ```
 
 [Ouvrir l’API extraite TypeScript](doc:api-typescript#signature).
@@ -66,7 +66,7 @@ const url: string = helpLink("./help/index.html", "fr", "quickstart");
 
 ```java
 import cydoc.examples.HelpLink;
-String url = HelpLink.create("file:///home/user/help/index.html", "fr", "quickstart");
+String url = HelpLink.create("file:///home/user/Documentation/Documentation.html", "fr", "quickstart");
 ```
 
 [Ouvrir l’API extraite Java](doc:api-java#signature).

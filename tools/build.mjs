@@ -9,6 +9,7 @@ import { languageOf, buildSourcePages } from './source-index.mjs';
 import { importApi } from './api-import.mjs';
 import { translationReport, reportPage } from './reports.mjs';
 import { createHash } from 'node:crypto';
+import { migrateLegacyExport } from './export-layout.mjs';
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export async function walk(directory, extension) {
@@ -29,9 +30,10 @@ export async function buildSite(configPath = resolve('cydoc.config.json'), overr
   if (!Array.isArray(modules) || modules.some(name => !['image', 'video', 'mesh', 'gallery', 'graph', 'gif'].includes(name))) throw new Error('Unknown media module');
   const compile = (markdown, page, symbols) => ({ ...compileMarkdown(markdown, { locale:page.locale,pageId:page.id,linkedDocs,glossary:config.glossary?.[page.locale] || {},symbols }), ...(page.kind ? {kind:page.kind} : page.symbol ? {kind:'api'} : {}), revision:String(page.revision || createHash('sha256').update(markdown).digest('hex').slice(0,12)) });
   for (const version of config.versions || []) if (!version.id || !version.label || !version.base || /[\u0000-\u0020\\]/.test(version.base) || /^(?!file:)[a-z][\w+.-]*:|^\/\//i.test(version.base)) throw new Error('Version destinations must be local file paths');
-  const output = resolve(base, config.out || 'dist/site');
+  const output = resolve(base, config.out || 'Documentation');
   const delta = relative(base, output);
   if (!delta || delta.startsWith('..') || isAbsolute(delta)) throw new Error('Output must be a subdirectory of the project');
+  const dataOutput = join(output, 'DocData');
   const pages = [];
   for (const locale of config.locales) {
     for (const file of await walk(resolve(base, config.content, locale.code), /\.md$/i)) {
@@ -100,27 +102,28 @@ export async function buildSite(configPath = resolve('cydoc.config.json'), overr
       if (!info.isFile()) throw new Error(`Media must be a file: ${media}`);
     }
   }
-  await mkdir(output, { recursive: true });
-  const assetCatalog = await packMeshAssets({ pages, assetRoot: resolve(base, config.assets || 'assets'), output, enabled: modules.includes('mesh'), gifEnabled:modules.includes('gif') });
-  for (const name of ['image', 'video', 'mesh', 'gallery', 'graph', 'gif'].filter(name => !modules.includes(name))) await unlink(join(output, `media-${name}.js`)).catch(error => { if (error.code !== 'ENOENT') throw error; });
+  const legacy = await migrateLegacyExport(output, dataOutput, join(output, 'Documentation.html'));
+  await mkdir(dataOutput, { recursive: true });
+  const assetCatalog = await packMeshAssets({ pages, assetRoot: resolve(base, config.assets || 'assets'), output: dataOutput, enabled: modules.includes('mesh'), gifEnabled:modules.includes('gif') });
+  for (const name of ['image', 'video', 'mesh', 'gallery', 'graph', 'gif'].filter(name => !modules.includes(name))) await unlink(join(dataOutput, `media-${name}.js`)).catch(error => { if (error.code !== 'ENOENT') throw error; });
   await Promise.all([
-    writeFile(join(output, 'data.js'), `globalThis.CYDOC_DATA=${JSON.stringify(data).replace(/</g, '\\u003c')};\nglobalThis.CYDOC_OPTIONS=${JSON.stringify({ homePage: config.homePage, landingPage: !!config.landingPage, modules, assets: assetCatalog }).replace(/</g, '\\u003c')};\n`),
-    writeFile(join(output, 'manifest.json'), JSON.stringify(data, null, 2)),
-    writeFile(join(output, 'translation-report.json'), JSON.stringify(translations,null,2)),
-    cp(resolve(projectRoot, 'web/reader.html'), join(output, 'index.html')),
-    cp(resolve(projectRoot, 'src/viewer.css'), join(output, 'viewer.css')),
+    writeFile(join(dataOutput, 'data.js'), `globalThis.CYDOC_DATA=${JSON.stringify(data).replace(/</g, '\\u003c')};\nglobalThis.CYDOC_OPTIONS=${JSON.stringify({ homePage: config.homePage, landingPage: !!config.landingPage, modules, assets: assetCatalog }).replace(/</g, '\\u003c')};\n`),
+    writeFile(join(dataOutput, 'manifest.json'), JSON.stringify(data, null, 2)),
+    writeFile(join(dataOutput, 'translation-report.json'), JSON.stringify(translations,null,2)),
+    cp(resolve(projectRoot, 'web/reader.html'), join(output, 'Documentation.html')),
+    cp(resolve(projectRoot, 'src/viewer.css'), join(dataOutput, 'viewer.css')),
     cp(resolve(projectRoot, 'src/viewer.css'), resolve(projectRoot, 'dist/viewer.css')),
-    cp(resolve(base, config.assets || 'assets'), join(output, 'assets'), { recursive: true }),
-    build({ entryPoints: [resolve(projectRoot, 'web/boot.mjs')], bundle: true, format: 'iife', minify: true, target: 'es2020', outfile: join(output, 'viewer.js') })
+    cp(resolve(base, config.assets || 'assets'), join(dataOutput, 'assets'), { recursive: true }),
+    build({ entryPoints: [resolve(projectRoot, 'web/boot.mjs')], bundle: true, format: 'iife', minify: true, target: 'es2020', outfile: join(dataOutput, 'viewer.js') })
   ]);
-  for (const name of modules) await build({ entryPoints: [resolve(projectRoot, `dist/modules/${name}.js`)], bundle: true, format: 'iife', globalName: `CyDocMedia_${name}`, minify: true, target: 'es2020', outfile: join(output, `media-${name}.js`), legalComments: 'eof' });
+  for (const name of modules) await build({ entryPoints: [resolve(projectRoot, `dist/modules/${name}.js`)], bundle: true, format: 'iife', globalName: `CyDocMedia_${name}`, minify: true, target: 'es2020', outfile: join(dataOutput, `media-${name}.js`), legalComments: 'eof' });
   if (modules.includes('mesh')) {
     const threeEntry = fileURLToPath(import.meta.resolve('three'));
-    await cp(resolve(dirname(threeEntry), '../LICENSE'), join(output, 'media-mesh.LICENSE.txt'));
-  } else await unlink(join(output, 'media-mesh.LICENSE.txt')).catch(error => { if (error.code !== 'ENOENT') throw error; });
+    await cp(resolve(dirname(threeEntry), '../LICENSE'), join(dataOutput, 'media-mesh.LICENSE.txt'));
+  } else await unlink(join(dataOutput, 'media-mesh.LICENSE.txt')).catch(error => { if (error.code !== 'ENOENT') throw error; });
   console.log(`CyDoc: ${pages.length} pages, ${config.locales.length} locales → ${output}`);
   for(const entry of config.versionBuilds || []) {
-    const destination=resolve(output,entry.destination), delta=relative(output,destination);
+    const destination=resolve(dataOutput,entry.destination), delta=relative(dataOutput,destination);
     if(!delta || delta.startsWith('..') || isAbsolute(delta))throw new Error('Version output must stay inside the export');
     const childConfig=resolve(base,entry.config);
     const childSettings=JSON.parse(await readFile(childConfig,'utf8'));
@@ -129,6 +132,11 @@ export async function buildSite(configPath = resolve('cydoc.config.json'), overr
     if(childSettings.translationReport)childIds.add('translation-report');
     const aliases={...Object.fromEntries(data.pages.filter(page=>!childIds.has(page.id)).map(page=>[page.id,childSettings.homePage||'overview'])),...childSettings.aliases};
     const child=await buildSite(childConfig,{aliases,versionBuilds:[]});
+    if (legacy) {
+      const previous = resolve(output, entry.destination), previousDelta = relative(output, previous);
+      if (!previousDelta || previousDelta.startsWith('..') || isAbsolute(previousDelta)) throw new Error('Legacy version output must stay inside the export');
+      await migrateLegacyExport(previous, join(destination, 'DocData'), join(destination, 'Documentation.html'));
+    }
     await mkdir(destination,{recursive:true});await cp(child.output,destination,{recursive:true});
   }
   return { data, output };

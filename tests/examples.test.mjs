@@ -7,7 +7,7 @@ import { extractComments } from '../tools/extract.mjs';
 import { sourceDependencies } from '../tools/source-index.mjs';
 
 test('nine source languages have extracted API pages and highlighted code', async () => {
-  const data = JSON.parse(await readFile('dist/site/manifest.json', 'utf8'));
+  const data = JSON.parse(await readFile('dist/site/DocData/manifest.json', 'utf8'));
   for (const locale of ['fr', 'en']) for (const language of ['cpp', 'python', 'c', 'csharp', 'javascript', 'typescript', 'java', 'hlsl', 'glsl']) {
     const page = data.pages.find(page => page.locale === locale && page.id === `api-${language}`);
     assert.ok(page, `Missing API ${locale}/${language}`);
@@ -39,7 +39,7 @@ test('Unreal clipboard is converted to typed pins and real node connections', as
   assert.throws(() => parseBlueprint('Begin Object Name="Broken"'), /Invalid/);
 });
 test('imports and includes resolve into local source-file links', async () => {
-  const data = JSON.parse(await readFile('dist/site/manifest.json', 'utf8'));
+  const data = JSON.parse(await readFile('dist/site/DocData/manifest.json', 'utf8'));
   for (const [source, target] of [
     ['source-examples-cpp-src-help-cpp', 'source-examples-cpp-include-cydoc-help-hpp'],
     ['source-examples-typescript-help-ts', 'source-examples-typescript-segments-ts'],

@@ -1,5 +1,5 @@
 import type { MediaModule } from '../types.js';
-import { addStyles, commonStyles, comparisonHandle, expandButton, watchExpansion, escape, localAsset, mediaPresentation, clamp, readSaved, writeSaved, saveJson, bindMediaState } from './shared.js';
+import { addStyles, commonStyles, comparisonHandle, expandButton, watchExpansion, escape, localAsset, assetUrl, mediaPresentation, clamp, readSaved, writeSaved, saveJson, bindMediaState } from './shared.js';
 
 interface Annotation { id: string; time: number; duration: number; text: string; x: number; y: number }
 function annotations(value: unknown): Annotation[] {
@@ -14,7 +14,7 @@ const videoModule: MediaModule = {
     const src = localAsset(config.src); const compare = config.compare ? localAsset(config.compare) : '';
     const sourceTag = (source: string, variants: unknown) => {
       const list = Array.isArray(variants) && variants.length ? variants : [{ src: source }];
-      return list.map(item => `<source src="${escape(localAsset(item.src))}"${item.type ? ` type="${escape(item.type)}"` : ''}>`).join('');
+      return list.map(item => `<source src="${escape(assetUrl(item.src, context))}"${item.type ? ` type="${escape(item.type)}"` : ''}>`).join('');
     };
     addStyles('cydoc-video-style', commonStyles + `.cy-video .video-layer{position:absolute;inset:0;pointer-events:none}.cy-video .video-layer video{width:100%;height:100%;max-height:none!important;object-fit:contain;border:0!important;border-radius:0!important;background:transparent!important}.cy-video .video-annotations{position:absolute;inset:0;pointer-events:none;z-index:5}.cy-video .video-note{position:absolute;max-width:70%;transform:translateX(-50%);background:#102a24e8;border:1px solid #7adab1;border-radius:6px;color:#e0ffef;padding:7px 12px;font-size:12px;box-shadow:0 3px 10px #0004}.cy-video .video-controls{display:flex;gap:8px;padding:10px 12px;align-items:center;flex-wrap:wrap}.cy-video .video-timeline{flex:1;min-width:90px}.cy-video .video-time{font-size:10px;font-variant-numeric:tabular-nums}.cy-video .video-controls select{max-width:75px}.cy-video .video-hint{font-size:10px;color:var(--muted,#647386);padding:0 12px 8px}`);
     host.className = 'cy-media cy-video';

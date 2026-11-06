@@ -18,7 +18,7 @@ def main():
     app = tk.Tk()
     app.title("CyDoc · F1")
     tk.Label(app, text="F1: aide contextuelle locale", padx=35, pady=40).pack()
-    app.bind("<F1>", lambda event: webbrowser.open(help_url(Path(__file__).parent / "help/index.html", page="precise-links")))
+    app.bind("<F1>", lambda event: webbrowser.open(help_url(Path(__file__).parent / "Documentation/Documentation.html", page="precise-links")))
     app.mainloop()
 
 

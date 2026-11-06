@@ -12,7 +12,7 @@ The exported viewer uses web standards. Open it in the system browser or an embe
 URLs combine the reader path, locale, stable page identifier, and an optional section. The part after `#` requires no server routing configuration.
 
 ```text
-help/index.html#/en/quickstart/installation
+Documentation/Documentation.html#/en/quickstart/installation
 ```
 
 In JavaScript or TypeScript, use the core to encode identifiers correctly.
@@ -24,7 +24,7 @@ const helpUrl = createLink({
   locale: 'en',
   pageId: 'quickstart',
   anchor: 'installation'
-}, './help/index.html');
+}, './Documentation/Documentation.html');
 ```
 
 ## Desktop and Android {#platforms}
@@ -67,4 +67,4 @@ Ship content and media with the corresponding application version. The viewer us
 
 ## Native F1 examples {#native}
 
-The [integration examples](doc:native-help) cover Qt, Python/Tk, WinForms, Java/Swing, AppKit, and Android/WebView. The direct Android `file:///android_asset/help/index.html` path needs no server or Internet permission. C++, C#, Java, and Python link helpers are checked; Qt, macOS, and Android windows still require target-device validation.
+The [integration examples](doc:native-help) cover Qt, Python/Tk, WinForms, Java/Swing, AppKit, and Android/WebView. The direct Android `file:///android_asset/Documentation/Documentation.html` path needs no server or Internet permission. C++, C#, Java, and Python link helpers are checked; Qt, macOS, and Android windows still require target-device validation.

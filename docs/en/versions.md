@@ -19,12 +19,12 @@ The version selector preserves page, section, and media state. **Demo v1** and *
     {
       "id": "1.0",
       "label": "1.0",
-      "base": "../v1/index.html"
+      "base": "../v1/Documentation.html"
     },
     {
       "id": "2.0",
       "label": "2.0",
-      "base": "../v2/index.html"
+      "base": "../v2/Documentation.html"
     }
   ]
 }
@@ -33,4 +33,4 @@ The version selector preserves page, section, and media state. **Demo v1** and *
 
 ## Translations {#translations}
 
-[View the translation report](doc:translation-report). `translation-report.json` contains missing pages, outdated revisions, and untracked translations. Demo v2 intentionally includes an outdated example and a missing example.
+[View the translation report](doc:translation-report). `DocData/translation-report.json` contains missing pages, outdated revisions, and untracked translations. Demo v2 intentionally includes an outdated example and a missing example.

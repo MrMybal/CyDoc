@@ -45,7 +45,7 @@ Use this minimal `cydoc.config.json`:
   "homePage": "overview",
   "content": "manual",
   "assets": "assets",
-  "out": "build/help",
+  "out": "build/Documentation",
   "modules": []
 }
 ```
@@ -63,9 +63,30 @@ Use the application's full name in `name`. Long names are visually shortened wit
 
 The reader has no permanent local/offline status cards or host-license badge. Its header contains global search and a compact **My space** icon for bookmarks and notes. Document the application's actual license in its own pages; the library's MIT license does not determine the application's license.
 
-Both commands compile, validate and write the export. `check` is not a read-only lint command. The exported `manifest.json` is build data; the generated bootstrap loads `data.js` locally without fetching the JSON.
+Both commands compile, validate and write the export. `check` is not a read-only lint command. The exported `DocData/manifest.json` is build data; the generated bootstrap loads `DocData/data.js` locally without fetching the JSON.
 
-Distribute **all** of `build/help/`, including module scripts, asset data scripts, styles, dependency notices and media. Keep the directory structure. Rebuild into a fresh output directory for a clean distribution because old copied assets are not automatically removed. Open the resulting `index.html` directly; do not introduce an HTTP server or a CDN to make it work.
+Install the exported folder as `App/Documentation/`:
+
+```text
+App/Documentation/
+  Documentation.html
+  DocData/
+    data.js
+    manifest.json
+    translation-report.json
+    viewer.js
+    viewer.css
+    assets/
+    media-*.js                # Enabled readers and packed binary assets
+    media-mesh.LICENSE.txt    # Mesh only
+    versions/                # Optional version builds
+```
+
+The default `out` is `Documentation`; the example above explicitly builds into `build/Documentation`. `Documentation.html` is the reader itself, with no iframe or redirect to an internal page. Point new application help links at it. Rebuilding a recognized previous flat CyDoc export relocates its generated files and preserves the old `index.html` as a redirect with its query and fragment. Unrelated files are left intact; do not delete application-owned files to force the layout.
+
+Keep source Markdown and assets outside this generated tree. Authored media and `logo` still use `assets/...`; the generated reader resolves those paths inside `DocData/`. Do not add `DocData/` to authored media paths. `linkedDocs.base` and `versions[].base` are relative to `Documentation.html`; `linkedDocs.manifest` points to the other export's `DocData/manifest.json` and resolves relative to the build configuration. `versionBuilds[].destination` resolves inside `DocData/`, for example `versions/v1` exports to `DocData/versions/v1/Documentation.html`.
+
+Distribute **all** of `build/Documentation/`, including module scripts, asset data scripts, styles, dependency notices and media. Keep the directory structure. Rebuild into a fresh output directory for a clean distribution because old copied assets are not automatically removed. Open the resulting `Documentation.html` directly; do not introduce an HTTP server or a CDN to make it work.
 
 To add readers, set e.g. `"modules": ["image", "video", "gallery"]`. Include every gallery child type. GIF frame controls need `gif`; ordinary animated GIF display in an image needs only `image`. Mesh exports need `mesh` and the Three.js build dependency. Generated scripts for disabled modules are removed on rebuild.
 
@@ -80,10 +101,10 @@ const helpUrl = createLink({
   locale: 'en',
   pageId: 'overview',
   anchor: 'getting-started'
-}, 'file:///path/to/app/help/index.html');
+}, 'file:///path/to/app/Documentation/Documentation.html');
 ```
 
-`file:///path/to/app/help/index.html` is a placeholder URL. For Node.js hosts, `pathToFileURL(absolutePath).href` creates the base. Native hosts use their framework's equivalent. CyDoc creates the address; the application decides whether to open it in a browser or an embedded WebView. Use a real page ID and a real explicit anchor, and preserve the route when reopening an existing help window.
+`file:///path/to/app/Documentation/Documentation.html` is a placeholder URL. For Node.js hosts, `pathToFileURL(absolutePath).href` creates the base. Native hosts use their framework's equivalent. CyDoc creates the address; the application decides whether to open it in a browser or an embedded WebView. Use a real page ID and a real explicit anchor, and preserve the route when reopening an existing help window.
 
 Source examples included in the package:
 
@@ -98,7 +119,7 @@ Source examples included in the package:
 | Android/Kotlin | [CyDocActivity.kt](../examples/integrations/android/CyDocActivity.kt) |
 | JavaScript F1 binding | [contextual-help.js](../examples/integrations/contextual-help.js) |
 
-These are source examples, not prebuilt framework packages. Android opens `file:///android_asset/help/index.html`; keep the restricted local asset configuration in the example and test the packaged app on the target device.
+These are source examples, not prebuilt framework packages. Android opens `file:///android_asset/Documentation/Documentation.html`; keep the restricted local asset configuration in the example and test the packaged app on the target device.
 
 ## Custom JavaScript embedding
 
@@ -123,7 +144,7 @@ export function openHelp(root: HTMLElement, manifest: Documentation) {
 
 Supply the manifest from the build through your host or bundling process. The viewer owns the URL hash and imports a global CSS reset: use a dedicated page or iframe, especially when the host also uses hash routing. Call the returned `destroy()` before replacing or closing the viewer.
 
-Custom mesh/GIF embeddings also supply `loadAsset(src)`, returning packed local bytes in `{ base64, resources? }`; see [API.md](API.md#optional-reader-contract). Use the generated exporter to avoid writing this adapter yourself. Do not replace it with `fetch()` against `file://` assets.
+Custom mesh/GIF embeddings also supply `loadAsset(src)`, returning packed local bytes in `{ base64, resources? }`; see [API.md](API.md#optional-reader-contract). Use the generated exporter to avoid writing this adapter yourself. Do not replace it with `fetch()` against `file://` assets. If an embedding places `assets/` under another directory, set `assetBase` to that directory, for example `DocData/`. Its default is the reader's directory. Binary providers still receive logical `assets/...` keys.
 
 ## Diagnose integration failures
 

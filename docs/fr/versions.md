@@ -19,12 +19,12 @@ Le sélecteur de version conserve la page, la section et l’état du média. Le
     {
       "id": "1.0",
       "label": "1.0",
-      "base": "../v1/index.html"
+      "base": "../v1/Documentation.html"
     },
     {
       "id": "2.0",
       "label": "2.0",
-      "base": "../v2/index.html"
+      "base": "../v2/Documentation.html"
     }
   ]
 }
@@ -33,4 +33,4 @@ Le sélecteur de version conserve la page, la section et l’état du média. Le
 
 ## Traductions {#translations}
 
-[Consulter le rapport de traduction](doc:translation-report). `translation-report.json` contient les pages manquantes, les révisions dépassées et les traductions sans suivi. La démo v2 contient volontairement un exemple dépassé et un exemple manquant.
+[Consulter le rapport de traduction](doc:translation-report). `DocData/translation-report.json` contient les pages manquantes, les révisions dépassées et les traductions sans suivi. La démo v2 contient volontairement un exemple dépassé et un exemple manquant.

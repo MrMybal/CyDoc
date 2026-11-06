@@ -19,13 +19,31 @@ npm ci
 npm run build
 ```
 
-Open `web/index.html` or `dist/site/index.html` directly in your browser. The first file redirects to the generated reader while preserving the URL fragment and query string.
+Open `web/index.html` or `dist/site/Documentation.html` directly in your browser. The first file redirects to the generated reader while preserving the URL fragment and query string.
 
 ```text
-file:///path/to/CyDoc/dist/site/index.html#/en/quickstart/installation
+file:///path/to/CyDoc/dist/site/Documentation.html#/en/quickstart/installation
 ```
 
-The generated `dist/site/` directory contains the reader, documentation, styles, and local assets. Copy the entire directory into your application distribution. Reading requires no Node.js installation, network connection, or web server.
+Copy the entire generated `dist/site/` directory into your application's `Documentation/` folder. Reading requires no Node.js installation, network connection, or web server. New exports have this layout:
+
+```text
+App/
+  Documentation/
+    Documentation.html
+    DocData/
+      viewer.js
+      viewer.css
+      data.js
+      manifest.json
+      translation-report.json
+      assets/
+      media-*.js                 # Enabled modules and packed binary assets
+      media-mesh.LICENSE.txt     # When mesh is enabled
+      versions/                 # When versionBuilds is configured
+```
+
+`Documentation.html` is the actual reader page; its address stays unchanged while reading. Set `out` to choose the export directory (default: `Documentation`). Source Markdown and authoring assets stay in their configured input directories. Builds recognize the previous flat CyDoc export, move its generated files into `DocData/`, and retain an `index.html` redirect for existing links, including their query and fragment. Unrelated output files are preserved; use a fresh output directory when packaging only the current generated files.
 
 ```sh
 npm run dev    # Rebuild on local changes; refresh the file in your browser
@@ -64,7 +82,7 @@ const url = createLink({
   locale: 'en',
   pageId: 'quickstart',
   anchor: 'installation'
-}, './help/index.html');
+}, './Documentation/Documentation.html');
 ```
 
 Mount the optional reader in a dedicated page:
@@ -209,7 +227,7 @@ const url = createLink({
   locale: 'en',
   pageId: 'video-viewer',
   state: { media: 'intro', time: '1.25', note: 'step-1' }
-}, './help/index.html');
+}, './Documentation/Documentation.html');
 ```
 
 The state query is inside the URL fragment. Set an explicit media `id` to keep links stable when rearranging a page. A reader's link icon copies its current view.
@@ -283,8 +301,8 @@ Declare local versions:
 {
   "version": "2.0",
   "versions": [
-    { "id": "1.0", "label": "1.0", "base": "../v1/index.html" },
-    { "id": "2.0", "label": "2.0", "base": "./index.html" }
+    { "id": "1.0", "label": "1.0", "base": "../v1/Documentation.html" },
+    { "id": "2.0", "label": "2.0", "base": "./Documentation.html" }
   ],
   "aliases": { "old-page": "new-page#section" },
   "translationReport": true
@@ -293,9 +311,9 @@ Declare local versions:
 
 The current version's `id` matches `version`. Switching versions preserves the locale, page, section, and media state. Each version is a separate local export. Aliases preserve renamed page addresses; cycles and missing destinations fail the build.
 
-The repository includes two small **Demo v1 / Demo v2** manuals to demonstrate switching and translation freshness. They are not historical CyDoc releases. Optional `versionBuilds` entries build child projects and copy their exports into controlled subdirectories of the main export.
+The repository includes two small **Demo v1 / Demo v2** manuals to demonstrate switching and translation freshness. They are not historical CyDoc releases. Optional `versionBuilds` entries build child projects and copy their exports into controlled subdirectories of `DocData/`. For a destination `versions/v1`, use `DocData/versions/v1/Documentation.html` as the version base.
 
-Every build writes `translation-report.json`. Set `translationReport: true` to include a report page. Put `revision` on an original page and the translated revision in `sourceRevision` on its translation. Missing, outdated, and untracked translations are reported separately. Without an explicit original revision, the generator uses a content fingerprint.
+Every build writes `DocData/translation-report.json`. Set `translationReport: true` to include a report page. Put `revision` on an original page and the translated revision in `sourceRevision` on its translation. Missing, outdated, and untracked translations are reported separately. Without an explicit original revision, the generator uses a content fingerprint.
 
 Link to another manual with `[Export](doc://editor/settings#export)` and a host-owned catalog:
 
@@ -303,8 +321,8 @@ Link to another manual with `[Export](doc://editor/settings#export)` and a host-
 {
   "linkedDocs": {
     "editor": {
-      "base": "../editor/help/index.html",
-      "manifest": "../editor/help/manifest.json"
+      "base": "../editor/Documentation/Documentation.html",
+      "manifest": "../editor/Documentation/DocData/manifest.json"
     }
   }
 }
@@ -330,7 +348,7 @@ Storage availability depends on the browser or WebView, particularly for file or
 - An Android Kotlin/WebView Activity and manifest fragment.
 - A JavaScript F1 binding with a host-provided opening callback.
 
-Copy the generated reader into your application's `help/` directory. Android's example opens `file:///android_asset/help/index.html` directly, without a web server or Internet permission. Native frameworks remain dependencies of the host application. The examples are included in the npm archive; Qt, AppKit, and Android interfaces still require target-device validation.
+Copy the generated reader into your application's `Documentation/` directory. Android's example opens `file:///android_asset/Documentation/Documentation.html` directly, without a web server or Internet permission. Native frameworks remain dependencies of the host application. The examples are included in the npm archive; Qt, AppKit, and Android interfaces still require target-device validation.
 
 ## Build another project's manual
 

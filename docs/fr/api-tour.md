@@ -15,7 +15,7 @@ Les exemples sont des fichiers du dépôt, pas des blocs de texte simulant une e
 #include "cydoc/help.hpp"
 
 const auto url = cydoc::make_help_link(
-    "file:///D:/Help/index.html", "fr", "quickstart", "installation");
+    "file:///D:/Documentation/Documentation.html", "fr", "quickstart", "installation");
 // The host app opens this local URL using its browser or WebView.
 ```
 
@@ -23,7 +23,7 @@ const auto url = cydoc::make_help_link(
 
 ```cpp
 import cydoc.help;
-const auto url = cydoc_module::link("file:///D:/Help/index.html", "fr", "quickstart");
+const auto url = cydoc_module::link("file:///D:/Documentation/Documentation.html", "fr", "quickstart");
 ```
 Le module C++20 réexporte un wrapper de la fonction portable C++17. Il faut compiler le module avec les options de votre compilateur, puis lier l’implémentation help.cpp. La cible CMake de démonstration reste en C++17.
 

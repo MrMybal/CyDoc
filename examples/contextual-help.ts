@@ -17,11 +17,11 @@
  *
  * ## Exemple {#example}
  * ```typescript
- * createLink({ locale: 'fr', pageId: 'quickstart', anchor: 'installation' }, './help/index.html');
+ * createLink({ locale: 'fr', pageId: 'quickstart', anchor: 'installation' }, './Documentation/Documentation.html');
  * ```
  *
  * ## Résultat {#result}
- * `./help/index.html#/fr/quickstart/installation`
+ * `./Documentation/Documentation.html#/fr/quickstart/installation`
  *
  * La fonction ne lance aucun navigateur. L’application hôte ouvre l’URL dans l’environnement de son choix.
  */
@@ -45,14 +45,14 @@
  *
  * ## Example {#example}
  * ```typescript
- * createLink({ locale: 'en', pageId: 'quickstart', anchor: 'installation' }, './help/index.html');
+ * createLink({ locale: 'en', pageId: 'quickstart', anchor: 'installation' }, './Documentation/Documentation.html');
  * ```
  *
  * ## Result {#result}
- * `./help/index.html#/en/quickstart/installation`
+ * `./Documentation/Documentation.html#/en/quickstart/installation`
  *
  * The function does not launch a browser. The host application opens the URL in its chosen environment.
  */
 export function helpUrl(locale: string) {
-  return `./help/index.html#/${encodeURIComponent(locale)}/quickstart/installation`;
+  return `./Documentation/Documentation.html#/${encodeURIComponent(locale)}/quickstart/installation`;
 }

@@ -37,7 +37,7 @@ Explicit section identifiers such as `{#installation}` keep the same destination
 To target another documentation, use `doc://identifier/page#section` and declare its destination in the `linkedDocs` configuration:
 
 ```json
-{"linkedDocs":{"editor":{"base":"../editor/help/index.html","manifest":"../editor/help/manifest.json"}}}
+{"linkedDocs":{"editor":{"base":"../editor/Documentation/Documentation.html","manifest":"../editor/Documentation/DocData/manifest.json"}}}
 ```
 
 ```markdown

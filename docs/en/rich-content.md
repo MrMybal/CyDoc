@@ -16,37 +16,37 @@ One explanation can present several languages without lengthening the page. The 
     {
       "label": "C++",
       "lang": "cpp",
-      "code": "auto url = cydoc::make_help_link(\"help/index.html\", \"fr\", \"quickstart\");"
+      "code": "auto url = cydoc::make_help_link(\"Documentation/Documentation.html\", \"fr\", \"quickstart\");"
     },
     {
       "label": "Python",
       "lang": "python",
-      "code": "url = help_link(\"help/index.html\", \"fr\", \"quickstart\")"
+      "code": "url = help_link(\"Documentation/Documentation.html\", \"fr\", \"quickstart\")"
     },
     {
       "label": "C#",
       "lang": "csharp",
-      "code": "string url = HelpLink.Create(\"help/index.html\", \"fr\", \"quickstart\");"
+      "code": "string url = HelpLink.Create(\"Documentation/Documentation.html\", \"fr\", \"quickstart\");"
     },
     {
       "label": "C",
       "lang": "c",
-      "code": "cydoc_help_link(url, sizeof url, \"help/index.html\", \"fr\", \"quickstart\", \"\");"
+      "code": "cydoc_help_link(url, sizeof url, \"Documentation/Documentation.html\", \"fr\", \"quickstart\", \"\");"
     },
     {
       "label": "JavaScript",
       "lang": "javascript",
-      "code": "const url = helpLink(\"help/index.html\", \"fr\", \"quickstart\");"
+      "code": "const url = helpLink(\"Documentation/Documentation.html\", \"fr\", \"quickstart\");"
     },
     {
       "label": "TypeScript",
       "lang": "typescript",
-      "code": "const url: string = helpLink(\"help/index.html\", \"fr\", \"quickstart\");"
+      "code": "const url: string = helpLink(\"Documentation/Documentation.html\", \"fr\", \"quickstart\");"
     },
     {
       "label": "Java",
       "lang": "java",
-      "code": "String url = HelpLink.create(\"help/index.html\", \"fr\", \"quickstart\");"
+      "code": "String url = HelpLink.create(\"Documentation/Documentation.html\", \"fr\", \"quickstart\");"
     },
     {
       "label": "HLSL",

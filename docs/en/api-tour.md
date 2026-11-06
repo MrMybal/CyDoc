@@ -15,7 +15,7 @@ The examples are repository files, not text blocks pretending to be extracted. T
 #include "cydoc/help.hpp"
 
 const auto url = cydoc::make_help_link(
-    "file:///D:/Help/index.html", "fr", "quickstart", "installation");
+    "file:///D:/Documentation/Documentation.html", "fr", "quickstart", "installation");
 // The host app opens this local URL using its browser or WebView.
 ```
 
@@ -23,7 +23,7 @@ const auto url = cydoc::make_help_link(
 
 ```cpp
 import cydoc.help;
-const auto url = cydoc_module::link("file:///D:/Help/index.html", "fr", "quickstart");
+const auto url = cydoc_module::link("file:///D:/Documentation/Documentation.html", "fr", "quickstart");
 ```
 The C++20 module exports a wrapper around the portable C++17 function. Compile the module using your compiler’s options, then link help.cpp. The demo CMake target stays on C++17.
 

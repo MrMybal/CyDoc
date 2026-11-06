@@ -1,0 +1,40 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtemp, mkdir, writeFile, readFile, readdir, rm, access } from 'node:fs/promises';
+import { resolve, join, dirname, basename } from 'node:path';
+import vm from 'node:vm';
+import { migrateLegacyExport } from '../tools/export-layout.mjs';
+
+test('legacy exports regroup generated files and preserve deep links and unrelated files', async t => {
+  const parent = resolve('.tmp'); await mkdir(parent, { recursive: true });
+  const root = await mkdtemp(join(parent, 'layout-test-'));
+  t.after(async () => {
+    if (dirname(root) !== parent || !basename(root).startsWith('layout-test-')) throw new Error('Unsafe cleanup target');
+    await rm(root, { recursive: true, force: true });
+  });
+  const output = join(root, 'Documentation'), data = join(output, 'DocData');
+  await mkdir(join(output, 'assets/nested'), { recursive: true });
+  await mkdir(join(data, 'assets/nested'), { recursive: true });
+  await writeFile(join(output, 'index.html'), '<div id="app"></div><script src="data.js" defer></script><script src="viewer.js" defer></script>');
+  await writeFile(join(output, 'notes.txt'), 'Application-owned file');
+  for (const name of ['data.js', 'viewer.js', 'viewer.css', 'manifest.json', 'translation-report.json', 'media-image.js', 'media-mesh.LICENSE.txt', 'media-gif-data-0123456789abcdef.js']) await writeFile(join(output, name), name);
+  await writeFile(join(output, 'assets/nested/image.svg'), 'Original media');
+  await writeFile(join(data, 'assets/nested/image.svg'), 'Previous target');
+  await writeFile(join(data, 'assets/keep.svg'), 'Preserved media');
+  assert.equal(await migrateLegacyExport(output, data, join(output, 'Documentation.html')), true);
+  assert.deepEqual((await readdir(output)).sort(), ['DocData', 'index.html', 'notes.txt']);
+  assert.equal(await readFile(join(data, 'assets/nested/image.svg'), 'utf8'), 'Original media');
+  assert.equal(await readFile(join(data, 'assets/keep.svg'), 'utf8'), 'Preserved media');
+  await access(join(data, 'media-gif-data-0123456789abcdef.js'));
+  const redirect = await readFile(join(output, 'index.html'), 'utf8');
+  let destination;
+  const location = { href: 'file:///Example%20App/Documentation/index.html?theme=dark#/en/settings/details?media=demo&time=1.25', search: '?theme=dark', hash: '#/en/settings/details?media=demo&time=1.25', replace: url => { destination = url; } };
+  vm.runInNewContext(redirect.match(/<script>([\s\S]*?)<\/script>/)[1], { URL, location });
+  assert.equal(destination, 'file:///Example%20App/Documentation/Documentation.html?theme=dark#/en/settings/details?media=demo&time=1.25');
+  assert.equal(await migrateLegacyExport(output, data, join(output, 'Documentation.html')), false);
+  const other = join(root, 'other'); await mkdir(other);
+  await writeFile(join(other, 'index.html'), '<h1>Application-owned entry</h1>');
+  await writeFile(join(other, 'data.js'), 'Application-owned script');
+  assert.equal(await migrateLegacyExport(other, join(other, 'DocData'), join(other, 'Documentation.html')), false);
+  assert.equal(await readFile(join(other, 'data.js'), 'utf8'), 'Application-owned script');
+});

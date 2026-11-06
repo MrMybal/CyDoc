@@ -12,6 +12,7 @@ These instructions apply to the CyDoc checkout. To use CyDoc in another applicat
 ## Architecture and constraints
 
 - Reading must work through `file://` without a web server. `npm run dev` is a build watcher. Keep the generated classic-script bootstrap and local binary asset provider working.
+- Exports open through `Documentation.html`; scripts, media, manifests, notices and version exports belong under `DocData/`. Keep authored `assets/` paths logical and use the reader's asset URL resolver for display. Preserve legacy entry redirects when migrating an existing export.
 - Keep `src/index.ts` and its core dependencies independent of the DOM and media engines. Media modules are optional and loaded on demand. Only the mesh module needs Three.js.
 - The viewer owns the URL fragment and uses a global CSS reset. Embeddings use a dedicated page or iframe.
 - Generate and package assets locally. Do not introduce runtime CDNs, remote fonts, telemetry, network-dependent search, or `fetch()` for local manifests and binary media.

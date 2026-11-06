@@ -6,4 +6,4 @@ revision: 2
 ---
 ## Installation {#installation}
 
-Ouvrez `index.html` sans serveur.
+Ouvrez `Documentation.html` sans serveur.

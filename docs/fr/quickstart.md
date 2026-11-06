@@ -16,7 +16,7 @@ npm install
 npm run build
 ```
 
-Ouvrez ensuite **dist/site/index.html** directement dans votre navigateur, avec une adresse `file:///…`. `npm run dev` peut surveiller les sources et reconstruire les fichiers pendant l’édition ; cette commande ne démarre aucun serveur web. Node.js 22 ou supérieur est nécessaire à la génération ; le lecteur exporté ne dépend pas de Node.js.
+Ouvrez ensuite **dist/site/Documentation.html** directement dans votre navigateur, avec une adresse `file:///…`. `npm run dev` peut surveiller les sources et reconstruire les fichiers pendant l’édition ; cette commande ne démarre aucun serveur web. Node.js 22 ou supérieur est nécessaire à la génération ; le lecteur exporté ne dépend pas de Node.js.
 
 > Le paquet est actuellement en développement dans ce dépôt. Il n’est pas encore publié sur un registre npm.
 
@@ -41,16 +41,19 @@ Ajoutez sa traduction dans `docs/en/` avec le même `id`. Pour en savoir plus, c
 
 ## Générer et embarquer {#build}
 
-La commande de génération produit un dossier autonome contenant le lecteur, les pages compilées, le manifeste et les médias locaux. Copiez **tout le dossier**, puis ouvrez `index.html` dans un navigateur ou une WebView.
+La commande de génération produit un dossier autonome contenant le lecteur, les pages compilées, le manifeste et les médias locaux. Copiez **tout le dossier**, puis ouvrez `Documentation.html` dans un navigateur ou une WebView.
 
 ```text
-dist/site/
-  index.html
-  viewer.css
-  viewer.js
-  data.js
-  manifest.json
-  assets/
+App/Documentation/
+  Documentation.html
+  DocData/
+    viewer.css
+    viewer.js
+    data.js
+    manifest.json
+    translation-report.json
+    assets/
+    media-*.js
 ```
 
 ## Ouvrir l’aide contextuelle {#contextual-help}
@@ -58,7 +61,7 @@ dist/site/
 Un simple lien ouvre la bonne page et la bonne section. Il fonctionne aussi depuis un bouton d’aide de votre application.
 
 ```text
-help/index.html#/fr/quickstart/installation
+Documentation/Documentation.html#/fr/quickstart/installation
 ```
 
 Le format est le même sur toutes les plateformes. Découvrez les [exemples d’intégration](doc:integration).

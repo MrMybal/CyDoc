@@ -13,7 +13,7 @@ final class CyDocHelpController {
     deinit { if let monitor { NSEvent.removeMonitor(monitor) } }
     func openHelp() {
         guard let resources = Bundle.main.resourceURL else { return }
-        let file = resources.appendingPathComponent("help/index.html")
+        let file = resources.appendingPathComponent("Documentation/Documentation.html")
         var components = URLComponents(url: file, resolvingAgainstBaseURL: false)!
         let allowed = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~")
         components.percentEncodedFragment = "/fr/" + (page.addingPercentEncoding(withAllowedCharacters: allowed) ?? "overview")

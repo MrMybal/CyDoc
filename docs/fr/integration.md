@@ -12,7 +12,7 @@ Le lecteur exporté utilise les standards du web. Il peut s’ouvrir dans le nav
 Une URL combine le chemin local du lecteur, la langue, l’identifiant de page et, éventuellement, une section. La partie après `#` ne demande aucune configuration de serveur.
 
 ```text
-help/index.html#/fr/quickstart/installation
+Documentation/Documentation.html#/fr/quickstart/installation
 ```
 
 Dans du code JavaScript ou TypeScript, utilisez le noyau pour encoder correctement les identifiants.
@@ -24,7 +24,7 @@ const helpUrl = createLink({
   locale: 'fr',
   pageId: 'quickstart',
   anchor: 'installation'
-}, './help/index.html');
+}, './Documentation/Documentation.html');
 ```
 
 ## Desktop et Android {#platforms}
@@ -67,4 +67,4 @@ Livrez le contenu et les médias avec la même version de votre application. Le 
 
 ## Exemples natifs F1 {#native}
 
-Le [kit d’intégration](doc:native-help) contient des exemples Qt, Python/Tk, WinForms, Java/Swing, AppKit et Android/WebView. Le chemin Android direct en `file:///android_asset/help/index.html` est illustré sans serveur ni permission Internet. Les aides de liens C++, C#, Java et Python sont vérifiées ; les fenêtres Qt, macOS et Android restent à valider sur leurs appareils.
+Le [kit d’intégration](doc:native-help) contient des exemples Qt, Python/Tk, WinForms, Java/Swing, AppKit et Android/WebView. Le chemin Android direct en `file:///android_asset/Documentation/Documentation.html` est illustré sans serveur ni permission Internet. Les aides de liens C++, C#, Java et Python sont vérifiées ; les fenêtres Qt, macOS et Android restent à valider sur leurs appareils.

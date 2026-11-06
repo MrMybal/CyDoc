@@ -85,13 +85,13 @@ End Object'''
     page(locale, 'diagrams', t('Galerie de schémas', 'Diagram gallery'), t('Flux, décisions, séquences, classes, dépendances et architecture.', 'Flows, decisions, sequences, classes, dependencies, and architecture.'), 18, body)
 
     languages = [
-        ('C++', 'cpp', 'api-cpp', '#include "cydoc/help.hpp"\nconst auto help = cydoc::make_help_link("file:///D:/Help/index.html", "fr", "quickstart", "installation");'),
-        ('Python', 'python', 'api-python', 'from help_link import help_link\nurl = help_link("file:///home/user/help/index.html", "fr", "quickstart")'),
+        ('C++', 'cpp', 'api-cpp', '#include "cydoc/help.hpp"\nconst auto help = cydoc::make_help_link("file:///D:/Documentation/Documentation.html", "fr", "quickstart", "installation");'),
+        ('Python', 'python', 'api-python', 'from help_link import help_link\nurl = help_link("file:///home/user/Documentation/Documentation.html", "fr", "quickstart")'),
         ('C', 'c', 'api-c', '#include "help.h"\nchar route[256];\ncydoc_help_link(route, sizeof route, "fr", "quickstart");'),
-        ('C#', 'csharp', 'api-csharp', 'using CyDoc.Examples;\nstring url = HelpLink.Create("file:///D:/Help/index.html", "fr", "quickstart");'),
-        ('JavaScript', 'javascript', 'api-javascript', 'import { helpLink } from "./help.js";\nconst url = helpLink("./help/index.html", "fr", "quickstart");'),
-        ('TypeScript', 'typescript', 'api-typescript', 'import { helpLink } from "./help.js";\nconst url: string = helpLink("./help/index.html", "fr", "quickstart");'),
-        ('Java', 'java', 'api-java', 'import cydoc.examples.HelpLink;\nString url = HelpLink.create("file:///home/user/help/index.html", "fr", "quickstart");'),
+        ('C#', 'csharp', 'api-csharp', 'using CyDoc.Examples;\nstring url = HelpLink.Create("file:///D:/Documentation/Documentation.html", "fr", "quickstart");'),
+        ('JavaScript', 'javascript', 'api-javascript', 'import { helpLink } from "./help.js";\nconst url = helpLink("./Documentation/Documentation.html", "fr", "quickstart");'),
+        ('TypeScript', 'typescript', 'api-typescript', 'import { helpLink } from "./help.js";\nconst url: string = helpLink("./Documentation/Documentation.html", "fr", "quickstart");'),
+        ('Java', 'java', 'api-java', 'import cydoc.examples.HelpLink;\nString url = HelpLink.create("file:///home/user/Documentation/Documentation.html", "fr", "quickstart");'),
         ('HLSL', 'hlsl', 'api-hlsl', '#include "common.hlsli"\nfloat4 MainPS(float4 position : SV_Position) : SV_Target {\n    return float4(ApplyExposure(float3(0.1, 0.5, 0.3), 0.5), 1.0);\n}'),
         ('GLSL', 'glsl', 'api-glsl', '#version 450\n#extension GL_GOOGLE_include_directive : require\n#include "common.glsl"\nlayout(location = 0) out vec4 fragColor;\nvoid main() { fragColor = vec4(applyExposure(vec3(0.1, 0.5, 0.3), 0.5), 1.0); }')
     ]
@@ -103,8 +103,8 @@ End Object'''
 
     body = t('Les exemples sont des fichiers du dépôt, pas des blocs de texte simulant une extraction. Le générateur lit leurs commentaires, construit les pages d’API et indexe leurs dépendances.', 'The examples are repository files, not text blocks pretending to be extracted. The generator reads their comments, creates API pages, and indexes dependencies.')
     body += f'\n\n## C++ : header et implémentation {{#cpp}}\n\n' + t('[API de make_help_link](doc:api-cpp) · [Header help.hpp](doc:source-examples-cpp-include-cydoc-help-hpp) · [Implémentation help.cpp](doc:source-examples-cpp-src-help-cpp) · [Module C++20](doc:source-examples-cpp-modules-cydoc-help-cppm).', '[make_help_link API](doc:api-cpp) · [help.hpp header](doc:source-examples-cpp-include-cydoc-help-hpp) · [help.cpp implementation](doc:source-examples-cpp-src-help-cpp) · [C++20 module](doc:source-examples-cpp-modules-cydoc-help-cppm).')
-    body += '\n\n```cpp\n#include "cydoc/help.hpp"\n\nconst auto url = cydoc::make_help_link(\n    "file:///D:/Help/index.html", "fr", "quickstart", "installation");\n// The host app opens this local URL using its browser or WebView.\n```\n'
-    body += f'\n## Module C++20 {{#modules}}\n\n```cpp\nimport cydoc.help;\nconst auto url = cydoc_module::link("file:///D:/Help/index.html", "fr", "quickstart");\n```\n'
+    body += '\n\n```cpp\n#include "cydoc/help.hpp"\n\nconst auto url = cydoc::make_help_link(\n    "file:///D:/Documentation/Documentation.html", "fr", "quickstart", "installation");\n// The host app opens this local URL using its browser or WebView.\n```\n'
+    body += f'\n## Module C++20 {{#modules}}\n\n```cpp\nimport cydoc.help;\nconst auto url = cydoc_module::link("file:///D:/Documentation/Documentation.html", "fr", "quickstart");\n```\n'
     body += t('Le module C++20 réexporte un wrapper de la fonction portable C++17. Il faut compiler le module avec les options de votre compilateur, puis lier l’implémentation help.cpp. La cible CMake de démonstration reste en C++17.', 'The C++20 module exports a wrapper around the portable C++17 function. Compile the module using your compiler’s options, then link help.cpp. The demo CMake target stays on C++17.')
     body += f'\n\n## {t("Autres langages", "Other languages")} {{#languages}}\n\n' + t('[Exemples des neuf langages](doc:code-languages) · [Imports JavaScript](doc:source-examples-javascript-help-js) · [Imports TypeScript](doc:source-examples-typescript-help-ts) · [Docstrings Python](doc:source-examples-python-help-link-py) · [Includes HLSL](doc:source-examples-shaders-preview-hlsl) · [Includes GLSL](doc:source-examples-shaders-preview-frag).', '[Nine-language examples](doc:code-languages) · [JavaScript imports](doc:source-examples-javascript-help-js) · [TypeScript imports](doc:source-examples-typescript-help-ts) · [Python docstrings](doc:source-examples-python-help-link-py) · [HLSL includes](doc:source-examples-shaders-preview-hlsl) · [GLSL includes](doc:source-examples-shaders-preview-frag).')
     body += f'\n\n## {t("Configuration d’extraction", "Extraction configuration")} {{#configuration}}\n\n' + block('json', {'sources': ['examples'], 'sourceIndex': {'enabled': True, 'includeDirs': ['examples/cpp/include', 'examples/shaders']}})

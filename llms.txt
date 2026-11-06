@@ -2,6 +2,8 @@
 
 > Modular, multilingual, MIT-licensed application documentation, readable from local files without a web server. These guides describe the current 0.1.0 implementation.
 
+Exports open through `Documentation.html`; their scripts, media and manifests are contained in `DocData/`.
+
 ## Guides for AI coding assistants
 
 - [Start here](ai/README.md): scope, integration choices and verification.

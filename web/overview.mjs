@@ -14,7 +14,7 @@ export function renderOverview(locale) {
 <span class="syntax-purple">#include</span> <span class="syntax-green">"cydoc/help.hpp"</span>
 
 <span class="syntax-purple">const auto</span> help = <span class="syntax-blue">cydoc::make_help_link</span>(
-  <span class="syntax-green">"file:///D:/Help/index.html"</span>,
+  <span class="syntax-green">"file:///D:/Documentation/Documentation.html"</span>,
   <span class="syntax-green">"${locale}"</span>, <span class="syntax-green">"quickstart"</span>, <span class="syntax-green">"installation"</span>
 );</code></pre><div class="editor-footer"><span class="green-dot"></span>${t('Fonctionne entièrement en local', 'Works entirely offline')}${icon('shield')}</div></div></section>
       <section class="explore"><div class="section-heading"><h2>${t('Un bon point de départ', 'A good place to start')}</h2><span>${t('DE L’IDÉE À L’INTÉGRATION', 'FROM IDEA TO INTEGRATION')}</span></div><div class="card-grid">

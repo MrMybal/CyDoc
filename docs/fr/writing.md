@@ -37,7 +37,7 @@ Les identifiants de section explicites comme `{#installation}` permettent de con
 Pour viser une autre documentation, utilisez `doc://identifiant/page#section` et déclarez sa destination dans `linkedDocs` de la configuration :
 
 ```json
-{"linkedDocs":{"editor":{"base":"../editor/help/index.html","manifest":"../editor/help/manifest.json"}}}
+{"linkedDocs":{"editor":{"base":"../editor/Documentation/Documentation.html","manifest":"../editor/Documentation/DocData/manifest.json"}}}
 ```
 
 ```markdown

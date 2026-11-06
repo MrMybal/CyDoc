@@ -19,17 +19,17 @@
     {
       "id": "1-demo",
       "label": "Démo v1",
-      "base": "../v1/index.html"
+      "base": "../v1/Documentation.html"
     },
     {
       "id": "2-demo",
       "label": "Démo v2",
-      "base": "../v2/index.html"
+      "base": "../v2/Documentation.html"
     },
     {
       "id": "0.1.0",
       "label": "CyDoc 0.1.0",
-      "base": "../../index.html"
+      "base": "../../../Documentation.html"
     }
   ],
   "homePage": "overview",

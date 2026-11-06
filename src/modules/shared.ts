@@ -1,3 +1,5 @@
+import type { MediaContext } from '../types.js';
+
 export const escape = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]!);
 export const localAsset = (value: unknown): string => {
   const url = String(value || '');
@@ -5,6 +7,10 @@ export const localAsset = (value: unknown): string => {
   try { decoded = decodeURIComponent(url); } catch { throw new Error('Invalid asset URL'); }
   if (!/^(?:\.\/)?assets\/[a-zA-Z0-9_./%~-]+$/.test(url) || /(?:^|\/)\.\.(?:\/|$)|[\\\u0000-\u0020]/.test(decoded)) throw new Error('Media must stay inside assets/');
   return url;
+};
+export const assetUrl = (value: unknown, context: MediaContext): string => {
+  const src = localAsset(value);
+  return context.assetUrl ? context.assetUrl(src) : src;
 };
 export const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 export const mediaIcon = (name: 'expand' | 'collapse' | 'grab' | 'previous' | 'next' | 'link') => `<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${{

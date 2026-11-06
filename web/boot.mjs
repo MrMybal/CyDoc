@@ -7,7 +7,7 @@ function loadAsset(src) {
   const file = options.assets?.[src];
   if (!file) return Promise.reject(new Error(`Local asset is not packaged: ${src}`));
   const pending = new Promise((resolve, reject) => {
-    const script = document.createElement('script'); script.src = file;
+    const script = document.createElement('script'); script.src = `DocData/${file}`;
     const cleanup = () => { pendingAssets.delete(src); script.remove(); };
     script.onload = () => {
       const asset = globalThis.CYDOC_ASSETS?.[src];
@@ -23,13 +23,14 @@ function loadAsset(src) {
 }
 const modules = Object.fromEntries((options.modules || []).map(name => [name, () => new Promise((resolve, reject) => {
   const script = document.createElement('script');
-  script.src = `media-${name}.js`;
+  script.src = `DocData/media-${name}.js`;
   script.onload = () => resolve(globalThis[`CyDocMedia_${name}`].default);
   script.onerror = () => { script.remove(); reject(new Error(`Cannot load media-${name}.js`)); };
   document.head.append(script);
 })]));
 mountViewer(document.querySelector('#app'), globalThis.CYDOC_DATA, {
   homePage: options.homePage,
+  assetBase: 'DocData/',
   renderHome: options.landingPage ? renderOverview : undefined,
   modules,
   loadAsset

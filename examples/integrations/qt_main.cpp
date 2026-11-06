@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
         QWidget* context = QApplication::focusWidget();
         while (context && !context->property("cydocPage").isValid()) context = context->parentWidget();
         const auto page = (context ? context : &window)->property("cydocPage").toString();
-        const auto file = QUrl::fromLocalFile(QCoreApplication::applicationDirPath() + "/help/index.html");
+        const auto file = QUrl::fromLocalFile(QCoreApplication::applicationDirPath() + "/Documentation/Documentation.html");
         QDesktopServices::openUrl(QUrl::fromEncoded(QByteArray::fromStdString(cydoc_native::link(file.toEncoded().toStdString(), "fr", page.toUtf8().toStdString()))));
     });
     window.show(); return app.exec();

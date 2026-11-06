@@ -8,7 +8,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.webkit.WebResourceRequest
 
-// Copy dist/site/* into app/src/main/assets/help/. No INTERNET permission is needed.
+// Copy dist/site/* into app/src/main/assets/Documentation/. No INTERNET permission is needed.
 class CyDocActivity : Activity() {
     private lateinit var reader: WebView
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,7 +21,7 @@ class CyDocActivity : Activity() {
         reader.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
                 val url = request.url
-                return url.scheme != "file" || !(url.path ?: "").startsWith("/android_asset/help/")
+                return url.scheme != "file" || !(url.path ?: "").startsWith("/android_asset/Documentation/")
             }
         }
         setContentView(reader)
@@ -29,7 +29,7 @@ class CyDocActivity : Activity() {
     }
     fun openHelp(page: String, time: String? = null) {
         val state = if (time != null) "?media=media-1&time=" + Uri.encode(time) else ""
-        reader.loadUrl("file:///android_asset/help/index.html#/fr/" + Uri.encode(page) + state)
+        reader.loadUrl("file:///android_asset/Documentation/Documentation.html#/fr/" + Uri.encode(page) + state)
     }
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_F1) { openHelp("precise-links"); return true }

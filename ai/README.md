@@ -15,7 +15,7 @@ The host application's instructions and requested scope still apply. These guide
 
 ## Working assumptions
 
-- Documentation is local. Ship the complete generated directory and open its `index.html` with a file URL. No server is needed at reading time.
+- Documentation is local. Ship `Documentation.html` together with its `DocData/` directory, including optional version exports, and open the HTML with a file URL. No server is needed at reading time.
 - Markdown, syntax highlighting, source indexing and API imports run at build time. Node.js 22 or later is a generation requirement, not a reader requirement.
 - Choose only the optional readers the application needs. A gallery also needs the modules for its item types. Three.js belongs only to mesh integration.
 - Use the application's existing logo through the optional `logo` configuration/manifest field. Copy it under `assets/`; if none is available, retain the default book icon. See [branding instructions](INTEGRATION.md).

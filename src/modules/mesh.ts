@@ -138,7 +138,7 @@ const meshModule: MediaModule = {
     const packedResources = new Map<string, string>();
     manager.setURLModifier(url => {
       if (/^(data|blob):/.test(url)) return url;
-      const target = new URL(url, location.href), assetRoot = new URL('assets/', location.href);
+      const target = new URL(url, location.href), assetRoot = new URL(!loadAsset && context.assetUrl ? context.assetUrl('assets/') : 'assets/', location.href);
       if (target.origin !== assetRoot.origin || !target.pathname.startsWith(assetRoot.pathname)) throw new Error('Mesh resources must stay local to assets/');
       const packed = packedResources.get(target.href);
       if (packed) return packed;
@@ -156,7 +156,7 @@ const meshModule: MediaModule = {
         gltf = await loader.parseAsync(unpackAsset(packed), directory);
       } else {
         if (location.protocol === 'file:') throw new Error('Provide loadAsset when embedding the mesh module directly from local files');
-        gltf = await loader.loadAsync(value);
+        gltf = await loader.loadAsync(context.assetUrl ? context.assetUrl(value) : value);
       }
       if (disposed || signal.aborted) { gltf.scenes.forEach(disposeObject); return; }
       loaded[index] = gltf; gltf.scenes.forEach(scene => resources.add(scene));

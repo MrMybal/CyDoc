@@ -5,7 +5,7 @@ description: Local integration examples for all four platforms.
 section: Integration
 order: 36
 ---
-Examples bind F1 or a help action to a contextual page. Distribute the export in `help/` beside your app. Qt uses the executable directory; Python, C#, Java, and Swift demonstrate platform path APIs.
+Examples bind F1 or a help action to a contextual page. Distribute the export in `Documentation/` beside your app. Qt uses the executable directory; Python, C#, Java, and Swift demonstrate platform path APIs.
 
 - [Qt · Windows/Linux/macOS](doc:source-examples-integrations-qt-main-cpp)
 - [Python/Tk · Windows/Linux/macOS](doc:source-examples-integrations-help-tk-py)
@@ -24,4 +24,4 @@ python examples/integrations/help_tk.py
 javac examples/integrations/HelpWindow.java
 ```
 
-Qt 6 Widgets is required for the C++ example. Tkinter, WinForms, and Java/Swing use host components. Swift supplies an AppKit controller for your window. Android supplies an Activity and manifest fragment: copy the export into `app/src/main/assets/help/`, then open the Activity from your app. It loads `file:///android_asset/help/index.html` using classic scripts without Internet permission. No native SDK is added to the JavaScript core.
+Qt 6 Widgets is required for the C++ example. Tkinter, WinForms, and Java/Swing use host components. Swift supplies an AppKit controller for your window. Android supplies an Activity and manifest fragment: copy the export into `app/src/main/assets/Documentation/`, then open the Activity from your app. It loads `file:///android_asset/Documentation/Documentation.html` using classic scripts without Internet permission. No native SDK is added to the JavaScript core.

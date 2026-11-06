@@ -23,7 +23,7 @@ import { createLink } from "cydoc";
 const url = createLink({
   locale: "fr", pageId: "video-viewer",
   state: { media: "media-1", time: "1.25" }
-}, "file:///D:/Help/index.html");
+}, "file:///D:/Documentation/Documentation.html");
 ```
 
 Le fragment contient `?media=…&time=…`. Un identifiant explicite `id` dans le bloc média stabilise le lien si vous réorganisez la page. Les annotations créées par le lecteur sont privées : un lien vers leur identifiant nécessite qu’elles existent sur l’appareil cible.

@@ -6,4 +6,4 @@ sourceRevision: 1
 ---
 ## Installation {#installation}
 
-Open `index.html` without a server.
+Open `Documentation.html` without a server.

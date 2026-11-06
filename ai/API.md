@@ -33,8 +33,8 @@ import type { Documentation, DocRoute } from 'cydoc';
 const route: DocRoute = {
   locale: 'en', pageId: 'overview', anchor: 'getting-started'
 };
-const url = createLink(route, './help/index.html');
-// ./help/index.html#/en/overview/getting-started
+const url = createLink(route, './Documentation/Documentation.html');
+// ./Documentation/Documentation.html#/en/overview/getting-started
 const parsed = parseLink(url.slice(url.indexOf('#')), 'en', 'overview');
 ```
 
@@ -88,7 +88,7 @@ For cross-manual addressing:
 
 ```typescript
 const manuals = createDocumentationRegistry([
-  { id: 'editor', base: '../editor/help/index.html' }
+  { id: 'editor', base: '../editor/Documentation/Documentation.html' }
 ]);
 const editorUrl = manuals.link({
   documentationId: 'editor', locale: 'en', pageId: 'settings', anchor: 'export'
@@ -109,6 +109,7 @@ An optional `manifest` on a registry entry validates page and section targets. W
 | `storageId` | Namespace for application-specific local reading data |
 | `modules` | Map from module name to `() => Promise<MediaModule>` |
 | `loadAsset` | `(src: string) => Promise<PackedAsset>` for local binary providers |
+| `assetBase` | Directory prefix for display assets, e.g. `DocData/`; default is the reader's directory |
 | `renderHome` | Optional trusted `(locale: string) => string` HTML callback |
 
 Route locale/page information takes priority over the initial route defaults. Available storage and theme preferences can influence the initial reader state. Content falls back to the default content locale; built-in UI translations currently cover French and English.
@@ -148,11 +149,12 @@ const exampleModule: MediaModule = {
 | `signal` | Abort signal for this reader's active lifecycle |
 | `storageKey` | Namespaced instance identifier |
 | `loadAsset?` | Packed local binary provider |
+| `assetUrl?` | `(src: string) => string`; resolves logical `assets/...` paths for images, video and thumbnails |
 | `loadModule?` | Loader for another selected media module, used by galleries |
 | `state?` | Initial media state, with string values |
 | `linkState?` | Host callback for sharing the current view |
 
-`PackedAsset` is `{ base64: string; resources?: Record<string, string> }`. The main binary uses base64; glTF dependencies in `resources` are packed data URLs. The generated bootstrap supplies these assets through on-demand classic scripts. Keep providers local and compatible with file origins.
+`PackedAsset` is `{ base64: string; resources?: Record<string, string> }`. The main binary uses base64; glTF dependencies in `resources` are packed data URLs. The generated bootstrap supplies these assets through on-demand classic scripts from `DocData/`. Custom readers should validate the logical local path, then use `context.assetUrl?.(src) ?? src` for display URLs. Pass the original logical path to `loadAsset` and use it for persistence keys and annotation exports. Keep providers local and compatible with file origins.
 
 Use the signal for listeners. Stop timers and animation loops, disconnect observers, pause media and dispose graphics resources in cleanup. Handle cancellation while awaiting a loader; a stale asynchronous mount must not overwrite a newer page or gallery item. Cleanup may run after the signal is aborted. Built-in readers can receive subsequent state through the `cydoc:state` custom event; implement this event in custom modules if they need in-place deep-link updates. `linkState` is a host callback, not a state persistence API.
 

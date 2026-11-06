@@ -10,7 +10,7 @@ import { decodeGif } from '../dist/modules/gif-decode.js';
 
 test('exported GLBs and GIFs decode without any file, HTTP, or network fetch', async () => {
   const scope = vm.createContext({});
-  vm.runInContext(await readFile('dist/site/data.js', 'utf8'), scope);
+  vm.runInContext(await readFile('dist/site/DocData/data.js', 'utf8'), scope);
   const catalog = scope.CYDOC_OPTIONS.assets;
   assert.deepEqual(Object.keys(catalog).sort(), ['assets/sample-a.glb', 'assets/sample-b.glb', 'assets/steps-a.gif', 'assets/steps-b.gif']);
   const previousFetch = globalThis.fetch;
@@ -18,7 +18,7 @@ test('exported GLBs and GIFs decode without any file, HTTP, or network fetch', a
   try {
     for (const [src, script] of Object.entries(catalog)) {
       assert.match(script, /^media-(mesh|gif)-data-[a-f0-9]{16}\.js$/);
-      vm.runInContext(await readFile(join('dist/site', script), 'utf8'), scope);
+      vm.runInContext(await readFile(join('dist/site/DocData', script), 'utf8'), scope);
       const bytes = unpackAsset(scope.CYDOC_ASSETS[src]);
       assert.deepEqual(Buffer.from(bytes), await readFile(src));
       if(src.endsWith('.gif')){assert.equal(decodeGif(new Uint8Array(bytes)).frames.length,12);continue;}

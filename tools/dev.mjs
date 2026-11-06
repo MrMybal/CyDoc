@@ -13,7 +13,7 @@ async function compile() {
   return buildSite();
 }
 const site = await compile();
-console.log(`Local file: ${pathToFileURL(join(site.output, 'index.html')).href}`);
+console.log(`Local file: ${pathToFileURL(join(site.output, 'Documentation.html')).href}`);
 console.log('Watching local sources. Refresh the file after changes. No web server is started.');
 let rebuilding = false;
 let dirty = false;

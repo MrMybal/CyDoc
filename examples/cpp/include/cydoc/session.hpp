@@ -9,7 +9,7 @@ public:
 class HelpSession : public DocSession {
 public:
     std::string open(std::string_view page, std::string_view locale = "fr") const {
-        return make_help_link("help/index.html", locale, page);
+        return make_help_link("Documentation/Documentation.html", locale, page);
     }
 };
 }
