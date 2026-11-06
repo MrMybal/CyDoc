@@ -3,6 +3,7 @@ import type { Documentation, DocPage, ViewerOptions, DocRoute } from './types.js
 import { mountReaderTools, revealTarget } from './reader-tools.js';
 import { captureReadingView, restoreReadingView, restoreScroll } from './reading-view.js';
 import { navigationTree, containsPage, type NavigationNode } from './navigation.js';
+import { mountTooltips } from './tooltips.js';
 
 import { icon } from './icons.js';
 import { themes, validTheme } from './themes.js';
@@ -61,11 +62,12 @@ export function mountViewer(root: HTMLElement, data: Documentation, options: Vie
 
   function renderNavigation(nodes: NavigationNode[], depth = 0): string {
     return `<ul class="${depth ? 'nav-children' : 'nav-tree'}">${nodes.map(node => {
-      const link = node.page ? `<a href="${href(node.page.id)}" data-page="${esc(node.page.id)}" title="${esc(node.page.description)}">${icon(navIcon[node.page.id] || 'file')}<span>${esc(node.label)}</span></a>` : '';
+      const link = node.page ? `<a href="${href(node.page.id)}" data-page="${esc(node.page.id)}" data-tooltip-title="${esc(node.page.title)}" data-tooltip-description="${esc(node.page.description)}">${icon(navIcon[node.page.id] || 'file')}<span>${esc(node.label)}</span></a>` : '';
       if (!node.children.length) return `<li class="nav-leaf">${link}</li>`;
       const saved = navigationViews.get(locale)?.groups[node.key];
       const open = saved ?? (containsPage(node, current?.id) || (!node.page && depth === 0 && !['Fichiers source', 'Source files'].includes(node.label)));
-      return `<li class="nav-branch"><details class="nav-group" data-nav-key="${esc(node.key)}" ${open ? 'open' : ''}><summary>${icon('chevron', 'nav-chevron')}${node.page ? link : `${icon('folder')}<span>${esc(node.label)}</span>`}</summary>${renderNavigation(node.children, depth + 1)}</details></li>`;
+      const folderTooltip = !node.page ? ` data-tooltip-title="${esc(node.key.replace(/^section:\//, '').replaceAll('/', ' / '))}"` : '';
+      return `<li class="nav-branch"><details class="nav-group" data-nav-key="${esc(node.key)}" ${open ? 'open' : ''}><summary${folderTooltip}>${icon('chevron', 'nav-chevron')}${node.page ? link : `${icon('folder')}<span>${esc(node.label)}</span>`}</summary>${renderNavigation(node.children, depth + 1)}</details></li>`;
     }).join('')}</ul>`;
   }
 
@@ -135,6 +137,7 @@ export function mountViewer(root: HTMLElement, data: Documentation, options: Vie
       else if (group.open) group.open = false;
       else group.parentElement?.closest('details')?.querySelector<HTMLElement>('summary')?.focus({ preventScroll: true });
     }) as EventListener, { signal: pageSignal });
+    mountTooltips(root, pageSignal);
   }
 
   function highlightSearch() {

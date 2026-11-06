@@ -48,6 +48,8 @@ For nested page navigation, add `parent: overview` to a child page's metadata. T
 
 The reader's header searches prose, code and symbols with live results and content/language filters. Ctrl+K opens the search dialog. Keep useful descriptions and explicit anchors so search results and contextual links remain understandable.
 
+The navigation tooltip uses the complete page `title`, followed by its optional `description`. Write short, useful descriptions; no separate tooltip configuration is needed. Folder tooltips include their full navigation path. Code-tab items and gallery items may each add a plain-text `description`, displayed beneath their complete label when hovered or focused. These descriptions are text, not Markdown or HTML.
+
 Translate titles and prose while preserving the page ID and explicit anchor IDs. A missing translation falls back to the default content locale. Set `translationReport: true` to add a report page; every build writes `translation-report.json`. Update `revision` when the original meaning changes, and update `sourceRevision` only when the translation has caught up. Without an original revision, the build uses a content fingerprint.
 
 ## Links are part of the application contract
@@ -67,7 +69,7 @@ CyDoc rich fences contain **JSON**, not Mermaid syntax or arbitrary JavaScript:
 
 ````markdown
 ```tabs
-{"items":[{"label":"C++","lang":"cpp","code":"open_help();"},{"label":"Python","lang":"python","code":"open_help()"}]}
+{"items":[{"label":"C++","description":"Minimal C++ help call.","lang":"cpp","code":"open_help();"},{"label":"Python","lang":"python","code":"open_help()"}]}
 ```
 
 ```callout

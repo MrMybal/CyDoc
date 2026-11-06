@@ -186,6 +186,8 @@ To nest a page below another page in the sidebar, add `parent: settings` to its 
 
 The header searches documentation terms, code and symbols while typing. Results support content/language filters, arrow keys and Enter; Ctrl+K opens the search dialog. Escape or a click outside closes the search popover. Navigation branches retain their open state and scroll position between pages.
 
+Navigation entries and reader tabs show fast tooltips with their complete label and optional description, on hover or keyboard focus. Page tooltips use the page's `title` and `description`; folder tooltips show the complete folder path. Tooltips float outside the scrolling menu, wrap long names, and close with Escape. Code-tab and gallery items can provide a plain-text `description` for their tooltip.
+
 Media blocks accept JSON, for example:
 
 ````markdown

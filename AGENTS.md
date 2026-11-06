@@ -27,7 +27,7 @@ These instructions apply to the CyDoc checkout. To use CyDoc in another applicat
 | --- | --- |
 | `src/index.ts`, `src/types.ts` | DOM-free routing, registry, search and public contracts |
 | `src/viewer.ts`, `src/reader-tools.ts`, `src/reading-view.ts` | Reader, personal tools and reading position |
-| `src/viewer.css`, `src/themes.ts`, `src/icons.ts` | Shared appearance and themes |
+| `src/viewer.css`, `src/themes.ts`, `src/icons.ts`, `src/tooltips.ts` | Shared appearance, themes and tooltips |
 | `src/modules/` | Optional readers and their shared controls |
 | `tools/` | Compilation, imports, extraction and local export |
 | `web/` | Local entry point and generated-reader bootstrap |

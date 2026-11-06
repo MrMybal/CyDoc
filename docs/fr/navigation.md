@@ -17,6 +17,8 @@ Essayez `configuration`, `make_help_link` ou `PBR`. Les accents sont ignorés et
 
 Le menu est un arbre repliable. Le chevron ouvre ou ferme une branche. Le titre d’une page parente reste un lien vers son propre contenu. Les branches ouvertes et le défilement du menu sont conservés quand vous changez de page.
 
+Survolez une entrée pour voir rapidement son nom complet et sa description, même si le menu coupe le libellé. Le focus au clavier affiche immédiatement l’infobulle. Les dossiers affichent leur chemin complet ; les onglets de code et de galerie affichent aussi leur libellé intégral. Échap ferme l’infobulle. Son texte reste visible lorsque vous déplacez le pointeur dessus.
+
 Pour placer une page sous une autre, utilisez son identifiant stable :
 
 ```text

@@ -117,6 +117,8 @@ Navigation preserves page reading positions, selected code tabs and menu scroll 
 
 The header search field displays results while typing. Ctrl+K opens a modal search dialog using the same query, content filters and language filters. The sidebar uses nested lists with native disclosure controls and page links. Tab/Enter and left/right arrows work on navigation branches; branch state is retained by stable node keys during the session.
 
+In the reader, navigation entries, folders and `[role=tab]` controls receive a fast tooltip on pointer hover or immediate keyboard focus. Navigation descriptions come from `DocPage.description`. Code-tab and gallery items may supply an optional plain-text `description`. The tooltip contains the full label, is linked with `aria-describedby`, stays within the viewport and clears on Escape, navigation or teardown. It requires no module or additional dependency.
+
 ## Optional reader contract
 
 ```typescript

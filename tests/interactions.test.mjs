@@ -11,6 +11,7 @@ import { compileMarkdown } from '../tools/compiler.mjs';
 import { readFile } from 'node:fs/promises';
 import { mediaPresentation, commonStyles, expandButton, watchExpansion } from '../dist/modules/shared.js';
 import { captureReadingView, restoreReadingView, restoreScroll } from '../dist/reading-view.js';
+import { mountTooltips } from '../dist/tooltips.js';
 
 function dom(t) {
   // Unit fixtures only. No navigation, script evaluation, resource fetching, or server.
@@ -383,4 +384,68 @@ test('application branding falls back gracefully and personal tools occupy only 
   logo.dispatchEvent(new window.Event('error'));
   assert.equal(host.querySelector('.brand-logo'),null);assert.equal(host.querySelector('.brand-mark.has-logo'),null);assert.equal(host.querySelector('.brand-fallback').hidden,false);assert.ok(host.querySelector('.brand-fallback .icon'));
   viewer.destroy();
+});
+
+
+test('fast tooltips show complete text safely outside clipped navigation and preserve existing descriptions', async t => {
+  const {host,window,context}=dom(t);
+  host.innerHTML='<nav class="side-nav" style="overflow:hidden"><a data-tooltip-title="Very long complete documentation name" data-tooltip-description="Optional description" aria-describedby="existing-help"><span>Very long…</span></a></nav><span id="existing-help">Existing help</span>';
+  mountTooltips(host,context.signal,10);
+  const link=host.querySelector('a'),tooltip=host.querySelector('[role=tooltip]');
+  link.dataset.tooltipTitle='Full <name> & complete path';link.dataset.tooltipDescription='Description <img src=x> is text';
+  tooltip.getBoundingClientRect=()=>({width:320,height:90});
+  link.getBoundingClientRect=()=>({left:185,right:220,top:200,bottom:234,height:34,width:35});
+  Object.defineProperty(window,'innerWidth',{configurable:true,value:540});Object.defineProperty(window,'innerHeight',{configurable:true,value:280});
+  link.querySelector('span').dispatchEvent(new window.PointerEvent('pointerover',{bubbles:true,pointerType:'mouse'}));
+  assert.equal(tooltip.hidden,true);
+  await new Promise(resolve=>setTimeout(resolve,30));
+  assert.equal(tooltip.hidden,false);assert.equal(tooltip.querySelector('strong').textContent,'Full <name> & complete path');
+  assert.equal(tooltip.querySelector('.reader-tooltip-description').textContent,'Description <img src=x> is text');assert.equal(tooltip.querySelector('img'),null);
+  assert.equal(tooltip.parentElement,host);assert.equal(tooltip.closest('.side-nav'),null);
+  assert.equal(tooltip.style.left,'8px');assert.equal(tooltip.style.top,'172px');assert.equal(link.getAttribute('aria-describedby'),`existing-help ${tooltip.id}`);
+  link.dispatchEvent(new window.PointerEvent('pointerout',{bubbles:true,relatedTarget:tooltip}));tooltip.dispatchEvent(new window.PointerEvent('pointerenter'));
+  await new Promise(resolve=>setTimeout(resolve,120));assert.equal(tooltip.hidden,false);
+  tooltip.dispatchEvent(new window.PointerEvent('pointerleave'));
+  await new Promise(resolve=>setTimeout(resolve,120));assert.equal(tooltip.hidden,true);assert.equal(link.getAttribute('aria-describedby'),'existing-help');
+});
+
+test('tooltip timers cancel on departure, Escape, scroll, resize and disposal', async t => {
+  const {host,window,context,abort}=dom(t);
+  host.innerHTML='<button role="tab">Full tab label</button><span>Outside</span>';
+  mountTooltips(host,context.signal,10);
+  const tab=host.querySelector('button'),tooltip=host.querySelector('[role=tooltip]');
+  const enter=()=>tab.dispatchEvent(new window.PointerEvent('pointerover',{bubbles:true,pointerType:'mouse'}));
+  const leave=()=>tab.dispatchEvent(new window.PointerEvent('pointerout',{bubbles:true,relatedTarget:host.querySelector('span')}));
+  enter();leave();await new Promise(resolve=>setTimeout(resolve,30));assert.equal(tooltip.hidden,true);
+  tab.focus();assert.equal(tooltip.hidden,false);assert.equal(tooltip.querySelector('.reader-tooltip-description').hidden,true);
+  window.dispatchEvent(new window.Event('scroll'));assert.equal(tooltip.hidden,false);
+  window.document.dispatchEvent(new window.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));assert.equal(tooltip.hidden,true);assert.equal(tab.hasAttribute('aria-describedby'),false);
+  enter();await new Promise(resolve=>setTimeout(resolve,30));assert.equal(tooltip.hidden,true);
+  leave();enter();await new Promise(resolve=>setTimeout(resolve,30));assert.equal(tooltip.hidden,false);
+  window.dispatchEvent(new window.Event('resize'));assert.equal(tooltip.hidden,true);
+  leave();enter();await new Promise(resolve=>setTimeout(resolve,30));assert.equal(tooltip.hidden,false);
+  window.dispatchEvent(new window.Event('hashchange'));assert.equal(tooltip.hidden,true);
+  enter();window.dispatchEvent(new window.Event('scroll'));await new Promise(resolve=>setTimeout(resolve,30));assert.equal(tooltip.hidden,true);
+  leave();enter();abort.abort();await new Promise(resolve=>setTimeout(resolve,30));assert.equal(host.querySelector('[role=tooltip]'),null);assert.equal(tab.hasAttribute('aria-describedby'),false);
+});
+
+test('navigation folders, parent pages, code tabs and gallery tabs expose full names and descriptions', async t => {
+  const {host,window,context}=dom(t);
+  const content=compileMarkdown('```tabs\n{"items":[{"label":"Complete C++ example title","description":"C++ details","code":"open();","lang":"cpp"},{"label":"Python","code":"open()","lang":"python"}]}\n```',{locale:'en',pageId:'parent'});
+  const data={schemaVersion:1,name:'Tooltip fixture',version:'1',defaultLocale:'en',locales:[{code:'en',label:'English'}],pages:[
+    {id:'parent',locale:'en',title:'The complete parent title',description:'Parent description',section:'Guides / Workspace',order:0,...content},
+    {id:'child',parent:'parent',locale:'en',title:'The complete child title',description:'Child description',section:'Guides',order:1,html:'',text:'',headings:[]}
+  ]};
+  const viewer=mountViewer(host,data,{homePage:'parent'});await settle();
+  const tooltip=host.querySelector('.reader-tooltip');
+  const folder=host.querySelector('[data-nav-key="section:/Guides/Workspace"] > summary');folder.focus();
+  assert.equal(tooltip.hidden,false);assert.equal(tooltip.querySelector('strong').textContent,'Guides / Workspace');
+  const parent=host.querySelector('[data-nav-key="page:parent"] > summary');parent.focus();
+  assert.equal(tooltip.querySelector('strong').textContent,'The complete parent title');assert.equal(tooltip.querySelector('.reader-tooltip-description').textContent,'Parent description');
+  const child=host.querySelector('[data-page=child]');child.focus();assert.equal(child.hasAttribute('title'),false);assert.equal(tooltip.querySelector('strong').textContent,'The complete child title');
+  host.querySelector('[data-tabs] [role=tab]').focus();assert.equal(tooltip.querySelector('strong').textContent,'Complete C++ example title');assert.equal(tooltip.querySelector('.reader-tooltip-description').textContent,'C++ details');
+  const gallery=window.document.createElement('div');host.querySelector('main').append(gallery);context.loadModule=async()=>({mount(){}});
+  const cleanup=galleryModule.mount(gallery,{items:[{type:'image',src:'assets/a.svg',title:'Complete gallery item title',description:'Gallery item details'}]},context);await settle();
+  gallery.querySelector('[role=tab]').focus();assert.equal(tooltip.querySelector('strong').textContent,'Complete gallery item title');assert.equal(tooltip.querySelector('.reader-tooltip-description').textContent,'Gallery item details');
+  cleanup();viewer.destroy();assert.equal(host.querySelector('.reader-tooltip'),null);
 });

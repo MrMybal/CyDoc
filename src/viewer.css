@@ -62,3 +62,7 @@
 
 /* Application identity and compact personal tools. */
 .brand-mark.has-logo{background:transparent;box-shadow:none}.brand-logo{display:block;width:34px;height:38px;object-fit:contain;flex-shrink:0}.brand-fallback{display:grid;place-items:center}.topbar .personal-trigger{display:grid;place-items:center;flex-shrink:0;width:32px;height:32px;margin:0;padding:0;border:0;border-radius:6px;background:transparent;color:var(--muted)}.topbar .personal-trigger:hover{background:var(--surface);color:var(--text)}.topbar .personal-trigger .icon{width:17px;height:17px}
+
+/* One floating tooltip clears sidebar clipping and preserves full labels. */
+.reader-tooltip{position:fixed;z-index:3000;max-width:min(360px,calc(100vw - 16px));max-height:calc(100dvh - 16px);overflow:auto;overscroll-behavior:contain;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);box-shadow:0 8px 28px #0004;font:12px/1.65 system-ui;text-align:left;white-space:normal;overflow-wrap:anywhere;user-select:text;cursor:default}.reader-tooltip-title{display:block;font-size:13px;font-weight:600;line-height:1.5}.reader-tooltip-description{display:block;margin-top:5px;color:var(--muted);font-size:12px}
+@media print{.reader-tooltip{display:none!important}}

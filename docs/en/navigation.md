@@ -17,6 +17,8 @@ Try `configuration`, `make_help_link` or `PBR`. Accents are ignored, and minor t
 
 The sidebar is a nested tree. Expand or collapse a branch using its chevron. A parent page's title remains a link to its own content. Open branches and menu scroll are preserved when switching pages.
 
+Hover over any entry to quickly see its complete name and description, even when the menu clips the label. Keyboard focus shows the tooltip immediately. Folders show their full path; code tabs and gallery tabs also expose their complete labels. Escape closes a tooltip. Its text remains visible when moving the pointer onto it.
+
 To place a page under another page, use its stable ID:
 
 ```text

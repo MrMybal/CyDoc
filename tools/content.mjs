@@ -5,7 +5,7 @@ export function richBlock(kind, text, { id, render, code, escape, link, locale }
   const fr = locale.startsWith('fr');
   if (kind === 'tabs') {
     if (!Array.isArray(data.items) || !data.items.length || data.items.length > 20) throw new Error('Tabs require 1–20 items');
-    return `<section class="content-tabs" data-tabs><div role="tablist" aria-label="${escape(data.title || (fr ? 'Exemples' : 'Examples'))}">${data.items.map((item, i) => `<button type="button" role="tab" id="${id}-tab-${i}" aria-controls="${id}-panel-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${escape(item.label)}</button>`).join('')}</div>${data.items.map((item, i) => `<div role="tabpanel" id="${id}-panel-${i}" aria-labelledby="${id}-tab-${i}" ${i ? 'hidden' : ''}>${item.code !== undefined ? code(String(item.code), item.lang || 'text') : render(String(item.body || ''))}</div>`).join('')}</section>`;
+    return `<section class="content-tabs" data-tabs><div role="tablist" aria-label="${escape(data.title || (fr ? 'Exemples' : 'Examples'))}">${data.items.map((item, i) => `<button type="button" role="tab" data-tooltip-title="${escape(item.label)}" data-tooltip-description="${escape(item.description || '')}" id="${id}-tab-${i}" aria-controls="${id}-panel-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${escape(item.label)}</button>`).join('')}</div>${data.items.map((item, i) => `<div role="tabpanel" id="${id}-panel-${i}" aria-labelledby="${id}-tab-${i}" ${i ? 'hidden' : ''}>${item.code !== undefined ? code(String(item.code), item.lang || 'text') : render(String(item.body || ''))}</div>`).join('')}</section>`;
   }
   if (kind === 'steps') {
     if (!Array.isArray(data.items) || data.items.length > 50) throw new Error('Invalid steps');
