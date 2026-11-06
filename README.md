@@ -4,7 +4,32 @@ A lightweight, modular documentation library for applications. Multilingual by d
 
 CyDoc combines handwritten guides, documentation extracted from source annotations, structured API imports, and optional media viewers in one framework-independent reader. It is designed for browsers and WebViews on Windows, Linux, macOS, and Android.
 
-**Status:** functional version 0.1.0. Not published to npm yet. Native integrations are provided as source examples; target-device validation is still required.
+**Status:** reader library 0.1.0 and optional Studio editor 0.1.2. The library is not published to npm yet. Native reader integrations are source examples; target-device validation is still required.
+
+For manual authoring, the optional [CyDoc Studio](https://github.com/MrMybal/CyDoc/blob/main/studio/README.md) adds a visual/Markdown web editor, account-free local editing, account-based online collaboration, optional Git, a Windows CyUI/CEF shell and local SDK/MCP access through CyToolsCore. Its dependencies remain separate from exported readers.
+
+## CyDoc Studio editor
+
+[Download Studio 0.1.2 for Windows x64](https://github.com/MrMybal/CyDoc/releases/tag/studio-v0.1.2). Extract the complete ZIP and start `CyDocStudio.exe`. The portable application bundles its runtimes and opens locally without an account. Keep `app/`, `runtime/` and `LICENCES/` beside the executable.
+
+- Write visually or in Markdown, organize a page tree, import local media and preview the actual reader.
+- Start from **Open the CyDoc example**, which creates an independent editable bilingual manual with media, diagrams and API examples.
+- Publish complete English/French documentation as `Documentation.html`, `DocData/` and the separate `DocAI.md` sidecar. Reading still works without Studio or a server.
+- Use ordinary folders without Git, or enable documentation commits, diffs, branches, history and supported HTTPS remotes.
+- Choose all six library themes: Light, Dark, Midnight, Nord, Paper and High contrast. The Windows shell, editor and bundled manual share the selection.
+- Work in full-window Editor, Documentation, Options and Local MCP / SDK tabs, with retained editor and reader views.
+- Host the web editor with accounts, invitations, project roles and simultaneous Yjs editing. Hosting requires one persistent service with HTTPS and WebSockets; this repository does not provision a hosted service.
+- Automate local projects with JavaScript/Python SDKs and 22 CyToolsCore MCP operations.
+
+To run the account-free browser editor from this checkout, after the root build below:
+
+```sh
+npm ci --prefix studio
+npm run build --prefix studio
+npm start --prefix studio -- --local --data ./data --port 4310
+```
+
+Open `http://127.0.0.1:4310`. The editing service is needed while authoring; the published reader remains static. Online installations omit `--local` and require accounts. See the [Studio guide](https://github.com/MrMybal/CyDoc/blob/main/studio/README.md) for setup, optional Git, hosting and SDK/MCP usage. The current Windows CyUI Python CEF bridge runs without the CEF process sandbox; use it with trusted documentation projects. Native Studio builds for other platforms are not provided.
 
 ## Quick start
 
@@ -62,7 +87,7 @@ npm run size   # Measure core, reader, data, and optional module bundles
 - Header search with live results, nested page navigation, six themes, keyboard navigation, a page outline, code copying, and print support.
 - Local bookmarks, recent pages, reading positions, and exportable private notes.
 - Independent media modules loaded on demand.
-- Local documentation versions, redirects, cross-documentation links, and source file indexes.
+- Local documentation versions, redirects, cross-documentation links, and API-only file references with includes and modules.
 
 ## Core library
 

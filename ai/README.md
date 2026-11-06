@@ -10,6 +10,7 @@ Use this index when integrating CyDoc into an application, writing its documenta
 | Update or migrate an existing application's manual | [Update requirements](UPDATE.md) |
 | Write pages, media, translations or API documentation | [Authoring](AUTHORING.md) |
 | Call the core API or implement a module | [API reference](API.md) |
+| Edit collaboratively or automate Studio | [Studio integration](STUDIO.md) |
 | Change CyDoc itself | [Repository instructions](../AGENTS.md) and [README](../README.md) |
 
 The host application's instructions and requested scope still apply. These guides do not authorize publishing, installing services, rewriting Git history or changing unrelated application code.

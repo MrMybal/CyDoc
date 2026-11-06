@@ -7,6 +7,8 @@ order: 10
 ---
 Écrivez des fichiers Markdown dans le dossier de chaque langue. Les titres, listes, tableaux, citations, liens et blocs de code sont pris en charge.
 
+Pour une édition manuelle, [CyDoc Studio](doc:studio#write) propose des vues visuelle et Markdown de la même page. Il enregistre les fichiers de création habituels de CyDoc et les prévisualise avec le lecteur réel.
+
 ## Structurer une page {#structure}
 
 Le titre principal vient des métadonnées `title`. Commencez le contenu avec des titres de niveau deux. Ils alimentent automatiquement le sommaire à droite.

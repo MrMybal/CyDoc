@@ -7,6 +7,8 @@ order: 19
 ---
 Choose a theme using the palette icon in the top bar. It applies to the viewer and module controls; the choice is saved on this device.
 
+[CyDoc Studio](doc:studio#appearance) offers the same six themes. In the Windows application, changing appearance synchronizes the native shell, editor and bundled manual. Dark is Studio’s default.
+
 | Theme | Use |
 | --- | --- |
 | Light | Bright reading |

@@ -12,6 +12,7 @@ The reader is for human users. Assistant guidance belongs in the separate `DocAI
 - [Update requirements](ai/UPDATE.md): human manual, English/French, private build workspace, tree navigation and API-only references.
 - [Authoring](ai/AUTHORING.md): page templates, translations, code extraction, media and diagrams.
 - [API reference](ai/API.md): core, viewer and optional module contracts.
+- [Studio](ai/STUDIO.md): separate web/Windows authoring, authenticated SDK/MCP and optional Git.
 
 ## Project references
 

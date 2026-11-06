@@ -7,6 +7,8 @@ order: 10
 ---
 Write Markdown files in each locale folder. Headings, lists, tables, quotes, links, and code blocks are supported.
 
+For manual editing, [CyDoc Studio](doc:studio#write) offers visual and Markdown views over the same page. It saves the normal CyDoc authoring files and previews them with the actual reader.
+
 ## Structure a page {#structure}
 
 The main title comes from the `title` metadata. Start content with level-two headings; they automatically populate the table of contents.

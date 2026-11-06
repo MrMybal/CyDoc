@@ -14,6 +14,7 @@ These instructions apply to the CyDoc checkout. To use CyDoc in another applicat
 - Reading must work through `file://` without a web server. `npm run dev` is a build watcher. Keep the generated classic-script bootstrap and local binary asset provider working.
 - Exports open through `Documentation.html`; scripts, media, manifests, notices and version exports belong under `DocData/`. Keep authored `assets/` paths logical and use the reader's asset URL resolver for display. Preserve legacy entry redirects when migrating an existing export.
 - Keep `src/index.ts` and its core dependencies independent of the DOM and media engines. Media modules are optional and loaded on demand. Only the mesh module needs Three.js.
+- Keep `studio/` authoring dependencies separate from the reader and root npm archive. Studio uses a service for storage and collaboration, with account-free loopback-only local mode (default in Windows, explicit `--local` on the web CLI) and authenticated online mode; exported manuals still work through `file://`. Desktop integration uses CyUI/CEF and the actual CyToolsCore runtime for SDK/MCP.
 - The viewer owns the URL fragment and uses a global CSS reset. Embeddings use a dedicated page or iframe.
 - Generate and package assets locally. Do not introduce runtime CDNs, remote fonts, telemetry, network-dependent search, or `fetch()` for local manifests and binary media.
 - Enlargement stays inside the documentation window. Do not introduce native browser/OS fullscreen. Keep Escape, keyboard controls, touch access, reading positions and navigation scroll working.
@@ -39,6 +40,7 @@ These instructions apply to the CyDoc checkout. To use CyDoc in another applicat
 | `docs/fr/`, `docs/en/`, `assets/` | Demo content and original sample media |
 | `examples/`, `tests/` | Integration examples and automated checks |
 | `ai/`, `llms.txt` | Guidance shipped to agents consuming the library |
+| `studio/` | Optional web editor, authenticated workspace service, SDK/MCP and Windows shell |
 
 Edit these inputs, then build. `dist/` and example `.output/` directories are generated; do not hand-edit or commit them. Do not run demo-generation scripts merely to edit one page: they can overwrite maintained examples.
 
@@ -49,6 +51,8 @@ Use Node.js 22 or later. Run `npm ci` when dependencies are missing, then `npm t
 For documentation-only edits, check relative links, examples and packaged files. If examples or configuration change, build a separate consumer manual with the CLI. Both `cydoc build` and `cydoc check` write an export. Use a temporary project subdirectory for fixtures.
 
 The Happy DOM tests are component fixtures, not a browser rendering or native-device compatibility check. Report which checks actually ran and any remaining limits. Preserve unrelated user changes. Add tests when they verify a meaningful behavior or regression.
+
+For Studio changes, install its separate lockfile with `npm ci --prefix studio`, then run `npm run build --prefix studio` and `npm test --prefix studio`. `node studio/desktop/test.mjs` exercises the real Python SDK/MCP using its prepared private runtime (`CYDOC_TEST_PYTHON` overrides the interpreter). Keep account databases, credential stores, runtime dependencies, profiles and generated distributions out of Git. Do not claim multi-node hosting, native browser sandboxing or untested platform compatibility.
 
 ## Keep agent guidance accurate
 

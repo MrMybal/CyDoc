@@ -7,6 +7,11 @@ dist/
 __pycache__/
 artifacts/
 **/.output/
+studio/data/
+/data/
+.cytools/
+studio/runtime/
+studio/desktop/build/
 .env
 .env.*
 !.env.example
