@@ -57,6 +57,10 @@ npx --no-install cydoc build cydoc.config.json
 npx --no-install cydoc check cydoc.config.json
 ```
 
+Use the application's own logo when it has one: copy an existing SVG/PNG/WebP logo into the documentation asset directory and add `"logo": "assets/app-logo.svg"` to the configuration. This file must exist; the CLI validates and copies it with the export. If no application logo is available, omit `logo` and retain CyDoc's default book icon. Do not set an imaginary logo path or reuse another application's branding. A custom embedding sets the same field on its `Documentation` manifest. The logo does not require the image module.
+
+The reader has no permanent local/offline status cards or host-license badge. Its header contains global search and a compact **My space** icon for bookmarks and notes. Document the application's actual license in its own pages; the library's MIT license does not determine the application's license.
+
 Both commands compile, validate and write the export. `check` is not a read-only lint command. The exported `manifest.json` is build data; the generated bootstrap loads `data.js` locally without fetching the JSON.
 
 Distribute **all** of `build/help/`, including module scripts, asset data scripts, styles, dependency notices and media. Keep the directory structure. Rebuild into a fresh output directory for a clean distribution because old copied assets are not automatically removed. Open the resulting `index.html` directly; do not introduce an HTTP server or a CDN to make it work.

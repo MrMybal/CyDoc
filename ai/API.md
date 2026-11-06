@@ -80,6 +80,8 @@ The minimum manifest shape is:
 
 Generate real manifests rather than maintaining compiled HTML by hand. `createDocumentation` validates the schema version, declared locales, duplicate page/locale pairs and aliases; it does not sanitize supplied HTML or verify every media file.
 
+`Documentation.logo?: string` is an optional application logo path under `assets/`. The same `logo` setting is accepted by the build configuration. Paths must be local, with no parent traversal. The CLI checks that the file exists and includes it in the export. The viewer uses a decorative image beside the application name, with the default book icon when omitted or if loading fails. No media module is needed. Integrations should use the application's existing logo when available and omit the field otherwise.
+
 `DocPage.parent?: string` names another page ID for the navigation tree. The core validates parent existence and rejects cycles, using the same default-locale fallback as page resolution. Parent IDs are exact page IDs, not aliases. A child's URL remains based on its own ID. Root pages may use slash-separated `section` paths for nested folders. Source pages are additionally grouped by their source directory. Navigation does not change the `pages()` ordering or the route format.
 
 For cross-manual addressing:

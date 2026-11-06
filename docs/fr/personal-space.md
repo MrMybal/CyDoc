@@ -5,7 +5,7 @@ description: Favoris, historique, reprise de lecture et notes exportables.
 section: Exemples
 order: 35
 ---
-Ouvrez **Mon espace** dans la navigation pour retrouver vos favoris et pages récentes. Le cœur à côté du titre ajoute la page aux favoris. **Mes notes sur cette page** conserve vos remarques privées et permet leur export depuis Mon espace.
+Ouvrez l’icône **Mon espace** dans l’en-tête pour retrouver vos favoris et pages récentes. Le cœur à côté du titre ajoute la page aux favoris. **Mes notes sur cette page** conserve vos remarques privées et permet leur export depuis Mon espace.
 
 La position de lecture est mémorisée. Lorsque vous revenez sur une page, **Reprendre ma lecture** dans le sommaire vous ramène à cette position. Un lien explicite vers une section ou un média conserve sa priorité.
 

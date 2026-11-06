@@ -18,6 +18,7 @@ The host application's instructions and requested scope still apply. These guide
 - Documentation is local. Ship the complete generated directory and open its `index.html` with a file URL. No server is needed at reading time.
 - Markdown, syntax highlighting, source indexing and API imports run at build time. Node.js 22 or later is a generation requirement, not a reader requirement.
 - Choose only the optional readers the application needs. A gallery also needs the modules for its item types. Three.js belongs only to mesh integration.
+- Use the application's existing logo through the optional `logo` configuration/manifest field. Copy it under `assets/`; if none is available, retain the default book icon. See [branding instructions](INTEGRATION.md).
 - Treat page IDs and explicit section/media IDs as public addresses. Use the same IDs across translations; do not rename them just because wording changes.
 - Keep content and assets application-owned and local. Compiled HTML is trusted input to the viewer; arbitrary HTML is not automatically sanitized by `mountViewer`.
 - Preserve the reader's keyboard and touch controls. Media enlargement is inside the window. Minimal controls appear on hover or focus and remain visible on touch devices.

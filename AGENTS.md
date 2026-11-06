@@ -18,6 +18,7 @@ These instructions apply to the CyDoc checkout. To use CyDoc in another applicat
 - Enlargement stays inside the documentation window. Do not introduce native browser/OS fullscreen. Keep Escape, keyboard controls, touch access, reading positions and navigation scroll working.
 - Keep page IDs, explicit anchors, media IDs and annotation IDs stable. Translations share page IDs and explicit anchors. Preserve existing deep links or add validated aliases.
 - UI text needs French and English equivalents. Additional content locales are supported; additional UI translations and RTL are not yet implemented.
+- Use an application's existing local logo through the optional configuration/manifest `logo` field. If it has none, omit the field and preserve the default book icon and loading-error fallback. Keep integration guidance explicit about this choice.
 - Preserve MIT licensing and dependency notices. Do not claim native, codec or WebGL compatibility without testing the target.
 
 ## Edit the source

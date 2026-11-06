@@ -41,3 +41,10 @@ Les exemples de médias montrent cette organisation : développez **Médias et l
 ## Navigation au clavier {#keyboard}
 
 Tab atteint les liens et les commandes de dépliage. Entrée active une page ou ouvre une branche. La flèche droite ouvre une branche puis entre dans ses enfants ; la flèche gauche la ferme ou revient à son parent. Les liens restent des liens locaux ordinaires, copiables et ouvrables dans un autre onglet.
+
+
+## Logo de l’application {#branding}
+
+Si l’application possède un logo, copiez-le dans les ressources de documentation et ajoutez `"logo": "assets/app-logo.svg"` à sa configuration. Ce fichier doit exister. Sans logo, omettez cette option pour conserver l’icône de livre par défaut. Un échec de chargement dans le lecteur rétablit aussi cette icône. L’image de marque ne nécessite aucun module de média.
+
+L’accès à **Mon espace** est une icône dans l’en-tête. Le menu gauche est consacré à la navigation. Le pied de page n’affiche pas de licence supposée pour l’application ; sa licence réelle se documente dans son contenu.

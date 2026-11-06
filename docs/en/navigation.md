@@ -41,3 +41,10 @@ The media examples demonstrate page nesting: expand **Media & viewers** to find 
 ## Keyboard navigation {#keyboard}
 
 Tab reaches links and disclosure controls. Enter activates a page or toggles a disclosure. Right arrow opens a branch, then enters its children; left arrow closes it or returns to its parent. Page links remain ordinary local links and can be copied or opened in another tab.
+
+
+## Application logo {#branding}
+
+When the application has a logo, copy it into the documentation assets and set `"logo": "assets/app-logo.svg"` in its configuration. The file must exist. Without a logo, omit this option to keep the default book icon. A loading error in the reader also restores that icon. Branding needs no media module.
+
+**My space** is an icon in the header. The left menu is reserved for navigation. The footer does not imply a license for the host application; document its actual license in its content.

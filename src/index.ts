@@ -56,6 +56,11 @@ function distance(a: string, b: string, max: number) {
 
 export function createDocumentation(data: Documentation) {
   if (data.schemaVersion !== 1) throw new Error('Unsupported CyDoc schema version');
+  if (data.logo !== undefined) {
+    let decoded = '';
+    try { decoded = decodeURIComponent(data.logo); } catch { throw new Error('Logo must be a local file under assets/'); }
+    if (typeof data.logo !== 'string' || !/^(?:\.\/)?assets\/[a-zA-Z0-9_./%~-]+$/.test(data.logo) || /(?:^|\/)\.\.(?:\/|$)|[\\\u0000-\u0020]/.test(decoded)) throw new Error('Logo must be a local file under assets/');
+  }
   const locales = new Set(data.locales.map(locale => locale.code));
   if (!locales.has(data.defaultLocale)) throw new Error('Default locale must be declared');
   const index = new Map<string, DocPage>();

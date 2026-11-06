@@ -46,9 +46,10 @@ export function mountReaderTools(root: HTMLElement, data: Documentation, page: D
       if (version) { const url = new URL(version.base, location.href); const latest=parseLink(location.hash,route.locale,page.id); if (url.protocol === 'file:' || url.origin === location.origin) location.href = createLink(latest, url.href); }
     }, { signal });
   }
-  const personalButton = document.createElement('button'); personalButton.type = 'button'; personalButton.className = 'personal-trigger'; personalButton.dataset.personal = '';
-  personalButton.innerHTML = `${icon('book')}<span>${t('Mon espace', 'My space')}</span><small>${t('Favoris et notes', 'Bookmarks & notes')}</small>`;
-  root.querySelector('.side-nav')?.before(personalButton);
+  const personalButton = document.createElement('button'); personalButton.type = 'button'; personalButton.className = 'icon-button personal-trigger'; personalButton.dataset.personal = '';
+  personalButton.title = t('Mon espace : favoris et notes', 'My space: bookmarks and notes'); personalButton.setAttribute('aria-label', personalButton.title);
+  personalButton.innerHTML = icon('book');
+  root.querySelector('.topbar-actions')?.prepend(personalButton);
   const bookmark = document.createElement('button'); bookmark.type = 'button'; bookmark.className = 'icon-button'; bookmark.dataset.bookmark = ''; bookmark.innerHTML = icon('heart'); bookmark.title = t('Ajouter aux favoris', 'Bookmark page'); bookmark.setAttribute('aria-label', bookmark.title);
   (root.querySelector('.article-title') || root.querySelector('.topbar-actions'))?.append(bookmark);
   const updateBookmark = () => bookmark.setAttribute('aria-pressed', String(saved.bookmarks.some(item => item.id === page.id && item.locale === route.locale)));

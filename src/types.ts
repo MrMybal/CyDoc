@@ -26,6 +26,8 @@ export interface DocPage {
 export interface Documentation {
   schemaVersion: 1;
   name: string;
+  /** Application logo under assets/. The viewer falls back to its book icon. */
+  logo?: string;
   version: string;
   defaultLocale: string;
   locales: Locale[];

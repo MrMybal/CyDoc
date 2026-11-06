@@ -84,6 +84,12 @@ viewer.destroy();
 
 The reader uses the URL fragment and a global CSS reset. Use a dedicated page or iframe when integrating into an existing UI. Pass a compiler-generated manifest, or HTML sanitized by your application, to `mountViewer`.
 
+## Application branding
+
+Use the application's existing logo when one is available. Copy it into the documentation asset directory and set `"logo": "assets/app-logo.svg"` in the build configuration. SVG, PNG and WebP are suitable choices. The logo is included in the generated manifest and needs no optional image module. Custom embeddings supply the same `logo` field on `Documentation`.
+
+If the application has no logo, omit this setting to keep the default book icon. An image that fails at reading time also falls back to that icon. The build rejects invalid or missing configured logo files. The reader footer does not label the host application's license; document that license in the application's own content. CyDoc itself remains MIT licensed.
+
 ## Optional media modules
 
 The core and main reader do not import a media viewer or a 3D engine. The host selects the modules it needs.
@@ -304,7 +310,7 @@ The optional manifest validates destination pages and sections during generation
 
 ## Personal reading tools
 
-**My space** stores bookmarks, recent pages, and private notes on the device, with a JSON export for backup. **Resume reading** returns to a saved page position. Explicit section and media links retain priority.
+The **My space** icon in the header stores bookmarks, recent pages, and private notes on the device, with a JSON export for backup. **Resume reading** returns to a saved page position. Explicit section and media links retain priority.
 
 Storage availability depends on the browser or WebView, particularly for file origins. The UI reports when notes cannot be persisted and offers export. `storageId` gives the host control over the data namespace. No feedback or personal notes are sent to a server.
 

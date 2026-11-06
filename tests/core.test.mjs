@@ -54,3 +54,13 @@ test('navigation parents validate missing targets and cycles while preserving lo
   assert.throws(()=>createDocumentation({...data,pages:[...data.pages,{...page('self','fr','Self'),parent:'self'}]}),/Invalid navigation parent/);
   assert.throws(()=>createDocumentation({...data,pages:[...data.pages,{...page('a','fr','A'),parent:'b'},{...page('b','fr','B'),parent:'a'}]}),/Invalid navigation parent/);
 });
+
+
+test('application logos stay local and remain optional', () => {
+  const data=fixture();
+  assert.equal(createDocumentation(data).data.logo,undefined);
+  assert.equal(createDocumentation({...data,logo:'assets/app-logo.svg'}).data.logo,'assets/app-logo.svg');
+  for(const logo of ['https://example.com/logo.svg','file:///private/logo.png','../logo.png','assets/../logo.png','assets/%2e%2e/logo.png','assets/%5cprivate.png','assets/%zz.png','',42]) {
+    assert.throws(()=>createDocumentation({...data,logo}),/Logo must be a local file/);
+  }
+});

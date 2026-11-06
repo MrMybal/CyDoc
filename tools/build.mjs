@@ -69,8 +69,13 @@ export async function buildSite(configPath = resolve('cydoc.config.json'), overr
   }
   const translations = translationReport(pages,config);
   if(config.translationReport) for(const locale of config.locales){const {markdown,...page}=reportPage(translations,locale.code);pages.push({...page,...compile(markdown,page)});}
-  const data = { schemaVersion: 1, name: config.name, version: config.version, defaultLocale: config.defaultLocale, locales: config.locales, aliases:config.aliases, versions:config.versions, pages: pages.map(({ mediaBlocks, ...page }) => page) };
+  const data = { schemaVersion: 1, name: config.name, logo: config.logo, version: config.version, defaultLocale: config.defaultLocale, locales: config.locales, aliases:config.aliases, versions:config.versions, pages: pages.map(({ mediaBlocks, ...page }) => page) };
   const library = createDocumentation(data);
+  if (data.logo) {
+    const logoPath = resolve(base, config.assets || 'assets', decodeURIComponent(data.logo.replace(/^(?:\.\/)?assets\//, '')));
+    const logoInfo = await stat(logoPath).catch(() => { throw new Error(`Missing application logo: ${data.logo}`); });
+    if (!logoInfo.isFile()) throw new Error('Application logo must be a file');
+  }
   if (!pages.length) throw new Error('Documentation must include at least one page');
   if (config.homePage && !library.resolve(config.homePage, config.defaultLocale)) throw new Error(`Home page does not exist: ${config.homePage}`);
   for (const page of pages) {

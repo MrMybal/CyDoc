@@ -366,3 +366,21 @@ test('nested page navigation preserves routes, opens active ancestors and expose
   summary.dispatchEvent(new window.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));assert.equal(window.document.activeElement,parent.querySelector('[data-page=install]'));
   viewer.destroy();
 });
+
+
+test('application branding falls back gracefully and personal tools occupy only a header icon', t => {
+  const {host,window}=dom(t);
+  const data={schemaVersion:1,name:'Example App',version:'1',defaultLocale:'en',locales:[{code:'en',label:'English'}],pages:[{id:'home',locale:'en',title:'Home',description:'',section:'Guides',order:0,html:'<p>Example content.</p>',text:'Example content.',headings:[]}]};
+  let viewer=mountViewer(host,data);
+  assert.ok(host.querySelector('.brand-mark > .icon'));
+  assert.equal(host.querySelector('.sidebar [data-personal]'),null);
+  const personal=host.querySelector('.topbar [data-personal]');assert.ok(personal.querySelector('svg'));assert.equal(personal.textContent,'');assert.match(personal.getAttribute('aria-label'),/bookmarks and notes/);
+  personal.click();assert.equal(host.querySelector('.personal-dialog').open,true);
+  assert.doesNotMatch(host.querySelector('.footer').textContent,/MIT/);
+  viewer.destroy();
+  viewer=mountViewer(host,{...data,logo:'assets/app-logo.svg'});
+  const logo=host.querySelector('.brand-logo');assert.equal(logo.getAttribute('src'),'assets/app-logo.svg');assert.equal(logo.getAttribute('alt'),'');assert.ok(host.querySelector('.brand-mark.has-logo'));
+  logo.dispatchEvent(new window.Event('error'));
+  assert.equal(host.querySelector('.brand-logo'),null);assert.equal(host.querySelector('.brand-mark.has-logo'),null);assert.equal(host.querySelector('.brand-fallback').hidden,false);assert.ok(host.querySelector('.brand-fallback .icon'));
+  viewer.destroy();
+});

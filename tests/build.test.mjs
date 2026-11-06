@@ -25,6 +25,18 @@ test('another application builds without CyDoc demo pages, and broken content fa
   assert.equal(data.pages[0].id, 'settings');
   const payload = await readFile(join(output, 'data.js'), 'utf8');
   assert.match(payload, /"landingPage":false/);
+  config.logo = 'assets/app-logo.svg';
+  await writeFile(join(root, 'assets', 'app-logo.svg'), '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>');
+  await writeFile(configPath, JSON.stringify(config));
+  const branded = await buildSite(configPath);
+  assert.equal(branded.data.logo, config.logo);
+  assert.equal(JSON.parse(await readFile(join(output, 'manifest.json'), 'utf8')).logo, config.logo);
+  await access(join(output, 'assets', 'app-logo.svg'));
+  await writeFile(configPath, JSON.stringify({ ...config, logo: 'assets/missing.svg' }));
+  await assert.rejects(buildSite(configPath), /Missing application logo/);
+  await writeFile(configPath, JSON.stringify({ ...config, logo: 'https://example.com/logo.svg' }));
+  await assert.rejects(buildSite(configPath), /Logo must be a local file/);
+  await writeFile(configPath, JSON.stringify(config));
   for (const name of ['image', 'video', 'mesh']) await assert.rejects(access(join(output, `media-${name}.js`)));
   assert.doesNotMatch(await readFile(join(output, 'viewer.js'), 'utf8'), /WebGLRenderer|image-pan|video-annotations/);
   await writeFile(configPath, JSON.stringify({ ...config, modules: ['image'] }));
