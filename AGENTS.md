@@ -41,6 +41,7 @@ These instructions apply to the CyDoc checkout. To use CyDoc in another applicat
 | `examples/`, `tests/` | Integration examples and automated checks |
 | `ai/`, `llms.txt` | Guidance shipped to agents consuming the library |
 | `studio/` | Optional web editor, authenticated workspace service, SDK/MCP and Windows shell |
+| `website/` | Static bilingual showcase sources and real product screenshots; builds to `dist/website/` with the original HTML manual |
 
 Edit these inputs, then build. `dist/` and example `.output/` directories are generated; do not hand-edit or commit them. Do not run demo-generation scripts merely to edit one page: they can overwrite maintained examples.
 
@@ -53,6 +54,8 @@ For documentation-only edits, check relative links, examples and packaged files.
 The Happy DOM tests are component fixtures, not a browser rendering or native-device compatibility check. Report which checks actually ran and any remaining limits. Preserve unrelated user changes. Add tests when they verify a meaningful behavior or regression.
 
 For Studio changes, install its separate lockfile with `npm ci --prefix studio`, then run `npm run build --prefix studio` and `npm test --prefix studio`. `node studio/desktop/test.mjs` exercises the real Python SDK/MCP using its prepared private runtime (`CYDOC_TEST_PYTHON` overrides the interpreter). Keep account databases, credential stores, runtime dependencies, profiles and generated distributions out of Git. Do not claim multi-node hosting, native browser sandboxing or untested platform compatibility.
+
+For showcase changes, use `npm run website:build` and `npm run website:preview`. Keep documentation links pointed at the generated `manual/Documentation.html` reader, with the selected locale. Validate desktop/mobile rendering, screenshot enlargement and both languages in a browser. Do not add a deployment workflow or publish unless requested.
 
 ## Keep agent guidance accurate
 

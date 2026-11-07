@@ -89,6 +89,17 @@ npm run size   # Measure core, reader, data, and optional module bundles
 - Independent media modules loaded on demand.
 - Local documentation versions, redirects, cross-documentation links, and API-only file references with includes and modules.
 
+## Showcase website
+
+The static English/French showcase is maintained in the checkout's `website/` directory; see `website/README.md`. Build and preview it locally:
+
+```sh
+npm run website:build
+npm run website:preview
+```
+
+Open the loopback URL printed by the preview command, or open `dist/website/index.html` directly. English is the default; `?lang=fr` selects French. The generated directory includes the actual CyDoc reader under `manual/Documentation.html`, with its offline assets and assistant sidecar. Styles and scripts use content-hashed filenames. The complete `dist/website/` directory is ready for static hosting, including GitHub Pages; these commands do not deploy or push anything.
+
 ## Core library
 
 The core has no runtime dependencies and does not use the DOM.

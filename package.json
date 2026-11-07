@@ -78,6 +78,8 @@
     "check": "tsc --noEmit",
     "test": "npm run build && node --test tests/*.test.mjs",
     "size": "node tools/size.mjs",
+    "website:build": "npm run build && node website/build.mjs",
+    "website:preview": "node website/preview.mjs",
     "prepack": "npm run build"
   },
   "dependencies": {
