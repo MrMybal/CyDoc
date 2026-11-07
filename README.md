@@ -1,20 +1,25 @@
-<div class="readme-header">
-  <p align="center"><a href="https://mrmybal.github.io/CyDoc/"><img src="assets/branding/cydoc-logo-v1.png" alt="CyDoc" width="144"></a></p>
-  <h1 align="center">CyDoc</h1>
-  <p align="center">By <a href="https://github.com/MrMybal">CyberAlien</a></p>
-  <p align="center">
-    <a href="https://mrmybal.github.io/CyDoc/">Website</a> ·
-    <a href="https://mrmybal.github.io/CyDoc/manual/Documentation.html#/en/overview">Documentation</a> ·
-    <a href="https://github.com/MrMybal/CyDoc">GitHub</a> ·
-    <a href="https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/CyDocStudio-0.1.2-windows-x64.zip">Download Studio · Windows x64</a><br>
-    <a href="README.md">English</a> · <a href="README.fr.md">Français</a>
-  </p>
-  <p align="center">
-    <a href="LICENSE"><strong>MIT license</strong></a><br>
-    <a href="VERSION.md">Reader <strong>0.1.0</strong> · Studio <strong>0.1.2</strong></a><br>
-    <strong>IN DEVELOPMENT</strong>
-  </p>
-</div>
+<table class="readme-header" width="100%">
+  <tr>
+    <td width="300" align="left" valign="top">
+      <a href="https://mrmybal.github.io/CyDoc/">Website</a><br>
+      <a href="https://mrmybal.github.io/CyDoc/manual/Documentation.html#/en/overview">Manual</a><br>
+      <a href="https://github.com/MrMybal/CyDoc">GitHub</a><br><br>
+      <sub>README</sub><br>
+      <a href="README.md">English</a> · <a href="README.fr.md">Français</a>
+    </td>
+    <td width="400" align="center" valign="middle">
+      <a href="https://mrmybal.github.io/CyDoc/"><img src="assets/branding/cydoc-logo-v1.png" alt="CyDoc" width="128"></a>
+    </td>
+    <td width="300" align="right" valign="top">
+      <p><sub>Application license</sub><br><a href="LICENSE"><strong>MIT</strong></a></p>
+      <p><sub>Versions</sub><br><a href="VERSION.md"><strong>Reader 0.1.0</strong><br><strong>Studio 0.1.2</strong></a><br><strong>IN DEVELOPMENT</strong></p>
+      <p><a href="https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/CyDocStudio-0.1.2-windows-x64.zip"><strong>Download Studio</strong></a><br><sub>Windows x64 · portable</sub></p>
+    </td>
+  </tr>
+</table>
+
+<h1 align="center">CyDoc</h1>
+<p align="center">By <a href="https://github.com/MrMybal">CyberAlien</a></p>
 
 A modular documentation library for application and plug-in developers. Write illustrated manuals, open the right explanation from your application and ship a searchable reader that works directly from local files. The optional **CyDoc Studio** editor adds visual and Markdown authoring.
 

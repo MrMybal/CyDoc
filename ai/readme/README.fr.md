@@ -32,7 +32,9 @@ L’en-tête contient :
 
 Le crédit auteur est **optionnel** : utiliser `By <auteur>` lorsque l’auteur est établi par les crédits du projet ou une instruction explicite. Lier son profil ou son site lorsqu’il est vérifié. Le propriétaire du dépôt, le responsable du projet, l’éditeur et l’auteur peuvent être différents. Ne pas imposer un nom dans la convention, inventer un crédit ou réécrire les copyrights pour les faire correspondre au crédit affiché. Omettre le crédit s’il n’est pas souhaité ou vérifiable.
 
-L’en-tête n’a **ni cadre, ni bordures de cellules, ni traits verticaux, ni cases colorées**. Ne pas employer de tableau HTML pour le mettre en page. Des blocs HTML simples gardent le contenu lisible dans les lecteurs Markdown. L’aperçu local les organise en trois colonnes ; GitHub n’utilise pas cette feuille de styles et les affiche dans leur flux normal. Ne pas promettre un rendu identique ni masquer la différence avec des styles locaux appliqués à un tableau.
+Établir le lecteur cible avant de présenter une disposition. Pour GitHub, l’exemple maintenu utilise un tableau HTML natif à trois colonnes : liens utiles à gauche, logo au centre, puis licence, versions, statut et téléchargement à droite. Cette composition conserve les bordures visibles de GitHub. L’utiliser lorsque ces bordures conviennent au projet. Le nom du produit et le crédit auteur optionnel suivent en dessous.
+
+GitHub retire les classes et styles personnalisés. Ne pas présenter des colonnes créées uniquement en CSS comme une solution GitHub, masquer les bordures natives dans l’aperçu, ou remplacer silencieusement la composition validée par un empilement centré. Si un projet exige à la fois trois colonnes et aucune bordure, expliquer la limite du lecteur avant de choisir une autre implémentation. Un SVG intégré peut conserver la composition visuelle, mais nécessite de vrais liens séparés ; les liens dessinés dans une image intégrée ne sont pas interactifs.
 
 ## 2. Ordre du contenu
 
@@ -47,7 +49,7 @@ L’en-tête n’a **ni cadre, ni bordures de cellules, ni traits verticaux, ni 
 9. **Références et liens** : vrai manuel, dépôt, suivi des problèmes et références pertinentes.
 10. **AI Usage, optionnel** : petit cadre final lié au guide IA principal et aux guides Markdown spécialisés utiles.
 
-Insérer un séparateur Markdown (`---`, entouré de lignes vides) avant **Installation** et **Licence**. Donner davantage d’espace à ces séparations dans les aperçus locaux ; conserver les traits dans le Markdown pour les autres lecteurs. Les tableaux servent aux données des dépendances, pas à encadrer l’en-tête.
+Insérer un séparateur Markdown (`---`, entouré de lignes vides) avant **Installation** et **Licence**. Conserver ces traits dans le Markdown. Les tableaux des dépendances contiennent de vraies données ; le tableau de mise en page de l’en-tête conserve les bordures natives du lecteur cible, lorsqu’elles sont acceptées par l’utilisateur.
 
 ## 3. Version et statut
 
@@ -105,6 +107,6 @@ Depuis le dépôt CyDoc, avec les dépendances Node.js 22+ installées :
 node ai/readme/preview.mjs
 ```
 
-Ouvrir directement `artifacts/readme-example/index.html`. L’aperçu contient les images et un script classique ; aucun serveur ni police distante n’est nécessaire. Il propose anglais/français, README/notes de version, clair/sombre et **Blocs simples** pour examiner l’en-tête sans ses colonnes locales. Ce mode illustre le flux des blocs ; il ne signifie pas que GitHub a été testé.
+Ouvrir directement `artifacts/readme-example/index.html`. L’aperçu contient les images et un script classique ; aucun serveur ni police distante n’est nécessaire. Il propose anglais/français, README/notes de version et clair/sombre. L’en-tête est le tableau natif du Markdown, avec ses bordures visibles et sans colonnes ajoutées en CSS. Vérifier le véritable résultat sur GitHub avant d’affirmer qu’il correspond à la composition convenue.
 
 La commande génère uniquement l’aperçu dans `artifacts/readme-example/`, par rapport au dossier courant. Modifier les Markdown et les ressources sources de ce dossier, puis régénérer. Elle ne remplace pas le README principal, ne compile pas d’application, ne crée pas de commit et ne pousse ou ne déploie rien.

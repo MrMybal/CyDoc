@@ -32,7 +32,9 @@ The header contains:
 
 An author credit is **optional**: use `By <author>` only when the author is established by the project's credits or an explicit instruction. Link to the appropriate profile or website when verified. The repository owner, maintainer, publisher and author may differ. Do not hardcode a person into the convention, invent attribution or change copyright notices to match a display credit. Omit the credit when it is not wanted or cannot be verified.
 
-The header has **no frame, cell borders, vertical rules or shaded boxes**. Do not use an HTML table for layout. Plain HTML blocks keep the content readable in Markdown renderers. The local preview arranges these blocks in three columns; GitHub does not use the preview's CSS and displays them in normal block flow. Do not claim identical layouts or conceal this difference with preview-only table styling.
+Establish the target renderer before presenting a layout. For GitHub, the maintained example uses a native three-column HTML table: useful links on the left, the logo in the middle, and the application license, versions, stage and download on the right. This composition retains GitHub's visible table borders. Use it when those borders are acceptable for the project. The product name and optional author credit follow below it.
+
+GitHub removes custom classes and inline styles. Do not present CSS-only columns as a working GitHub implementation, hide native table borders in a preview, or silently replace an accepted composition with a centered stack. If a project requires both three columns and no borders, explain the renderer limitation before choosing a different implementation. An embedded SVG can retain a visual composition, but it needs separate real links; links drawn inside an embedded image are not interactive.
 
 ## 2. Content order
 
@@ -47,7 +49,7 @@ The header has **no frame, cell borders, vertical rules or shaded boxes**. Do no
 9. **References and links:** the real manual, source repository, issue tracker and relevant project references.
 10. **AI Usage, optional:** a small final box linking to the primary agent guide and useful task-specific Markdown guides.
 
-Insert a Markdown horizontal rule (`---`, surrounded by blank lines) before **Installation** and **License**. Use generous spacing in local renderers; keep the separators in the Markdown itself so other renderers retain the distinction. Tables are appropriate for dependency information, not for framing the header.
+Insert a Markdown horizontal rule (`---`, surrounded by blank lines) before **Installation** and **License**. Keep these separators in the Markdown itself. Dependency tables contain real data; a header layout table uses the target renderer's native borders, when accepted by the user.
 
 ## 3. Version and stage
 
@@ -105,6 +107,6 @@ From the CyDoc checkout, with its Node.js 22+ dependencies installed:
 node ai/readme/preview.mjs
 ```
 
-Open the generated `artifacts/readme-example/index.html` directly. The preview includes the images and classic script, and needs no server or remote fonts. It offers English/French, README/version notes, dark/light and a **Plain blocks** option to inspect the header without its local column layout. That option illustrates block flow; it is not a claim that GitHub was tested.
+Open the generated `artifacts/readme-example/index.html` directly. The preview includes the images and classic script, and needs no server or remote fonts. It offers English/French, README/version notes and dark/light. Its header is the source's native table, with visible borders and no CSS column layout. Verify the actual GitHub result before claiming that it matches the agreed composition.
 
 The command generates only the preview in `artifacts/readme-example/` relative to the current directory. Edit this folder's source Markdown and preview inputs, then regenerate. It does not replace the root README, build an application, commit, push or deploy anything.

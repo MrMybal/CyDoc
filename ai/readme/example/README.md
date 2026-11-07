@@ -1,19 +1,22 @@
-<div class="readme-header">
-  <div class="readme-brand" align="center">
-    <a href="https://mrmybal.github.io/CyDoc/"><img src="assets/cydoc-logo-v1.png" alt="CyDoc" width="128"></a>
-  </div>
-  <div class="readme-links" align="left">
-    <a href="https://mrmybal.github.io/CyDoc/">Website</a><br>
-    <a href="https://mrmybal.github.io/CyDoc/manual/Documentation.html#/en/overview">Manual</a><br><br>
-    <sub>README</sub><br>
-    <a href="README.md">English</a> · <a href="README.fr.md">Français</a>
-  </div>
-  <div class="readme-meta" align="right">
-    <p><sub>Application license</sub><br><a href="../../../LICENSE"><strong>MIT</strong></a></p>
-    <p><sub>Versions</sub><br><a href="VERSION.md"><strong>Reader 0.1.0</strong><br><strong>Studio 0.1.2</strong></a><br><strong>IN DEVELOPMENT</strong></p>
-    <p><a href="https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/CyDocStudio-0.1.2-windows-x64.zip"><strong>Download Studio</strong></a><br><sub>Windows x64 · portable</sub></p>
-  </div>
-</div>
+<table class="readme-header" width="100%">
+  <tr>
+    <td width="300" align="left" valign="top">
+      <a href="https://mrmybal.github.io/CyDoc/">Website</a><br>
+      <a href="https://mrmybal.github.io/CyDoc/manual/Documentation.html#/en/overview">Manual</a><br>
+      <a href="https://github.com/MrMybal/CyDoc">GitHub</a><br><br>
+      <sub>README</sub><br>
+      <a href="README.md">English</a> · <a href="README.fr.md">Français</a>
+    </td>
+    <td width="400" align="center" valign="middle">
+      <a href="https://mrmybal.github.io/CyDoc/"><img src="assets/cydoc-logo-v1.png" alt="CyDoc" width="128"></a>
+    </td>
+    <td width="300" align="right" valign="top">
+      <p><sub>Application license</sub><br><a href="../../../LICENSE"><strong>MIT</strong></a></p>
+      <p><sub>Versions</sub><br><a href="VERSION.md"><strong>Reader 0.1.0</strong><br><strong>Studio 0.1.2</strong></a><br><strong>IN DEVELOPMENT</strong></p>
+      <p><a href="https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/CyDocStudio-0.1.2-windows-x64.zip"><strong>Download Studio</strong></a><br><sub>Windows x64 · portable</sub></p>
+    </td>
+  </tr>
+</table>
 
 <h1 align="center">CyDoc</h1>
 <p align="center">By <a href="https://github.com/MrMybal">CyberAlien</a></p>

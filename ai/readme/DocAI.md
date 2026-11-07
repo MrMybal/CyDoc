@@ -16,7 +16,7 @@ Keep the target application's own agent instructions. A request for a convention
 
 - English goes in `README.md`; provide `README.fr.md` only when its translation is complete and current. For this convention's maintained CyDoc example, keep both editions complete.
 - Use `VERSION.md` and `VERSION.fr.md` for the corresponding version notes unless the project already has an established equivalent. Preserve its existing filename and links when possible.
-- Keep the header borderless. Include the existing logo, useful verified links, actual application license, exact component version(s), explicit stage and available platform/download actions.
+- Preserve the agreed header composition in the target renderer. The CyDoc example uses three native table columns with GitHub's visible borders; use it when those borders are acceptable. Include the existing logo, useful verified links, actual application license, exact component version(s), explicit stage and available platform/download actions.
 - Put version and stage directly below the license. Do not infer them from an unrelated library version, an internal executable filename or a version-number pattern.
 - An optional `By <author>` credit may use a verified project author and profile, or an explicit user-provided credit. It is not required. Do not assume that the repository owner is the author. Do not introduce a fixed person, fabricate attribution or alter legal copyright notices.
 - Follow the convention's content order: short description and version note; main screenshot when available; application explanation and supporting images; optional features; installation; Git/build/required libraries; application and library licenses; references; optional final AI Usage box.
@@ -54,7 +54,9 @@ Do not treat a table of main components as a replacement for complete transitive
 
 ## Rendering and verification
 
-The example uses ordinary HTML blocks, not a header layout table. GitHub controls its own styles and sanitizes custom styling; the preview's CSS columns are only a local layout. The **Plain blocks** preview illustrates source order, not an exact GitHub rendering test. Do not reintroduce framed header tables or claim that preview-only styles will work on GitHub.
+The example uses a native HTML header table and keeps GitHub's visible borders. Its three columns contain links, logo and metadata, in that order. The preview renders that same table without adding a CSS layout or concealing its borders. GitHub removes custom classes and inline styles; validate the actual GitHub result before claiming fidelity.
+
+Explain renderer limitations before presenting an incompatible layout. If a user wants both borderless columns and independent links, resolve that tradeoff first. Never substitute a centered stack for an approved three-column composition, or show a CSS-only local mockup as a GitHub solution.
 
 Check relative files, links, anchors, images, reciprocal language links, version files, actual downloads and license references. Inspect both languages on desktop/mobile and check keyboard links, dark/light presentation and overflow when a local preview is supplied. Keep the content functional without the preview script. Never claim a browser, device, GitHub or offline check that did not run.
 
@@ -70,7 +72,7 @@ and DocAI.md. Inspect the actual project, builds, versions, development stage,
 documentation, logo and dependency licenses. Include an author credit only
 when wanted and supported by the project's credits or my instructions.
 Prepare complete English/French editions and matching version notes with
-documented limitations and real issue links. Keep the header borderless and
+documented limitations and real issue links. Preserve the agreed header layout and
 separate Installation and License clearly. If useful, append an optional
 AI Usage box with the main agent guide and existing task-specific MD links.
 Verify the result locally,
