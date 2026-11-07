@@ -1,6 +1,8 @@
 # CyDoc showcase
 
-Static, presentation-only website for CyDoc and CyDoc Studio. English is the default; `?lang=fr` selects the complete French translation. All product claims come from the current repository and Studio 0.1.2 release. This directory contains source inputs, not an online deployment.
+Static, presentation-only website for CyDoc and CyDoc Studio. English is the default; `?lang=fr` selects the complete French translation. All product claims come from the current repository and Studio 0.1.2 release. This directory contains source inputs; generated files stay in `dist/website/`.
+
+[Website](https://mrmybal.github.io/CyDoc/) · [French presentation](https://mrmybal.github.io/CyDoc/?lang=fr) · [English manual](https://mrmybal.github.io/CyDoc/manual/Documentation.html#/en/overview) · [French manual](https://mrmybal.github.io/CyDoc/manual/Documentation.html#/fr/overview)
 
 ## Build and preview
 
@@ -53,6 +55,8 @@ When recapturing, use a separate example workspace, wait for viewers to load, an
 
 ## Static hosting
 
-The complete `dist/website/` output is compatible with a GitHub Pages project subpath: all local resources and manual links are relative, with no history-path router or server-side endpoints. Publish that directory as a static artifact when explicitly requested. No deployment workflow, repository setting, DNS change, push or publication is performed by the build/preview commands.
+The complete `dist/website/` output is compatible with a GitHub Pages project subpath: all local resources and manual links are relative, with no history-path router or server-side endpoints. The repository uses GitHub Actions as its Pages source. `.github/workflows/pages.yml` builds and tests the reader/showcase, uploads only `dist/website/`, then deploys that artifact to the `github-pages` environment. Pushes to `main` and manual workflow runs publish updates. No Studio installation, account database or local project folder is included.
+
+The build/preview commands themselves do not push or publish. The workflow needs `pages: write` and `id-token: write` only for its deployment job; its build job has read-only repository access. Action versions are pinned to commit hashes. The repository's About website points to the showcase, and the root README links to both the showcase and the real HTML reader in English and French.
 
 Before handing off changes, check English and French, desktop and mobile widths, the initial screenshot's full visibility, all media tabs, the comparison divider/range, keyboard image navigation, Escape/focus restoration, FAQ controls, documentation routes and download links. Browser checks complement the normal `npm test` suite; they do not certify other operating systems or mobile hardware.

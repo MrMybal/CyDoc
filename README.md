@@ -2,6 +2,8 @@
 
 A lightweight, modular documentation library for applications. Multilingual by design, MIT licensed, and readable directly from local files without a web server.
 
+[Website](https://mrmybal.github.io/CyDoc/) · [Documentation](https://mrmybal.github.io/CyDoc/manual/Documentation.html#/en/overview) · [Présentation en français](https://mrmybal.github.io/CyDoc/?lang=fr) · [Documentation française](https://mrmybal.github.io/CyDoc/manual/Documentation.html#/fr/overview) · [Downloads](https://github.com/MrMybal/CyDoc/releases)
+
 CyDoc combines handwritten guides, documentation extracted from source annotations, structured API imports, and optional media viewers in one framework-independent reader. It is designed for browsers and WebViews on Windows, Linux, macOS, and Android.
 
 **Status:** reader library 0.1.0 and optional Studio editor 0.1.2. The library is not published to npm yet. Native reader integrations are source examples; target-device validation is still required.
@@ -91,6 +93,8 @@ npm run size   # Measure core, reader, data, and optional module bundles
 
 ## Showcase website
 
+The [public showcase](https://mrmybal.github.io/CyDoc/) and the [HTML documentation](https://mrmybal.github.io/CyDoc/manual/Documentation.html#/en/overview) are hosted on GitHub Pages. English is the default; the language selector opens the complete French presentation and matching manual.
+
 The static English/French showcase is maintained in the checkout's `website/` directory; see `website/README.md`. Build and preview it locally:
 
 ```sh
@@ -99,6 +103,8 @@ npm run website:preview
 ```
 
 Open the loopback URL printed by the preview command, or open `dist/website/index.html` directly. English is the default; `?lang=fr` selects French. The generated directory includes the actual CyDoc reader under `manual/Documentation.html`, with its offline assets and assistant sidecar. Styles and scripts use content-hashed filenames. The complete `dist/website/` directory is ready for static hosting, including GitHub Pages; these commands do not deploy or push anything.
+
+The `Publish website and documentation` workflow rebuilds, tests and deploys `dist/website/` on pushes to `main` or when run manually in GitHub Actions. It publishes only the static showcase and manual; Studio services and local project data are excluded.
 
 ## Core library
 
