@@ -44,6 +44,8 @@ Use a dark graphite background, light text, restrained borders and accent colors
 
 Keep the introduction compact: application name, a short concrete explanation, useful actions and an honest status/platform note. Avoid oversized slogans, large empty bands and excessive badges. A visitor should immediately understand what the application does.
 
+When the application has an existing local logo, place it directly beside its name in the introduction, as shown in the bundled example. Scale it with the title on desktop and mobile. Keep the image decorative when the adjacent name already identifies the application; omit the logo if none exists.
+
 On desktop, the initial viewport must contain a large, complete screenshot of the application alongside or immediately below the compact introduction. A two-column layout is often appropriate. The image must remain useful at the displayed size.
 
 - Preserve the screenshot's aspect ratio and full frame. Use containment rather than a crop or background cover treatment for the main image.

@@ -33,7 +33,7 @@ export function renderPage() {
 </div></header>
 <main id="main">
 <section class="hero wrap" aria-labelledby="hero-title"><div class="hero-copy">
-  ${text('p', 'hero.status', 'class="status"')}${text('h1', 'hero.title', 'id="hero-title"')}
+  ${text('p', 'hero.status', 'class="status"')}<h1 id="hero-title"><img class="hero-logo" src="./assets/favicon.svg" width="56" height="56" alt=""><span data-i18n="hero.title">${t('hero.title')}</span></h1>
   ${text('h2', 'hero.lead', 'class="hero-lead"')}${text('p', 'hero.body', 'class="lead"')}
   <div class="hero-buttons"><a class="button primary" href="#editor">${arrow}<span data-i18n="hero.download">${t('hero.download')}</span></a>${manual('overview', 'hero.reader', 'button secondary')}</div>
   ${text('p', 'hero.note', 'class="fineprint"')}
