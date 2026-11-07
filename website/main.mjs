@@ -120,6 +120,13 @@ document.querySelector('[data-lightbox-close]').addEventListener('click', () => 
 document.querySelector('[data-lightbox-prev]').addEventListener('click', () => showShot(currentShot - 1));
 document.querySelector('[data-lightbox-next]').addEventListener('click', () => showShot(currentShot + 1));
 dialog.addEventListener('keydown', event => {
+  if (event.key === 'Tab') {
+    const controls = [...dialog.querySelectorAll('button:not(:disabled)')];
+    const index = controls.indexOf(document.activeElement);
+    event.preventDefault();
+    controls[(index + (event.shiftKey ? -1 : 1) + controls.length) % controls.length]?.focus();
+    return;
+  }
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
     event.preventDefault();
     showShot(currentShot + (event.key === 'ArrowRight' ? 1 : -1));

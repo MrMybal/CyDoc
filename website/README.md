@@ -39,6 +39,8 @@ dist/website/
 
 The builder checks translation parity, linked page/anchor IDs in both manual languages, screenshot files and generated local references. CSS/JavaScript filenames change with their contents, avoiding reuse of stale bundles. No remote fonts, CDNs, analytics or runtime APIs are required by the showcase. Screenshot enlargement, tabs and language switching use the bundled classic script, so `index.html` can also be opened with `file://`.
 
+The supplied application logo comes from `assets/branding/cydoc-logo-v1.png` in the checkout. The builder copies it into the site with a content-hashed filename, shared by the header, introduction, footer and browser icon. The manual's build configuration uses that same local source for its reader branding. Replace the source asset and rebuild when the identity changes; do not edit generated files.
+
 Keep `manual/` intact: it is the actual compiler-generated CyDoc HTML reader, including optional modules, packed local assets, versions and dependency notices. Documentation links target that reader with the selected locale; they do not point to Markdown sources. The editor service and its account data are never copied into the website.
 
 ## Editing

@@ -30,21 +30,24 @@ const styles = await transform(await readFile(resolve(root, 'website/styles.css'
 const script = await build({ entryPoints: [resolve(root, 'website/main.mjs')], bundle: true, format: 'iife', target: 'es2020', minify: true, write: false, legalComments: 'eof' });
 const revision = value => createHash('sha256').update(value).digest('hex').slice(0, 12);
 const cssName = `site.${revision(styles.code)}.css`, jsName = `site.${revision(script.outputFiles[0].contents)}.js`;
+const logo = await readFile(resolve(root, 'assets/branding/cydoc-logo-v1.png'));
+const logoName = `cydoc-logo.${revision(logo)}.png`;
 await mkdir(resolve(output, 'assets'), { recursive: true });
-// Generated bundles get content hashes. Remove only this builder's old hash-named files.
-for (const name of await readdir(resolve(output, 'assets'))) if (/^site\.[a-f0-9]{12}\.(css|js)$/.test(name) && ![cssName, jsName].includes(name)) {
+// Remove only this builder's previous revisioned bundles and application logos.
+for (const name of await readdir(resolve(output, 'assets'))) if (/^(?:site\.[a-f0-9]{12}\.(?:css|js)|cydoc-logo\.[a-f0-9]{12}\.png)$/.test(name) && ![cssName, jsName, logoName].includes(name)) {
   const { unlink } = await import('node:fs/promises');
   await unlink(resolve(output, 'assets', name));
 }
 await cp(resolve(root, 'website/assets'), resolve(output, 'assets'), { recursive: true });
 await writeFile(resolve(output, 'assets', cssName), styles.code);
 await writeFile(resolve(output, 'assets', jsName), script.outputFiles[0].contents);
+await writeFile(resolve(output, 'assets', logoName), logo);
 await cp(resolve(root, 'dist/site'), resolve(output, 'manual'), { recursive: true });
 await cp(resolve(root, 'LICENSE'), resolve(output, 'LICENSE'));
-html = html.replace('__STYLESHEET__', './assets/' + cssName).replace('__SCRIPT__', './assets/' + jsName);
+html = html.replace('__STYLESHEET__', './assets/' + cssName).replace('__SCRIPT__', './assets/' + jsName).replaceAll('__APPLICATION_LOGO__', './assets/' + logoName);
 await writeFile(resolve(output, 'index.html'), html);
 await writeFile(resolve(output, '.nojekyll'), '');
-await writeFile(resolve(output, 'build.json'), JSON.stringify({ stylesheet: cssName, script: jsName, locales: ['en', 'fr'], documentation: 'manual/Documentation.html' }, null, 2));
+await writeFile(resolve(output, 'build.json'), JSON.stringify({ stylesheet: cssName, script: jsName, logo: logoName, locales: ['en', 'fr'], documentation: 'manual/Documentation.html' }, null, 2));
 for (const match of html.matchAll(/(?:href|src)="(\.[^"]+)"/g)) {
   const target = match[1].split('#')[0].split('?')[0];
   if (!(await stat(resolve(output, target))).isFile()) throw new Error(`Missing generated website file: ${target}`);
