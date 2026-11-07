@@ -95,7 +95,11 @@ npm run size   # Measure core, reader, data, and optional module bundles
 
 The [public showcase](https://mrmybal.github.io/CyDoc/) and the [HTML documentation](https://mrmybal.github.io/CyDoc/manual/Documentation.html#/en/overview) are hosted on GitHub Pages. English is the default; the language selector opens the complete French presentation and matching manual.
 
-The static English/French showcase is maintained in the checkout's `website/` directory; see `website/README.md`. Build and preview it locally:
+The static English/French showcase is maintained in the checkout's `website/` directory; see `website/README.md`.
+
+For another application, use the [reusable showcase convention for AI assistants](ai/showcase/README.md). It covers the visual direction, real screenshots, English/French content, offline manual integration and browser verification. Git, GitHub and hosting are optional.
+
+Build and preview it locally:
 
 ```sh
 npm run website:build
