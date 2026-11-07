@@ -12,6 +12,7 @@ This folder contains reusable guidance and a real CyDoc example. It does not rep
 | --- | --- |
 | [README.md](README.md), [README.fr.md](README.fr.md) | English and French convention |
 | [DocAI.md](DocAI.md) | Instructions for agents applying the convention |
+| [TEMPLATE.md](TEMPLATE.md), [TEMPLATE.fr.md](TEMPLATE.fr.md) | Complete copyable README structure in English and French |
 | [example/README.md](example/README.md), [example/README.fr.md](example/README.fr.md) | Complete CyDoc READMEs |
 | [example/VERSION.md](example/VERSION.md), [example/VERSION.fr.md](example/VERSION.fr.md) | Changes, current status, documented limitations and issue links |
 | [example/assets/](example/assets/) | Existing CyDoc logo and real product screenshots |
@@ -32,9 +33,11 @@ The header contains:
 
 An author credit is **optional**: use `By <author>` only when the author is established by the project's credits or an explicit instruction. Link to the appropriate profile or website when verified. The repository owner, maintainer, publisher and author may differ. Do not hardcode a person into the convention, invent attribution or change copyright notices to match a display credit. Omit the credit when it is not wanted or cannot be verified.
 
-Establish the target renderer before presenting a layout. For GitHub, the maintained example uses a native three-column HTML table: useful links on the left, the logo in the middle, and the application license, versions, stage and download on the right. This composition retains GitHub's visible table borders. Use it when those borders are acceptable for the project. The product name and optional author credit follow below it.
+For GitHub READMEs following this convention, use a native three-column HTML table by default: useful links and languages on the left, the existing logo in the middle, and the application license, exact versions, explicit stage and available download on the right. Keep versions and stage directly below the license. Retain GitHub's visible table borders. The product name and optional author credit follow below the table. Preserve this composition in both languages, unless the user requests a different layout.
 
 GitHub removes custom classes and inline styles. Do not present CSS-only columns as a working GitHub implementation, hide native table borders in a preview, or silently replace an accepted composition with a centered stack. If a project requires both three columns and no borders, explain the renderer limitation before choosing a different implementation. An embedded SVG can retain a visual composition, but it needs separate real links; links drawn inside an embedded image are not interactive.
+
+The [English template](TEMPLATE.md) and [French template](TEMPLATE.fr.md) contain the full copyable Markdown structure, including the native header table and optional author/AI Usage blocks. Replace every placeholder with verified project information, remove unavailable links and unwanted optional blocks, and compare with the [real CyDoc example](example/README.md). Templates are source material to adapt, not finished product READMEs.
 
 ## 2. Content order
 
@@ -86,6 +89,8 @@ Use English in `README.md`. A French edition uses `README.fr.md`, with the same 
 Keep the logo and screenshots local and repository-relative. Preserve screenshot content and aspect ratios. Avoid runtime image badges, remote fonts or script-dependent README content. Do not include private projects, account data, credentials or machine paths in examples.
 
 Before delivery, verify the local files, image paths, section links, version-note links, license table and actual download destinations. Inspect both languages at desktop and mobile sizes, dark and light when the preview supports them. Distinguish a local rendering check from an actual GitHub rendering check. Do not push or publish merely because a README was prepared.
+
+When GitHub publication is authorized, inspect the actual rendered README in both languages before reporting success: check the three column positions, logo, visible borders, license/version/stage order and working links. Capture the GitHub result as evidence. If working locally or if GitHub cannot be inspected, state that GitHub rendering remains unverified; do not present the local preview as proof. Keep screenshots and verification reports outside the human README.
 
 ## 6. Optional AI Usage box
 

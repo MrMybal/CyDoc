@@ -12,7 +12,7 @@ Use this index when integrating CyDoc into an application, writing its documenta
 | Call the core API or implement a module | [API reference](API.md) |
 | Edit collaboratively or automate Studio | [Studio integration](STUDIO.md) |
 | Build an application's bilingual static showcase from a complete local example | [Standalone showcase convention](showcase/README.md) |
-| Standardize an application README, version notes, dependency licenses and optional AI Usage links | [README convention](readme/README.md) and [AI instructions](readme/DocAI.md) |
+| Standardize an application README with a native three-column GitHub header, version notes, dependency licenses and optional AI Usage links | [README convention](readme/README.md), [AI instructions](readme/DocAI.md) and [complete templates](readme/TEMPLATE.md) |
 | Change CyDoc itself | [Repository instructions](../AGENTS.md) and [README](../README.md) |
 
 The host application's instructions and requested scope still apply. These guides do not authorize publishing, installing services, rewriting Git history or changing unrelated application code.

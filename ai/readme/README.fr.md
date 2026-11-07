@@ -12,6 +12,7 @@ Ce dossier contient la convention réutilisable et un véritable exemple CyDoc. 
 | --- | --- |
 | [README.md](README.md), [README.fr.md](README.fr.md) | Convention en anglais et en français |
 | [DocAI.md](DocAI.md) | Instructions pour les agents qui appliquent la convention |
+| [TEMPLATE.md](TEMPLATE.md), [TEMPLATE.fr.md](TEMPLATE.fr.md) | Structure complète de README à recopier en anglais et en français |
 | [example/README.md](example/README.md), [example/README.fr.md](example/README.fr.md) | README CyDoc complets |
 | [example/VERSION.md](example/VERSION.md), [example/VERSION.fr.md](example/VERSION.fr.md) | Changements, statut, limites documentées et suivi des problèmes |
 | [example/assets/](example/assets/) | Logo existant de CyDoc et vraies captures |
@@ -32,9 +33,11 @@ L’en-tête contient :
 
 Le crédit auteur est **optionnel** : utiliser `By <auteur>` lorsque l’auteur est établi par les crédits du projet ou une instruction explicite. Lier son profil ou son site lorsqu’il est vérifié. Le propriétaire du dépôt, le responsable du projet, l’éditeur et l’auteur peuvent être différents. Ne pas imposer un nom dans la convention, inventer un crédit ou réécrire les copyrights pour les faire correspondre au crédit affiché. Omettre le crédit s’il n’est pas souhaité ou vérifiable.
 
-Établir le lecteur cible avant de présenter une disposition. Pour GitHub, l’exemple maintenu utilise un tableau HTML natif à trois colonnes : liens utiles à gauche, logo au centre, puis licence, versions, statut et téléchargement à droite. Cette composition conserve les bordures visibles de GitHub. L’utiliser lorsque ces bordures conviennent au projet. Le nom du produit et le crédit auteur optionnel suivent en dessous.
+Pour les README GitHub qui suivent cette convention, utiliser par défaut un tableau HTML natif à trois colonnes : liens utiles et langues à gauche, logo existant au centre, puis licence, versions exactes, statut explicite et téléchargement disponible à droite. Garder les versions et le statut directement sous la licence. Conserver les bordures visibles de GitHub. Le nom du produit et le crédit auteur optionnel suivent sous le tableau. Préserver cette composition dans les deux langues, sauf demande de disposition différente par l’utilisateur.
 
 GitHub retire les classes et styles personnalisés. Ne pas présenter des colonnes créées uniquement en CSS comme une solution GitHub, masquer les bordures natives dans l’aperçu, ou remplacer silencieusement la composition validée par un empilement centré. Si un projet exige à la fois trois colonnes et aucune bordure, expliquer la limite du lecteur avant de choisir une autre implémentation. Un SVG intégré peut conserver la composition visuelle, mais nécessite de vrais liens séparés ; les liens dessinés dans une image intégrée ne sont pas interactifs.
+
+Le [modèle anglais](TEMPLATE.md) et le [modèle français](TEMPLATE.fr.md) contiennent toute la structure Markdown à recopier, avec le tableau d’en-tête natif et les blocs auteur/AI Usage optionnels. Remplacer chaque valeur à compléter par une information vérifiée du projet, retirer les liens indisponibles et les blocs optionnels non souhaités, puis comparer avec le [véritable exemple CyDoc](example/README.fr.md). Les modèles sont des sources à adapter, pas des README de produit terminés.
 
 ## 2. Ordre du contenu
 
@@ -86,6 +89,8 @@ Rédiger `README.md` en anglais. La traduction française complète utilise `REA
 Garder le logo et les captures locaux, avec des chemins relatifs au dépôt. Conserver leur contenu et leurs proportions. Éviter les badges chargés à distance, les polices externes et le contenu qui nécessite JavaScript dans le README. Exclure les projets privés, comptes, identifiants et chemins personnels des exemples.
 
 Avant livraison, vérifier les fichiers, images, liens de sections, notes de version, tableau de licences et téléchargements réels. Examiner les deux langues sur ordinateur et mobile, en clair et sombre si l’aperçu le permet. Distinguer une vérification locale d’une vérification réelle dans GitHub. Préparer un README n’autorise pas à pousser ni publier.
+
+Lorsque la publication GitHub est autorisée, inspecter le véritable README rendu dans les deux langues avant d’annoncer le succès : positions des trois colonnes, logo, bordures visibles, ordre licence/versions/statut et liens fonctionnels. Conserver une capture du résultat GitHub comme preuve. En cas de travail local ou d’impossibilité d’inspecter GitHub, indiquer que ce rendu reste non vérifié ; ne pas présenter l’aperçu local comme une preuve. Garder les captures et comptes rendus de vérification hors du README humain.
 
 ## 6. Cadre AI Usage optionnel
 

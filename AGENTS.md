@@ -60,3 +60,9 @@ For showcase changes, use `npm run website:build` and `npm run website:preview`.
 ## Keep agent guidance accurate
 
 Update `ai/` when changing public APIs, supported configuration, media options or integration constraints. Keep its links usable in the npm archive, whose `files` allowlist is in `package.json`. Do not advertise commands, adapters, codecs or source parsers that the implementation does not provide.
+
+## README convention
+
+Before changing a README, read [the convention](ai/readme/README.md), [its agent instructions](ai/readme/DocAI.md) and [the complete template](ai/readme/TEMPLATE.md). CyDoc's GitHub header uses a native three-column HTML table with visible borders: useful links and languages on the left, the existing logo in the middle, and the application license, exact versions, explicit stage and available download on the right. Put versions and stage directly below the license. Keep the name and optional author credit below the table. Preserve this composition in both README languages.
+
+The local preview must render that same table and its borders. Do not use preview-only CSS to simulate a GitHub layout, hide native borders, or replace the accepted columns with a centered stack. Explain renderer limitations before presenting a design. When publication is authorized, inspect the actual rendered GitHub README before reporting visual success; otherwise state that GitHub rendering remains unverified. Keep the optional `By <author>` credit project-specific and the optional AI Usage box last.

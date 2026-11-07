@@ -15,7 +15,7 @@ The reader is for human users. Assistant guidance belongs in the separate `DocAI
 - [Studio](ai/STUDIO.md): separate web/Windows authoring, authenticated SDK/MCP and optional Git.
 - [Standalone showcase convention](ai/showcase/README.md): self-contained English guide and complete local CyDoc example with its own screenshots, scripts, styles and real offline HTML manual; no external reference links, Git/GitHub optional.
 
-- [README convention](ai/readme/README.md): native three-column GitHub header, version/stage notes, clear installation/build sections, dependency licenses, optional attribution and final AI Usage links; includes a complete CyDoc example and [agent instructions](ai/readme/DocAI.md).
+- [README convention](ai/readme/README.md): native three-column GitHub header with visible borders, version/stage notes, clear installation/build sections, dependency licenses, optional attribution and final AI Usage links; includes a complete CyDoc example, [agent instructions](ai/readme/DocAI.md) and copyable [English](ai/readme/TEMPLATE.md)/[French](ai/readme/TEMPLATE.fr.md) structure templates. Check actual GitHub rendering before claiming visual fidelity.
 
 ## Project references
 

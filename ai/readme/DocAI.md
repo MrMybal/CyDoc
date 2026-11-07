@@ -2,6 +2,8 @@
 
 Read [the convention](README.md) and inspect [the CyDoc example](example/README.md) before editing a target application's README. The example's identity, versions, optional author credit, dependencies and MIT license belong to CyDoc; they are not defaults for other projects.
 
+Use the complete [English template](TEMPLATE.md) and [French template](TEMPLATE.fr.md) as the structural source. Copy the contents of their Markdown code blocks, replace all placeholders from verified evidence and remove unavailable links and unwanted optional blocks. Do not copy template explanations into the application's README or leave placeholders in a finished file.
+
 Keep the target application's own agent instructions. A request for a convention or example does not authorize replacing its real README, committing unrelated work, pushing, publishing a release or deploying a website.
 
 ## Inspect first
@@ -16,7 +18,7 @@ Keep the target application's own agent instructions. A request for a convention
 
 - English goes in `README.md`; provide `README.fr.md` only when its translation is complete and current. For this convention's maintained CyDoc example, keep both editions complete.
 - Use `VERSION.md` and `VERSION.fr.md` for the corresponding version notes unless the project already has an established equivalent. Preserve its existing filename and links when possible.
-- Preserve the agreed header composition in the target renderer. The CyDoc example uses three native table columns with GitHub's visible borders; use it when those borders are acceptable. Include the existing logo, useful verified links, actual application license, exact component version(s), explicit stage and available platform/download actions.
+- For GitHub READMEs following this convention, use three native table columns by default: links and languages on the left, the existing logo in the middle, and license, exact versions, explicit stage and available download on the right. Keep GitHub's visible borders and the name and optional author credit below the table. Preserve the accepted composition in both languages.
 - Put version and stage directly below the license. Do not infer them from an unrelated library version, an internal executable filename or a version-number pattern.
 - An optional `By <author>` credit may use a verified project author and profile, or an explicit user-provided credit. It is not required. Do not assume that the repository owner is the author. Do not introduce a fixed person, fabricate attribution or alter legal copyright notices.
 - Follow the convention's content order: short description and version note; main screenshot when available; application explanation and supporting images; optional features; installation; Git/build/required libraries; application and library licenses; references; optional final AI Usage box.
@@ -60,6 +62,8 @@ Explain renderer limitations before presenting an incompatible layout. If a user
 
 Check relative files, links, anchors, images, reciprocal language links, version files, actual downloads and license references. Inspect both languages on desktop/mobile and check keyboard links, dark/light presentation and overflow when a local preview is supplied. Keep the content functional without the preview script. Never claim a browser, device, GitHub or offline check that did not run.
 
+When GitHub publication is authorized, inspect both actual rendered README editions before reporting visual success. Confirm column positions, visible borders, logo, license/version/stage order and real link destinations, and save a screenshot as evidence outside the human README. For local-only delivery or unavailable GitHub access, explicitly state that GitHub rendering remains unverified. A local screenshot does not prove GitHub compatibility.
+
 When working in this CyDoc checkout, run `node ai/readme/preview.mjs` to regenerate the example preview. Documentation-only changes need link/packaged-file checks; follow the repository instructions if code, examples or public configuration change. Keep generated preview output under ignored `artifacts/`; do not hand-edit or commit it.
 
 Report the files created, the local preview path, checks performed and relevant rendering/compatibility limits. Keep publication local unless the user authorizes the next publishing action.
@@ -67,14 +71,16 @@ Report the files created, the local preview path, checks performed and relevant 
 ## Reuse prompt
 
 ```text
-Update this application's README using the supplied CyDoc README convention
-and DocAI.md. Inspect the actual project, builds, versions, development stage,
+Update this application's README using the supplied CyDoc README convention,
+DocAI.md and complete English/French templates. Inspect the actual project, builds, versions, development stage,
 documentation, logo and dependency licenses. Include an author credit only
 when wanted and supported by the project's credits or my instructions.
 Prepare complete English/French editions and matching version notes with
-documented limitations and real issue links. Preserve the agreed header layout and
+documented limitations and real issue links. For GitHub, use a native three-column
+table with visible borders: links on the left, logo in the middle, license,
+versions, stage and download on the right. Keep version/stage below the license and
 separate Installation and License clearly. If useful, append an optional
 AI Usage box with the main agent guide and existing task-specific MD links.
-Verify the result locally,
+Verify the result locally and report GitHub rendering as unverified until actually inspected,
 preserve unrelated work and wait for my request before pushing or publishing.
 ```
