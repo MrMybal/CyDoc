@@ -10,6 +10,7 @@ This is the complete CyDoc showcase adapted into a local reference: the original
 | --- | --- |
 | [index.html](index.html) | Ready-to-open reference page |
 | `assets/` | Local logo, screenshots and revisioned CSS/classic JavaScript |
+| `assets/cydoc-logo-v1.png` | Supplied CyDoc logo, used beside the name in the introduction, header, footer and browser icon |
 | `source/content.mjs` | English/French copy and media catalog; standalone overrides are grouped at the end |
 | `source/template.mjs` | Complete page structure and local destinations |
 | `source/main.mjs` | Language switching, tabs, comparison, navigation and image viewer |

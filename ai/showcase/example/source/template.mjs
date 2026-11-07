@@ -16,12 +16,12 @@ export function renderPage() {
 <title>${t('meta.title')}</title><meta name="description" content="${t('meta.description')}">
 <meta property="og:type" content="website"><meta property="og:title" content="${t('meta.title')}"><meta property="og:description" content="${t('meta.description')}">
 <meta property="og:image" content="./assets/screenshots/studio-visual.webp"><meta name="twitter:card" content="summary_large_image">
-<link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
+<link rel="icon" type="image/png" href="./assets/cydoc-logo-v1.png">
 <link rel="stylesheet" href="__STYLESHEET__"><script src="__SCRIPT__" defer></script>
 </head><body>
 <a class="skip" href="#main" data-i18n="skip">${t('skip')}</a>
 <header class="site-header"><div class="header-inner wrap">
-  <a class="brand" href="#main" aria-label="CyDoc"><img src="./assets/favicon.svg" width="34" height="34" alt=""><span>CyDoc</span></a>
+  <a class="brand" href="#main" aria-label="CyDoc"><img src="./assets/cydoc-logo-v1.png" width="34" height="34" alt=""><span>CyDoc</span></a>
   <nav class="primary-nav" id="primary-nav" aria-label="Navigation">
     <a href="#editor" data-i18n="nav.features">${t('nav.features')}</a>
     <a href="./manual/Documentation.html#/en/overview" data-doc="overview" data-i18n="nav.docs">${t('nav.docs')}</a>
@@ -33,7 +33,7 @@ export function renderPage() {
 </div></header>
 <main id="main">
 <section class="hero wrap" aria-labelledby="hero-title"><div class="hero-copy">
-  ${text('p', 'hero.status', 'class="status"')}<h1 id="hero-title"><img class="hero-logo" src="./assets/favicon.svg" width="56" height="56" alt=""><span data-i18n="hero.title">${t('hero.title')}</span></h1>
+  ${text('p', 'hero.status', 'class="status"')}<h1 id="hero-title"><img class="hero-logo" src="./assets/cydoc-logo-v1.png" width="56" height="56" alt=""><span data-i18n="hero.title">${t('hero.title')}</span></h1>
   ${text('h2', 'hero.lead', 'class="hero-lead"')}${text('p', 'hero.body', 'class="lead"')}
   <div class="hero-buttons"><a class="button primary" href="#editor">${arrow}<span data-i18n="hero.download">${t('hero.download')}</span></a>${manual('overview', 'hero.reader', 'button secondary')}</div>
   ${text('p', 'hero.note', 'class="fineprint"')}
@@ -100,7 +100,7 @@ export function renderPage() {
   <div class="web-note">${text('p', 'download.web')}${manual('studio#collaborate', 'download.web.link')}</div>
 </section>
 </main>
-<footer class="site-footer wrap"><div><a class="brand" href="#main"><img src="./assets/favicon.svg" alt="" width="28" height="28"><span>CyDoc</span></a>${text('p', 'footer.line')}</div><nav aria-label="CyDoc">${manual('overview', 'nav.docs')}${manual('studio', 'footer.releases')}${manual('media', 'footer.source')}<a href="./LICENSE" data-i18n="footer.license">${t('footer.license')}</a></nav><span class="copyright">© 2026 CyDoc</span></footer>
+<footer class="site-footer wrap"><div><a class="brand" href="#main"><img src="./assets/cydoc-logo-v1.png" alt="" width="28" height="28"><span>CyDoc</span></a>${text('p', 'footer.line')}</div><nav aria-label="CyDoc">${manual('overview', 'nav.docs')}${manual('studio', 'footer.releases')}${manual('media', 'footer.source')}<a href="./LICENSE" data-i18n="footer.license">${t('footer.license')}</a></nav><span class="copyright">© 2026 CyDoc</span></footer>
 <dialog class="lightbox" id="lightbox" aria-labelledby="lightbox-caption"><div class="lightbox-shell"><div class="lightbox-toolbar"><p id="lightbox-caption"></p><button type="button" class="icon-button" data-lightbox-close data-i18n-label="lightbox.close" aria-label="${t('lightbox.close')}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg></button></div><div class="lightbox-picture"><img id="lightbox-image" alt=""></div><div class="lightbox-bottom"><button type="button" class="icon-button" data-lightbox-prev data-i18n-label="lightbox.previous" aria-label="${t('lightbox.previous')}">←</button><span id="lightbox-count"></span>${text('span', 'lightbox.help')}<button type="button" class="icon-button" data-lightbox-next data-i18n-label="lightbox.next" aria-label="${t('lightbox.next')}">→</button></div></div></dialog>
 </body></html>`;
 }
