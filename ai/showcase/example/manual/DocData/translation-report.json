@@ -1,0 +1,428 @@
+{
+  "defaultLocale": "en",
+  "missing": [],
+  "outdated": [],
+  "untracked": [
+    {
+      "id": "advanced-search",
+      "title": "Search in code",
+      "locale": "fr",
+      "expectedRevision": "e42e8ee27215"
+    },
+    {
+      "id": "api-tour",
+      "title": "API & file links",
+      "locale": "fr",
+      "expectedRevision": "5a015043f17b"
+    },
+    {
+      "id": "architecture",
+      "title": "Architecture",
+      "locale": "fr",
+      "expectedRevision": "43d423d10014"
+    },
+    {
+      "id": "blueprints",
+      "title": "Graphs & Blueprints",
+      "locale": "fr",
+      "expectedRevision": "9b4983158fbc"
+    },
+    {
+      "id": "changelog",
+      "title": "Release notes",
+      "locale": "fr",
+      "expectedRevision": "6aaaca1cb6f7"
+    },
+    {
+      "id": "code-languages",
+      "title": "Code & languages",
+      "locale": "fr",
+      "expectedRevision": "e9c9477b64f0"
+    },
+    {
+      "id": "diagrams",
+      "title": "Diagram gallery",
+      "locale": "fr",
+      "expectedRevision": "57d41ca68b68"
+    },
+    {
+      "id": "extraction",
+      "title": "Extract from source code",
+      "locale": "fr",
+      "expectedRevision": "a1348a3a2187"
+    },
+    {
+      "id": "galleries",
+      "title": "Media galleries",
+      "locale": "fr",
+      "expectedRevision": "15b8e457204f"
+    },
+    {
+      "id": "gif-controls",
+      "title": "GIF controls",
+      "locale": "fr",
+      "expectedRevision": "e1bf0b34b74e"
+    },
+    {
+      "id": "image-viewer",
+      "title": "Single image",
+      "locale": "fr",
+      "expectedRevision": "c1358444eb60"
+    },
+    {
+      "id": "integration",
+      "title": "Integrate with an app",
+      "locale": "fr",
+      "expectedRevision": "7c2976a5147c"
+    },
+    {
+      "id": "languages",
+      "title": "Languages & translations",
+      "locale": "fr",
+      "expectedRevision": "e2e92a159ca6"
+    },
+    {
+      "id": "media",
+      "title": "Media & viewers",
+      "locale": "fr",
+      "expectedRevision": "ee11dda3fb8d"
+    },
+    {
+      "id": "mesh-viewer",
+      "title": "Single mesh",
+      "locale": "fr",
+      "expectedRevision": "3f604ed92669"
+    },
+    {
+      "id": "minimal-media",
+      "title": "Minimal readers",
+      "locale": "fr",
+      "expectedRevision": "3217aa01674b"
+    },
+    {
+      "id": "native-help",
+      "title": "Native help and F1",
+      "locale": "fr",
+      "expectedRevision": "0da14e98d77c"
+    },
+    {
+      "id": "navigation",
+      "title": "Navigation & search",
+      "locale": "fr",
+      "expectedRevision": "42a4e6a616c5"
+    },
+    {
+      "id": "overview",
+      "title": "Overview",
+      "locale": "fr",
+      "expectedRevision": "2aa57f0e0c03"
+    },
+    {
+      "id": "personal-space",
+      "title": "Bookmarks and private notes",
+      "locale": "fr",
+      "expectedRevision": "e921eec7361d"
+    },
+    {
+      "id": "precise-links",
+      "title": "Precise links and views",
+      "locale": "fr",
+      "expectedRevision": "84644b66dec6"
+    },
+    {
+      "id": "quickstart",
+      "title": "Quickstart",
+      "locale": "fr",
+      "expectedRevision": "bb113960b38d"
+    },
+    {
+      "id": "rich-content",
+      "title": "Rich content",
+      "locale": "fr",
+      "expectedRevision": "c84e9503b76f"
+    },
+    {
+      "id": "structured-api",
+      "title": "Structured API",
+      "locale": "fr",
+      "expectedRevision": "8afc1328540b"
+    },
+    {
+      "id": "themes",
+      "title": "Themes & appearance",
+      "locale": "fr",
+      "expectedRevision": "041ec4aff622"
+    },
+    {
+      "id": "versions",
+      "title": "Versions and translations",
+      "locale": "fr",
+      "expectedRevision": "014545c07605"
+    },
+    {
+      "id": "video-viewer",
+      "title": "Single video",
+      "locale": "fr",
+      "expectedRevision": "df0c66f8249d"
+    },
+    {
+      "id": "writing",
+      "title": "Write pages",
+      "locale": "fr",
+      "expectedRevision": "027b229c7e07"
+    },
+    {
+      "id": "api-c",
+      "title": "C · cydoc_help_link",
+      "locale": "fr",
+      "expectedRevision": "8611263e34be"
+    },
+    {
+      "id": "api-links",
+      "title": "Links API",
+      "locale": "fr",
+      "expectedRevision": "78d72f331f8c"
+    },
+    {
+      "id": "api-cpp",
+      "title": "C++ · make_help_link",
+      "locale": "fr",
+      "expectedRevision": "d88c3965e2fd"
+    },
+    {
+      "id": "api-csharp",
+      "title": "C# · HelpLink.Create",
+      "locale": "fr",
+      "expectedRevision": "98ed2bca435a"
+    },
+    {
+      "id": "api-java",
+      "title": "Java · HelpLink.create",
+      "locale": "fr",
+      "expectedRevision": "7a4e0058dd9d"
+    },
+    {
+      "id": "api-javascript",
+      "title": "JavaScript · helpLink",
+      "locale": "fr",
+      "expectedRevision": "8e000311c451"
+    },
+    {
+      "id": "api-python",
+      "title": "Python · help_link",
+      "locale": "fr",
+      "expectedRevision": "db0e6fe39a31"
+    },
+    {
+      "id": "api-glsl",
+      "title": "GLSL · main",
+      "locale": "fr",
+      "expectedRevision": "680c1167f6e9"
+    },
+    {
+      "id": "api-hlsl",
+      "title": "HLSL · MainPS",
+      "locale": "fr",
+      "expectedRevision": "382ac907ce9e"
+    },
+    {
+      "id": "api-typescript",
+      "title": "TypeScript · helpLink",
+      "locale": "fr",
+      "expectedRevision": "44558770e9e3"
+    },
+    {
+      "id": "doxygen-cydoc-docsession-base",
+      "title": "cydoc::DocSession",
+      "locale": "fr",
+      "expectedRevision": "16c7bcfec610"
+    },
+    {
+      "id": "doxygen-cydoc-helpsession-session",
+      "title": "cydoc::HelpSession",
+      "locale": "fr",
+      "expectedRevision": "a09899b6a0f9"
+    },
+    {
+      "id": "doxygen-cydoc-helpsession-open-open",
+      "title": "cydoc::HelpSession::open",
+      "locale": "fr",
+      "expectedRevision": "a4230b3060ba"
+    },
+    {
+      "id": "typedoc-helplink-2",
+      "title": "helpLink",
+      "locale": "fr",
+      "expectedRevision": "f8e4450ffe55"
+    },
+    {
+      "id": "source-examples-c-help-c",
+      "title": "help.c",
+      "locale": "fr",
+      "expectedRevision": "d09a36347485"
+    },
+    {
+      "id": "source-examples-c-help-h",
+      "title": "help.h",
+      "locale": "fr",
+      "expectedRevision": "a27cc8f6c85c"
+    },
+    {
+      "id": "source-examples-c-main-c",
+      "title": "main.c",
+      "locale": "fr",
+      "expectedRevision": "791649b03d78"
+    },
+    {
+      "id": "source-examples-contextual-help-ts",
+      "title": "contextual-help.ts",
+      "locale": "fr",
+      "expectedRevision": "b2047a881b98"
+    },
+    {
+      "id": "source-examples-cpp-include-cydoc-help-hpp",
+      "title": "help.hpp",
+      "locale": "fr",
+      "expectedRevision": "a7b19c764351"
+    },
+    {
+      "id": "source-examples-cpp-include-cydoc-session-hpp",
+      "title": "session.hpp",
+      "locale": "fr",
+      "expectedRevision": "a5a9decd217e"
+    },
+    {
+      "id": "source-examples-cpp-main-cpp",
+      "title": "main.cpp",
+      "locale": "fr",
+      "expectedRevision": "f4ff35accbe9"
+    },
+    {
+      "id": "source-examples-cpp-modules-cydoc-help-cppm",
+      "title": "cydoc.help.cppm",
+      "locale": "fr",
+      "expectedRevision": "b0c05800ab39"
+    },
+    {
+      "id": "source-examples-cpp-src-help-cpp",
+      "title": "help.cpp",
+      "locale": "fr",
+      "expectedRevision": "90b10b70c244"
+    },
+    {
+      "id": "source-examples-csharp-helplink-cs",
+      "title": "HelpLink.cs",
+      "locale": "fr",
+      "expectedRevision": "7e862af6d403"
+    },
+    {
+      "id": "source-examples-integrations-helpwindow-cs",
+      "title": "HelpWindow.cs",
+      "locale": "fr",
+      "expectedRevision": "c66d55eb63f3"
+    },
+    {
+      "id": "source-examples-integrations-helpwindow-java",
+      "title": "HelpWindow.java",
+      "locale": "fr",
+      "expectedRevision": "63b4067bbeb2"
+    },
+    {
+      "id": "source-examples-integrations-android-cydocactivity-kt",
+      "title": "CyDocActivity.kt",
+      "locale": "fr",
+      "expectedRevision": "c7c5bf9cd26b"
+    },
+    {
+      "id": "source-examples-integrations-contextual-help-js",
+      "title": "contextual-help.js",
+      "locale": "fr",
+      "expectedRevision": "0042f40ea80e"
+    },
+    {
+      "id": "source-examples-integrations-cydoc-link-hpp",
+      "title": "cydoc_link.hpp",
+      "locale": "fr",
+      "expectedRevision": "beed4ce1fc40"
+    },
+    {
+      "id": "source-examples-integrations-help-tk-py",
+      "title": "help_tk.py",
+      "locale": "fr",
+      "expectedRevision": "abd664d8173e"
+    },
+    {
+      "id": "source-examples-integrations-macos-help-swift",
+      "title": "macos_help.swift",
+      "locale": "fr",
+      "expectedRevision": "24c119b47185"
+    },
+    {
+      "id": "source-examples-integrations-qt-main-cpp",
+      "title": "qt_main.cpp",
+      "locale": "fr",
+      "expectedRevision": "91d9fa5c302c"
+    },
+    {
+      "id": "source-examples-java-cydoc-examples-helplink-java",
+      "title": "HelpLink.java",
+      "locale": "fr",
+      "expectedRevision": "8d283f8c5d06"
+    },
+    {
+      "id": "source-examples-javascript-help-js",
+      "title": "help.js",
+      "locale": "fr",
+      "expectedRevision": "b140820ad580"
+    },
+    {
+      "id": "source-examples-javascript-segments-js",
+      "title": "segments.js",
+      "locale": "fr",
+      "expectedRevision": "58eef6a774ac"
+    },
+    {
+      "id": "source-examples-python-help-link-py",
+      "title": "help_link.py",
+      "locale": "fr",
+      "expectedRevision": "9df9ad0b8893"
+    },
+    {
+      "id": "source-examples-shaders-common-glsl",
+      "title": "common.glsl",
+      "locale": "fr",
+      "expectedRevision": "7a2bf195022b"
+    },
+    {
+      "id": "source-examples-shaders-common-hlsli",
+      "title": "common.hlsli",
+      "locale": "fr",
+      "expectedRevision": "7b812ae729b4"
+    },
+    {
+      "id": "source-examples-shaders-preview-frag",
+      "title": "preview.frag",
+      "locale": "fr",
+      "expectedRevision": "91ffe930e27b"
+    },
+    {
+      "id": "source-examples-shaders-preview-hlsl",
+      "title": "preview.hlsl",
+      "locale": "fr",
+      "expectedRevision": "bf4d98597bf3"
+    },
+    {
+      "id": "source-examples-typescript-help-ts",
+      "title": "help.ts",
+      "locale": "fr",
+      "expectedRevision": "a6150fa8f3dd"
+    },
+    {
+      "id": "source-examples-typescript-segments-ts",
+      "title": "segments.ts",
+      "locale": "fr",
+      "expectedRevision": "0b4abad8eea4"
+    }
+  ],
+  "current": 1
+}

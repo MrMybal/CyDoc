@@ -13,7 +13,7 @@ The reader is for human users. Assistant guidance belongs in the separate `DocAI
 - [Authoring](ai/AUTHORING.md): page templates, translations, code extraction, media and diagrams.
 - [API reference](ai/API.md): core, viewer and optional module contracts.
 - [Studio](ai/STUDIO.md): separate web/Windows authoring, authenticated SDK/MCP and optional Git.
-- [Showcase convention](ai/showcase/README.md): build a complete bilingual static application showcase with real screenshots, offline HTML documentation and optional Git/GitHub integration.
+- [Standalone showcase convention](ai/showcase/README.md): self-contained English guide and complete local CyDoc example with its own screenshots, scripts, styles and real offline HTML manual; no external reference links, Git/GitHub optional.
 
 ## Project references
 

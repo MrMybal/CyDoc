@@ -1,0 +1,246 @@
+{
+  "schemaVersion": 1,
+  "name": "CyDoc · Démo versions",
+  "version": "2-demo",
+  "defaultLocale": "en",
+  "locales": [
+    {
+      "code": "en",
+      "label": "English"
+    },
+    {
+      "code": "fr",
+      "label": "Français"
+    }
+  ],
+  "aliases": {
+    "advanced-search": "overview",
+    "api-tour": "overview",
+    "architecture": "overview",
+    "blueprints": "overview",
+    "changelog": "overview",
+    "code-languages": "overview",
+    "diagrams": "overview",
+    "extraction": "overview",
+    "galleries": "overview",
+    "gif-controls": "overview",
+    "image-viewer": "overview",
+    "integration": "overview",
+    "languages": "overview",
+    "media": "overview",
+    "mesh-viewer": "overview",
+    "minimal-media": "overview",
+    "native-help": "overview",
+    "navigation": "overview",
+    "personal-space": "overview",
+    "precise-links": "overview",
+    "rich-content": "overview",
+    "structured-api": "overview",
+    "studio": "overview",
+    "themes": "overview",
+    "versions": "overview",
+    "video-viewer": "overview",
+    "writing": "overview",
+    "api-c": "overview",
+    "api-links": "overview",
+    "api-cpp": "overview",
+    "api-csharp": "overview",
+    "api-java": "overview",
+    "api-javascript": "overview",
+    "api-python": "overview",
+    "api-glsl": "overview",
+    "api-hlsl": "overview",
+    "api-typescript": "overview",
+    "doxygen-cydoc-docsession-base": "overview",
+    "doxygen-cydoc-helpsession-session": "overview",
+    "doxygen-cydoc-helpsession-open-open": "overview",
+    "typedoc-helplink-2": "overview",
+    "source-examples-c-help-c": "overview",
+    "source-examples-c-help-h": "overview",
+    "source-examples-c-main-c": "overview",
+    "source-examples-contextual-help-ts": "overview",
+    "source-examples-cpp-include-cydoc-help-hpp": "overview",
+    "source-examples-cpp-include-cydoc-session-hpp": "overview",
+    "source-examples-cpp-main-cpp": "overview",
+    "source-examples-cpp-modules-cydoc-help-cppm": "overview",
+    "source-examples-cpp-src-help-cpp": "overview",
+    "source-examples-csharp-helplink-cs": "overview",
+    "source-examples-integrations-helpwindow-cs": "overview",
+    "source-examples-integrations-helpwindow-java": "overview",
+    "source-examples-integrations-android-cydocactivity-kt": "overview",
+    "source-examples-integrations-contextual-help-js": "overview",
+    "source-examples-integrations-cydoc-link-hpp": "overview",
+    "source-examples-integrations-help-tk-py": "overview",
+    "source-examples-integrations-macos-help-swift": "overview",
+    "source-examples-integrations-qt-main-cpp": "overview",
+    "source-examples-java-cydoc-examples-helplink-java": "overview",
+    "source-examples-javascript-help-js": "overview",
+    "source-examples-javascript-segments-js": "overview",
+    "source-examples-python-help-link-py": "overview",
+    "source-examples-shaders-common-glsl": "overview",
+    "source-examples-shaders-common-hlsli": "overview",
+    "source-examples-shaders-preview-frag": "overview",
+    "source-examples-shaders-preview-hlsl": "overview",
+    "source-examples-typescript-help-ts": "overview",
+    "source-examples-typescript-segments-ts": "overview",
+    "translation-report": "overview"
+  },
+  "versions": [
+    {
+      "id": "1-demo",
+      "label": "Démo v1",
+      "base": "../v1/Documentation.html"
+    },
+    {
+      "id": "2-demo",
+      "label": "Démo v2",
+      "base": "../v2/Documentation.html"
+    },
+    {
+      "id": "0.1.0",
+      "label": "CyDoc 0.1.0",
+      "base": "../../../Documentation.html"
+    }
+  ],
+  "pages": [
+    {
+      "id": "new-feature",
+      "title": "New feature",
+      "section": "Guide",
+      "revision": "1",
+      "locale": "en",
+      "description": "",
+      "order": 0,
+      "html": "<p>This edition adds direct access to a section through a stable link.</p>\n",
+      "text": "This edition adds direct access to a section through a stable link.",
+      "headings": [],
+      "anchors": [],
+      "languages": [],
+      "code": "",
+      "assets": [],
+      "links": [],
+      "kind": "guide"
+    },
+    {
+      "id": "overview",
+      "title": "Version demo",
+      "section": "Guide",
+      "revision": "2",
+      "locale": "en",
+      "description": "",
+      "order": 0,
+      "html": "<p>This small manual is <strong>demo v2</strong>. Version 2 adds a section about precise links.</p>\n<p><a href=\"#/en/quickstart\">Guide</a></p>\n<h2 id=\"installation\">Installation<a class=\"heading-anchor\" href=\"#/en/overview/installation\" aria-label=\"Link to Installation\">#</a></h2><p>Copy the documentation folder.</p>\n",
+      "text": "This small manual is demo v2 . Version 2 adds a section about precise links. Guide Installation # Copy the documentation folder.",
+      "headings": [
+        {
+          "id": "installation",
+          "text": "Installation",
+          "level": 2
+        }
+      ],
+      "anchors": [],
+      "languages": [],
+      "code": "",
+      "assets": [],
+      "links": [
+        "#/en/quickstart"
+      ],
+      "kind": "guide"
+    },
+    {
+      "id": "quickstart",
+      "title": "Guide",
+      "section": "Guide",
+      "revision": "2",
+      "locale": "en",
+      "description": "",
+      "order": 0,
+      "html": "<h2 id=\"installation\">Installation<a class=\"heading-anchor\" href=\"#/en/quickstart/installation\" aria-label=\"Link to Installation\">#</a></h2><p>Open <code>Documentation.html</code> without a server.</p>\n",
+      "text": "Installation # Open Documentation.html without a server.",
+      "headings": [
+        {
+          "id": "installation",
+          "text": "Installation",
+          "level": 2
+        }
+      ],
+      "anchors": [],
+      "languages": [],
+      "code": "",
+      "assets": [],
+      "links": [],
+      "kind": "guide"
+    },
+    {
+      "id": "new-feature",
+      "title": "Nouvelle fonction",
+      "section": "Guide",
+      "sourceRevision": "1",
+      "locale": "fr",
+      "description": "",
+      "order": 0,
+      "html": "<p>Cette édition ajoute l’ouverture directe d’une section par un lien stable.</p>\n",
+      "text": "Cette édition ajoute l’ouverture directe d’une section par un lien stable.",
+      "headings": [],
+      "anchors": [],
+      "languages": [],
+      "code": "",
+      "assets": [],
+      "links": [],
+      "kind": "guide",
+      "revision": "c597198daf0c"
+    },
+    {
+      "id": "overview",
+      "title": "Démo versions",
+      "section": "Guide",
+      "sourceRevision": "2",
+      "locale": "fr",
+      "description": "",
+      "order": 0,
+      "html": "<p>Ce petit manuel est la <strong>démo v2</strong>. La version 2 ajoute une section sur les liens précis.</p>\n<p><a href=\"#/fr/quickstart\">Guide</a></p>\n<h2 id=\"installation\">Installation<a class=\"heading-anchor\" href=\"#/fr/overview/installation\" aria-label=\"Lien vers Installation\">#</a></h2><p>Copiez le dossier de documentation.</p>\n",
+      "text": "Ce petit manuel est la démo v2 . La version 2 ajoute une section sur les liens précis. Guide Installation # Copiez le dossier de documentation.",
+      "headings": [
+        {
+          "id": "installation",
+          "text": "Installation",
+          "level": 2
+        }
+      ],
+      "anchors": [],
+      "languages": [],
+      "code": "",
+      "assets": [],
+      "links": [
+        "#/fr/quickstart"
+      ],
+      "kind": "guide",
+      "revision": "93b534543572"
+    },
+    {
+      "id": "quickstart",
+      "title": "Guide",
+      "section": "Guide",
+      "sourceRevision": "2",
+      "locale": "fr",
+      "description": "",
+      "order": 0,
+      "html": "<h2 id=\"installation\">Installation<a class=\"heading-anchor\" href=\"#/fr/quickstart/installation\" aria-label=\"Lien vers Installation\">#</a></h2><p>Ouvrez <code>Documentation.html</code> sans serveur.</p>\n",
+      "text": "Installation # Ouvrez Documentation.html sans serveur.",
+      "headings": [
+        {
+          "id": "installation",
+          "text": "Installation",
+          "level": 2
+        }
+      ],
+      "anchors": [],
+      "languages": [],
+      "code": "",
+      "assets": [],
+      "links": [],
+      "kind": "guide",
+      "revision": "560963286121"
+    }
+  ]
+}

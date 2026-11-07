@@ -1,6 +1,6 @@
 # Application showcase convention for AI assistants
 
-Use this guide to build or update a complete static showcase for an application. It defines the shared convention used by the CyDAW and CyDoc showcases. The guide is written in English for AI assistants; the resulting showcase must provide complete English and French editions.
+Use this self-contained guide to build or update a complete static showcase for an application. Its visual reference is the complete [bundled CyDoc example](example/index.html), including its own images, scripts, styles and real offline HTML manual. No external website is needed to understand or apply the convention. This guide is written in English for AI assistants; the resulting showcase must provide complete English and French editions.
 
 Git, GitHub, GitHub Pages and public hosting are optional. The same showcase must be usable from an ordinary project folder, as a local application companion, or on another static host. Building a showcase does not authorize pushing or publishing it.
 
@@ -10,20 +10,21 @@ Give an assistant this file, access to the target application project, and this 
 
 ```text
 Build the application's complete showcase using this convention. Start by
-opening the CyDAW reference in a browser, then inspect this application's real
-features, documentation, branding and available builds. Implement and verify
-the result locally. GitHub integration is optional; include it only when the
-project has a verified GitHub destination. Make a local commit if this is
+opening example/index.html from this folder in a browser, then inspect the
+target application's real features, documentation, branding and builds.
+Implement and verify the complete result locally. Bundle all resources and
+use local links by default. Add GitHub or another external destination only
+when explicitly requested and verified. Make a local commit if this is
 already a Git repository. Keep the result local until I request publication.
 ```
 
-Use this convention within the current task's scope. A request to document the convention does not itself request a new website. When applying it to another application, keep that application's own `AGENTS.md` and build conventions. Do not replace them with CyDoc's repository instructions.
+Follow the current task's scope. When applying this convention to another application, keep that application's own `AGENTS.md` and build conventions. Do not replace them with CyDoc's repository instructions.
 
-## 1. Inspect the reference and the application
+## 1. Inspect the local example and the application
 
-First open the [CyDAW French showcase](https://mrmybal.github.io/CyDaw/?lang=fr) in a browser. Inspect the initial desktop composition, chapter navigation, illustrated sections, screenshot enlargement and language selector. Use its presentation principles while retaining the target application's own identity, screenshots and content. Do not copy its product claims, logo or application-specific sections.
+First open [example/index.html](example/index.html) directly from this folder. Switch between English and French, explore its chapters, media tabs, theme comparison, screenshot enlargement and bundled documentation. This is the complete CyDoc showcase adapted for standalone use, with real product captures and no outbound navigation. Application installers and repository hosting are omitted; the example never pretends that those files are included.
 
-If the reference cannot be loaded, report that limitation and continue from the written convention and available local examples. Never claim to have inspected a page that was inaccessible.
+Use its composition and interaction patterns while retaining the target application's own identity, screenshots and content. Do not copy CyDoc's claims, branding or application-specific sections into another product. The [example notes](example/README.md) explain its file layout and dependency-free rebuild command. Copy this entire `showcase/` folder to use the convention elsewhere; none of its reference links require the parent checkout, Git or a connection.
 
 Before editing:
 
@@ -116,14 +117,14 @@ Translate all visitor-facing strings: headings, body copy, navigation, captions,
 
 Keep both editions complete and current. Validate matching translation keys and nonempty strings during the build, then review the actual copy; matching keys alone do not establish translation quality. Never fill French gaps with copied English paragraphs or placeholders.
 
-The header must link to the feature chapters, actual documentation, and available repository/download destinations. Keep the language selector accessible on mobile.
+The header must link to the feature chapters and actual local documentation. Keep the language selector accessible on mobile. Use local navigation by default. Repository hosting and remote downloads are optional integrations, added only when requested; the bundled example contains none.
 
 | Project situation | Navigation behavior |
 | --- | --- |
-| A public GitHub repository is verified | Show a clearly labeled GitHub button on desktop and mobile; on mobile keep it directly visible outside a collapsed menu |
-| Sources are hosted elsewhere | Link to that verified destination with its actual service name or a clear source label |
+| GitHub integration is requested and a public repository is verified | Show a clearly labeled GitHub button on desktop and mobile; on mobile keep it directly visible outside a collapsed menu |
+| Another external source destination is requested | Link to that verified destination with its actual service name or a clear source label |
 | No public source destination exists | Omit the source button; do not invent a GitHub URL or expose a private repository |
-| A downloadable build exists | Link to the real build or release page, stating platform and development status |
+| A downloadable build is supplied locally | Link to the actual bundled file, stating platform and development status; add a remote release destination only when requested |
 | No public download exists | Omit the download action or explain the verified availability without a fake link |
 | The showcase is distributed locally | Use relative documentation/assets/download paths where real local files are supplied |
 
@@ -133,7 +134,7 @@ Do not leave disabled placeholder buttons, `href="#"` actions or empty destinati
 
 If the application already uses CyDoc, keep its actual generated HTML reader. Do not replace documentation actions with GitHub file views, raw Markdown, a static text copy or a new imitation reader.
 
-For application integrations, documentation sources and tooling belong in `App/.CyDocBuild/`, and the generated manual belongs in `App/Documentation/`. This CyDoc library checkout retains its existing demo/source layout. See the [integration guide](../INTEGRATION.md) and [authoring guide](../AUTHORING.md) when changes to a manual are necessary.
+For application integrations, documentation sources and tooling belong in `App/.CyDocBuild/`, and the generated manual belongs in `App/Documentation/`. Use the target application's installed CyDoc build tool and its own documentation sources when a manual needs changes. The bundled example already contains a working generated reader; do not replace it with Markdown or an imitation reader.
 
 Copy the complete generated export into the showcase's manual directory, preserving its structure:
 
@@ -187,14 +188,15 @@ Prefer simple static HTML/CSS and a locally bundled classic script for interacti
 
 Provide reproducible build and loopback preview commands in the target project's README. Use its actual installed toolchain and lockfile. Do not assume that CyDoc's npm scripts exist in another application; add and document the required commands when implementing them.
 
-In this CyDoc checkout, the existing commands are:
+The bundled example opens immediately without Node.js, installation or a build. To edit and regenerate its HTML and cache-revisioned styles/scripts with Node.js 22+, run from this folder:
 
 ```sh
-npm run website:build
-npm run website:preview
+node example/rebuild.mjs
+node verify.mjs
+node preview.mjs
 ```
 
-The build writes `dist/website/` with the genuine manual under `manual/Documentation.html`. The preview prints an available loopback URL. Building or previewing does not publish the result. A local preview server is a development convenience, not an offline reading requirement.
+The rebuild uses only Node.js built-ins and files inside this folder. It keeps the genuine manual under `example/manual/Documentation.html`. The optional preview serves only this convention folder, binds to loopback and prints its local URL. Neither command publishes anything. See [example/README.md](example/README.md) for editing and adaptation instructions.
 
 ## 9. Static hosting, cache updates and optional GitHub Pages
 

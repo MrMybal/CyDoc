@@ -2,7 +2,7 @@
 
 Static, presentation-only website for CyDoc and CyDoc Studio. English is the default; `?lang=fr` selects the complete French translation. All product claims come from the current repository and Studio 0.1.2 release. This directory contains source inputs; generated files stay in `dist/website/`.
 
-The [reusable showcase convention](../ai/showcase/README.md) documents the shared visual, content, screenshot, translation and verification requirements for AI assistants building another application's showcase. It also covers local-folder integration and static hosting without Git or GitHub. The implementation in this directory uses CyDoc's own verified repository and release links.
+The [standalone showcase convention](../ai/showcase/README.md) includes a complete copy of this showcase adapted as a local example, with its own screenshots, scripts, styles and genuine HTML manual. The example has no external reference links and works after copying its folder elsewhere. Its English guide covers visual, content, translation and verification requirements, with Git/GitHub integration optional. This public implementation keeps CyDoc's verified repository and release links.
 
 [Website](https://mrmybal.github.io/CyDoc/) · [French presentation](https://mrmybal.github.io/CyDoc/?lang=fr) · [English manual](https://mrmybal.github.io/CyDoc/manual/Documentation.html#/en/overview) · [French manual](https://mrmybal.github.io/CyDoc/manual/Documentation.html#/fr/overview)
 

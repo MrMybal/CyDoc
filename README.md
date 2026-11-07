@@ -97,7 +97,7 @@ The [public showcase](https://mrmybal.github.io/CyDoc/) and the [HTML documentat
 
 The static English/French showcase is maintained in the checkout's `website/` directory; see `website/README.md`.
 
-For another application, use the [reusable showcase convention for AI assistants](ai/showcase/README.md). It covers the visual direction, real screenshots, English/French content, offline manual integration and browser verification. Git, GitHub and hosting are optional.
+For another application, use the [standalone showcase convention for AI assistants](ai/showcase/README.md) and its [complete local CyDoc example](ai/showcase/example/index.html). The folder includes its own resources and HTML manual, with no external reference links. It covers visual direction, real screenshots, English/French content, offline manual integration and browser verification. Git, GitHub and hosting are optional.
 
 Build and preview it locally:
 
