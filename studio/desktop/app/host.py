@@ -22,6 +22,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
 from business import invoke
+from platform_paths import executable_name
 
 TERMINAL = {'Completed', 'Failed', 'Cancelled'}
 
@@ -173,12 +174,12 @@ class Jobs:
 def executable():
     configured = os.environ.get('CYDOC_CYMCP_HOST')
     candidates = [Path(configured)] if configured else [
-        Path(sys.executable).parent/'CyDocStudioHost.exe',
-        Path(__file__).resolve().parents[3]/'.tmp/cymcp-native/Release/CyDocStudioHost.exe']
+        Path(sys.executable).parent/executable_name('CyDocStudioHost'),
+        Path(__file__).resolve().parents[3]/'.tmp/cymcp-native'/('Release' if os.name=='nt' else '')/executable_name('CyDocStudioHost')]
     for candidate in candidates:
         if candidate.is_file():
             return str(candidate.resolve())
-    raise OperationError('HostNotBuilt', 'Build the native CyMCPSDK host with studio/desktop/build-native.ps1, or set CYDOC_CYMCP_HOST.')
+    raise OperationError('HostNotBuilt', 'Build the native CyMCPSDK host with the desktop build script, or set CYDOC_CYMCP_HOST.')
 
 
 class NativeHost:

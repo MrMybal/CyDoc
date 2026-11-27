@@ -1,9 +1,12 @@
-"""Verify an assembled Windows package without launching the graphical editor."""
+"""Verify an assembled native package on its target OS without opening the editor."""
 import argparse
 import json
 from pathlib import Path
 import subprocess
 import tempfile
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parent/'app'))
+from platform_paths import executable_name
 from PyInstaller.archive.readers import CArchiveReader
 
 
@@ -13,9 +16,9 @@ def main():
     parser.add_argument('--report', type=Path, required=True)
     args = parser.parse_args()
     root = args.directory.resolve()
-    runtime = root/'runtime/desktop/CyDocStudioRuntime.exe'
-    native = root/'runtime/desktop/CyDocStudioHost.exe'
-    required = ['CyDocStudio.exe', 'LICENCES/CyMCPSDK-MIT.txt', 'LICENCES/CyMCPSDK-curl-COPYING',
+    runtime = root/'runtime/desktop'/executable_name('CyDocStudioRuntime')
+    native = root/'runtime/desktop'/executable_name('CyDocStudioHost')
+    required = [executable_name('CyDocStudio'), 'LICENCES/CyMCPSDK-MIT.txt', 'LICENCES/CyMCPSDK-curl-COPYING',
                 'LICENCES/CyMCPSDK-httplib-LICENSE', 'LICENCES/CyMCPSDK-nlohmann-LICENSE.MIT',
                 'LICENCES/CyMCPSDK-picosha2-LICENSE', 'LICENCES/CyMCPSDK-revision.txt',
                 'app/cydoc/src/viewer.css', 'LICENCES/CyInstaller/LICENSE.txt']
@@ -49,13 +52,13 @@ def main():
                        'homePage':'overview','content':'manual','out':'../Documentation','modules':['image','video','mesh','gallery','graph','gif']}
         (fixture/'assets').mkdir()
         config=fixture/'cydoc.config.json';config.write_text(json.dumps(configuration),'utf-8')
-        exported=subprocess.run([str(root/'runtime/node.exe'),str(root/'app/cydoc/tools/cli.mjs'),'build',str(config)],
+        exported=subprocess.run([str(root/'runtime'/executable_name('node')),str(root/'app/cydoc/tools/cli.mjs'),'build',str(config)],
                                 capture_output=True,encoding='utf-8',errors='replace',timeout=90)
         assert exported.returncode==0,exported.stderr
         manual=fixture.parent/'Documentation'
         assert (manual/'Documentation.html').is_file() and (manual/'DocAI.md').is_file()
         assert all((manual/'DocData'/f'media-{module}.js').is_file() for module in configuration['modules'])
-    summary = {'sdkRevision': (root/'LICENCES/CyMCPSDK-revision.txt').read_text('utf-8-sig').strip(),
+    summary = {'platform':sys.platform,'sdkRevision': (root/'LICENCES/CyMCPSDK-revision.txt').read_text('utf-8-sig').strip(),
                'registryOperations': len(catalogue), 'pythonModulesInspected': len(modules),
                'legacyRuntimeAbsent': True, 'privateStateAbsent': True, 'cliValidationPassed': True,'packagedExportPassed':True}
     args.report.parent.mkdir(parents=True, exist_ok=True)

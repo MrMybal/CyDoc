@@ -1,6 +1,8 @@
 # CyDoc Studio integration
 
-Current Studio sources are version 0.1.5. In a checkout, `.cyinstaller/README.md` documents the installer contract, local release commands and end-to-end tests. CyInstaller 0.1.0 owns update discovery, verification, download, apply, relaunch and rollback. Do not add an independent updater or fabricate `_cyinstall` metadata in a compiled payload. Studio binaries and installer dependencies remain outside the root reader/npm runtime.
+Current Studio sources are version 0.2.0. In a checkout, `.cyinstaller/README.md` documents the installer contract, local release commands and end-to-end tests. CyInstaller 0.1.0 owns update discovery, verification, download, apply, relaunch and rollback. Do not add an independent updater or fabricate `_cyinstall` metadata in a compiled payload. Studio binaries and installer dependencies remain outside the root reader/npm runtime.
+
+The native shell has Windows and Linux X11 backends. `desktop/build-linux.py` builds the CEF bridge and native assistant from local source checkouts; Ubuntu 24.04 x64 is the current Linux validation target. The X11 child panel has its own ImGui context, as on Windows. Linux data uses `$XDG_DATA_HOME/CyDocStudio` or `~/.local/share/CyDocStudio`. `SIGTERM` requests the same save acknowledgement as a normal close, rather than terminating pending work. Linux executable names have no `.exe` suffix. A pure Wayland session without an X11 display is not supported by this host.
 
 Ship the service and generated editor UI together. Save acknowledgements include the persisted text's SHA-256 and Yjs vector: deletions do not advance that vector. Initial no-op sync waits for queued writes before acknowledgement, without rewriting the page. Native closure drains acknowledgement processing after the final flush; Ctrl+S must not force a saved label.
 

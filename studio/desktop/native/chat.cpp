@@ -1,55 +1,33 @@
-#include <windows.h>
 #include "host.hpp"
+#include "surface.hpp"
 #include <cyui/Core.h>
-#include <d3d11.h>
-#include <wrl/client.h>
-#include <imgui_impl_dx11.h>
-#include <imgui_impl_win32.h>
 #include <fstream>
 #include <future>
 #include <set>
 #include <algorithm>
 #include <cmath>
+#include <thread>
 using namespace cymcp;
-using Microsoft::WRL::ComPtr;
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND, UINT, WPARAM, LPARAM);
 namespace {
-UINT width = 0, height = 0;
-LRESULT WINAPI procedure(HWND window, UINT message, WPARAM w, LPARAM l) {
-    if (ImGui::GetCurrentContext() && ImGui_ImplWin32_WndProcHandler(window, message, w, l)) return 1;
-    if (message == WM_SIZE) { width = LOWORD(l); height = HIWORD(l); return 0; }
-    if (message == WM_CLOSE) { DestroyWindow(window); return 0; }
-    if (message == WM_DESTROY) { PostQuitMessage(0); return 0; }
-    return DefWindowProcW(window, message, w, l);
-}
 std::string environment(const std::string& key) { auto v = std::getenv(key.c_str()); return v ? v : ""; }
+void apply_style(cyui::Config config) {
+    config.density = cyui::Density::comfortable;
+    cyui::apply(config);
+    ImGui::GetStyle().FrameBorderSize = cyui::dp(1.f);
+    ImGui::GetStyle().FontSizeBase = 16.f;
+}
 }
 void run_chat(Host& host, std::uintptr_t parent) {
-    auto instance = GetModuleHandleW(nullptr);
-    WNDCLASSW klass{}; klass.lpfnWndProc = procedure; klass.hInstance = instance; klass.lpszClassName = L"CyDocStudioAssistant"; klass.hCursor = LoadCursor(nullptr, IDC_ARROW);
-    RegisterClassW(&klass);
-    HWND window = CreateWindowW(klass.lpszClassName, L"CyDoc Studio Assistant", parent ? WS_CHILD | WS_CLIPSIBLINGS : WS_OVERLAPPEDWINDOW,
-        0, 0, 1100, 760, reinterpret_cast<HWND>(parent), nullptr, instance, nullptr);
-    if (!window) throw Error("WindowFailed", "Cannot create assistant panel");
-    ComPtr<ID3D11Device> device; ComPtr<ID3D11DeviceContext> renderer; ComPtr<IDXGISwapChain> swap; ComPtr<ID3D11RenderTargetView> target;
-    DXGI_SWAP_CHAIN_DESC desc{}; desc.BufferCount = 2; desc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-    desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; desc.OutputWindow = window; desc.SampleDesc.Count = 1; desc.Windowed = TRUE;
-    const D3D_FEATURE_LEVEL levels[]{D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0}; D3D_FEATURE_LEVEL level;
-    auto result = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, levels, 2, D3D11_SDK_VERSION, &desc, &swap, &device, &level, &renderer);
-    if (FAILED(result)) result = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_WARP, nullptr, 0, levels, 2, D3D11_SDK_VERSION, &desc, &swap, &device, &level, &renderer);
-    if (FAILED(result)) { DestroyWindow(window); throw Error("RendererFailed", "Cannot initialize assistant renderer"); }
-    auto create_target = [&] { ComPtr<ID3D11Texture2D> back; if (FAILED(swap->GetBuffer(0, IID_PPV_ARGS(&back))) || FAILED(device->CreateRenderTargetView(back.Get(), nullptr, &target))) throw Error("RendererFailed", "Cannot create assistant render target"); };
-    create_target();
+    auto surface = create_chat_surface(parent);
     IMGUI_CHECKVERSION(); ImGui::CreateContext(); ImGui::GetIO().IniFilename = nullptr;
     ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    cyui::Config appearance; appearance.themeKey = "navy"; appearance.dpiScale = static_cast<float>(GetDpiForWindow(window)) / 96.f;
-    cyui::apply(appearance); cyui::loadFonts(); cyui::setLocale(host.language.c_str());
-    ImGui_ImplWin32_Init(window); ImGui_ImplDX11_Init(device.Get(), renderer.Get());
+    cyui::Config appearance; appearance.themeKey = "navy"; appearance.dpiScale = surface->dpi_scale();
+    apply_style(appearance); cyui::loadFonts(); cyui::setLocale(host.language.c_str());
+    surface->initialize();
     {
         auto out = open_private_output_file(host.data / "assistant-window.json");
-        auto value = Json{{"handle", reinterpret_cast<std::uintptr_t>(window)}, {"parent", reinterpret_cast<std::uintptr_t>(GetParent(window))}}.dump(); std::fwrite(value.data(), 1, value.size(), out.get());
+        auto value = Json{{"handle", surface->handle()}, {"parent", parent}}.dump(); std::fwrite(value.data(), 1, value.size(), out.get());
     }
-    if (!parent) ShowWindow(window, SW_SHOW);
     {
         auto providers = std::make_shared<ProviderRegistry>();
         ChatController controller(providers);
@@ -74,11 +52,7 @@ void run_chat(Host& host, std::uintptr_t parent) {
             } catch (...) { error = "Invalid assistant settings / Paramètres de l’assistant invalides"; }
         }
         const auto tr = [&](const char* en, const char* fr) { return host.language == "fr" ? fr : en; };
-        bool done = false;
-        while (!done && !host.stop && (!parent || IsWindow(reinterpret_cast<HWND>(parent)))) {
-            MSG message; while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE)) { if (message.message == WM_QUIT) done = true; TranslateMessage(&message); DispatchMessageW(&message); }
-            if (done) break;
-            if (width && height) { renderer->OMSetRenderTargets(0, nullptr, nullptr); target.Reset(); if (FAILED(swap->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0))) throw Error("RendererFailed", "Cannot resize assistant"); width = height = 0; create_target(); }
+        while (!host.stop && surface->poll()) {
             controller.poll();
             for (const auto& event : host.ui_events.drain()) {
                 if (event.type != "Appearance") continue;
@@ -87,7 +61,7 @@ void run_chat(Host& host, std::uintptr_t parent) {
                     const auto locale = value.at("locale").get<std::string>();
                     if (locale != "en" && locale != "fr") continue;
                     host.language = locale; cyui::setLocale(locale.c_str());
-                    cyui::Config config; config.themeKey = value.value("light", false) ? "light-grey" : "navy"; config.dpiScale = appearance.dpiScale; cyui::apply(config);
+                    cyui::Config config; config.themeKey = value.value("light", false) ? "light-grey" : "navy"; config.dpiScale = appearance.dpiScale; apply_style(config);
                     auto palette = cyui::palette();
                     const std::map<std::string, ImU32 cyui::Palette::*> fields{{"bg0", &cyui::Palette::bg0}, {"bg1", &cyui::Palette::bg1}, {"bg2", &cyui::Palette::bg2}, {"bg3", &cyui::Palette::bg3}, {"bg4", &cyui::Palette::bg4}, {"bg5", &cyui::Palette::bg5}, {"text", &cyui::Palette::text}, {"textDim", &cyui::Palette::textDim}, {"textFaint", &cyui::Palette::textFaint}, {"line", &cyui::Palette::line}, {"lineStrong", &cyui::Palette::lineStrong}, {"grid", &cyui::Palette::grid}, {"gridStrong", &cyui::Palette::gridStrong}, {"accent", &cyui::Palette::accent}, {"accentHover", &cyui::Palette::accentHover}, {"accentDim", &cyui::Palette::accentDim}, {"selection", &cyui::Palette::selection}, {"info", &cyui::Palette::info}};
                     const std::map<std::string, std::string> tokens{{"bg0","sidebar"},{"bg1","bg"},{"bg2","surface"},{"bg3","card"},{"bg4","accent-bg"},{"bg5","line"},{"text","text"},{"textDim","muted"},{"textFaint","faint"},{"line","line"},{"lineStrong","line"},{"grid","line"},{"gridStrong","line"},{"accent","accent"},{"accentHover","accent"},{"accentDim","accent"},{"selection","accent-bg"},{"info","accent"}};
@@ -107,30 +81,34 @@ void run_chat(Host& host, std::uintptr_t parent) {
             if (discovery.valid() && discovery.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
                 try { found = discovery.get(); } catch (const std::exception& e) { error = e.what(); }
             }
-            if (!IsWindowVisible(window) || IsIconic(window)) { Sleep(30); continue; }
-            ImGui_ImplDX11_NewFrame(); ImGui_ImplWin32_NewFrame(); ImGui::NewFrame();
+            if (!surface->visible()) { std::this_thread::sleep_for(std::chrono::milliseconds(30)); continue; }
+            surface->begin_frame(); ImGui::NewFrame();
             ImGui::SetNextWindowPos({0, 0}); ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
             ImGui::Begin("CyDoc Assistant", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
             if (ImGui::Button(tr("Connection settings", "Réglages de connexion"))) configuration = !configuration;
-            ImGui::SameLine(); ImGui::TextUnformatted(controller.state().phase.c_str());
             if (configuration) {
-                if (ImGui::BeginCombo(tr("Provider", "Fournisseur"), provider)) {
+                ImGui::PushItemWidth(std::min(cyui::dp(820.f), ImGui::GetContentRegionAvail().x));
+                ImGui::TextUnformatted(tr("Provider", "Fournisseur"));
+                if (ImGui::BeginCombo("##provider", provider)) {
                     for (const auto& item : catalogue) { auto id = item.at("id").get<std::string>();
                         bool available = false; for (const auto& candidate : found) if (candidate.provider_id == id && candidate.available()) available = true;
                         if (ImGui::Selectable((id + (available ? " *" : "")).c_str(), id == provider)) { std::snprintf(provider, sizeof(provider), "%s", id.c_str()); model[0] = endpoint[0] = executable[0] = key_env[0] = 0; }
                     } ImGui::EndCombo();
                 }
                 if (ImGui::Button(tr("Detect again", "Détecter à nouveau")) && !discovery.valid()) discovery = discover();
-                ImGui::SameLine(); ImGui::TextUnformatted(tr("* detected; authentication is checked on connection", "* détecté ; authentification vérifiée à la connexion"));
-                ImGui::InputText(tr("Model ID (empty: native/local)", "ID modèle (vide : natif/local)"), model, sizeof(model));
-                ImGui::InputText(tr("Service URL (optional)", "URL du service (facultative)"), endpoint, sizeof(endpoint));
-                ImGui::InputText(tr("CLI executable (optional)", "Exécutable CLI (facultatif)"), executable, sizeof(executable));
-                ImGui::InputText(tr("API key environment variable", "Variable d’environnement de la clé API"), key_env, sizeof(key_env));
-                ImGui::InputText(tr("Conversation name", "Nom de conversation"), history, sizeof(history));
+                ImGui::TextWrapped("%s", tr("* detected; authentication is checked on connection", "* détecté ; authentification vérifiée à la connexion"));
+                const auto field = [](const char* label, const char* id, auto& buffer) { ImGui::TextUnformatted(label); ImGui::InputText(id, buffer, sizeof(buffer)); };
+                field(tr("Model ID (empty: native/local)", "ID modèle (vide : natif/local)"), "##model", model);
+                field(tr("Service URL (optional)", "URL du service (facultative)"), "##endpoint", endpoint);
+                field(tr("CLI executable (optional)", "Exécutable CLI (facultatif)"), "##executable", executable);
+                field(tr("API key environment variable", "Variable d’environnement de la clé API"), "##key-environment", key_env);
+                field(tr("Conversation name", "Nom de conversation"), "##history", history);
                 ImGui::Checkbox(tr("Restore saved conversation", "Reprendre la conversation enregistrée"), &restore);
                 if (ImGui::TreeNode(tr("Advanced connection settings", "Réglages avancés de connexion"))) {
-                    ImGui::InputTextMultiline(tr("Provider JSON (memory only)", "JSON fournisseur (en mémoire)"), advanced, sizeof(advanced), {0, 100});
-                    ImGui::InputInt(tr("API context limit (KiB, 0 = full)", "Limite du contexte API (Kio, 0 = complet)"), &context_kib);
+                    ImGui::TextUnformatted(tr("Provider JSON (memory only)", "JSON fournisseur (en mémoire)"));
+                    ImGui::InputTextMultiline("##advanced", advanced, sizeof(advanced), {0, cyui::dp(100.f)});
+                    ImGui::TextUnformatted(tr("API context limit (KiB, 0 = full)", "Limite du contexte API (Kio, 0 = complet)"));
+                    ImGui::InputInt("##context-limit", &context_kib);
                     context_kib = std::clamp(context_kib, 0, 262144);
                     ImGui::TextWrapped("%s", tr("Complete conversation history remains available locally.", "L’historique complet reste disponible localement.")); ImGui::TreePop();
                 }
@@ -167,11 +145,14 @@ void run_chat(Host& host, std::uintptr_t parent) {
                         auto value = Json{{"provider", provider}, {"model", model}, {"endpoint", endpoint}, {"executable", executable}, {"keyEnvironment", key_env}}.dump(); std::fwrite(value.data(), 1, value.size(), out.get());
                     } catch (const std::exception& e) { error = redact_error_message(e.what()); }
                 }
-                ImGui::SameLine(); if (ImGui::Button(tr("Model catalogue", "Catalogue des modèles"))) controller.refresh_models();
-                ImGui::SameLine(); if (ImGui::Button(tr("Save history", "Enregistrer l’historique"))) controller.save();
+                if (ImGui::GetContentRegionAvail().x >= cyui::dp(640.f)) ImGui::SameLine();
+                if (ImGui::Button(tr("Model catalogue", "Catalogue des modèles"))) controller.refresh_models();
+                if (ImGui::GetContentRegionAvail().x >= cyui::dp(640.f)) ImGui::SameLine();
+                if (ImGui::Button(tr("Save history", "Enregistrer l’historique"))) controller.save();
                 ImGui::EndDisabled();
                 ImGui::BeginDisabled(controller.state().busy);
-                if (!controller.state().models.empty() && ImGui::BeginCombo(tr("Catalogued models", "Modèles du catalogue"), model)) {
+                if (!controller.state().models.empty()) ImGui::TextUnformatted(tr("Catalogued models", "Modèles du catalogue"));
+                if (!controller.state().models.empty() && ImGui::BeginCombo("##catalogued-models", model)) {
                   for (const auto& item : controller.state().models) {
                     const auto id = item.is_string() ? item.get<std::string>() : item.value("id", "");
                     if (!id.empty() && ImGui::Selectable(id.c_str(), id == model)) { std::snprintf(model, sizeof(model), "%s", id.c_str()); if (controller.state().connected && controller.state().turn_model_selection) controller.select_model(id); }
@@ -180,16 +161,15 @@ void run_chat(Host& host, std::uintptr_t parent) {
                 }
                 ImGui::EndDisabled();
                 if (!error.empty()) ImGui::TextWrapped("%s", error.c_str());
+                ImGui::PopItemWidth();
                 ImGui::Separator();
             }
             panel.draw("studio-chat");
             ImGui::End(); ImGui::Render();
-            const float clear[]{.035f, .045f, .065f, 1}; auto target_ptr = target.Get(); renderer->OMSetRenderTargets(1, &target_ptr, nullptr); renderer->ClearRenderTargetView(target.Get(), clear);
-            ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData()); swap->Present(1, 0);
+            surface->present();
         }
         discovery_cancel.cancel(); controller.cancel(); controller.disconnect();
     }
-    ImGui_ImplDX11_Shutdown(); ImGui_ImplWin32_Shutdown(); ImGui::DestroyContext();
-    if (IsWindow(window)) DestroyWindow(window);
+    surface->shutdown(); ImGui::DestroyContext();
     host.stop = true;
 }

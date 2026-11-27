@@ -2,11 +2,15 @@
 
 [Back to README](README.md) · [Français](VERSION.fr.md)
 
-**Reader library: 0.1.0 · Studio sources: 0.1.5**<br>
+**Reader library: 0.2.0 · Studio sources: 0.2.0**<br>
 **Stage: IN DEVELOPMENT**<br>
 **Available native editor package: Windows x64**
 
 CyDoc is an early implementation. Studio 0.1.2 is a published portable release; that publication does not establish production maturity for every integration. Review the documented limits before depending on a target runtime.
+
+## Studio 0.2.0 sources — native Linux
+
+The native shell and embedded assistant support Linux X11 alongside Windows. Ubuntu 24.04 x64 is the Linux validation target, with an X11 display and OpenGL 3.3. Linux user data follows XDG paths, update signals use the durable-save close handshake, and the assistant's connection form has visible borders and labels above its fields. Local builds and tests remain separate from publication.
 
 ## Studio 0.1.5 sources — shared language preference
 
@@ -30,6 +34,10 @@ The current sources replace the previous automation runtime with CyMCPSDK 0.7.5,
 - Complete English/French static export with the separate DocAI.md sidecar.
 
 [Download and official release notes](https://github.com/MrMybal/CyDoc/releases/tag/studio-v0.1.2) · [SHA-256 checksums](https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/SHA256SUMS.txt)
+
+## Reader library 0.2.0
+
+This source version adds guided reading paths, section-aware local search, clearer navigation, diagram enlargement and improved graph controls. Consume a built checkout or a locally generated `cydoc-0.2.0.tgz`; this version is not published to npm.
 
 ## Reader library 0.1.0
 

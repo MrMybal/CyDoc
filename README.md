@@ -12,7 +12,7 @@
     </td>
     <td width="300" align="right" valign="top">
       <p><sub>Application license</sub><br><a href="LICENSE"><strong>MIT</strong></a></p>
-      <p><sub>Source versions</sub><br><a href="VERSION.md"><strong>Reader 0.1.0</strong><br><strong>Studio 0.1.5</strong></a><br><strong>IN DEVELOPMENT</strong></p>
+      <p><sub>Source versions</sub><br><a href="VERSION.md"><strong>Reader 0.2.0</strong><br><strong>Studio 0.2.0</strong></a><br><strong>IN DEVELOPMENT</strong></p>
       <p><a href="https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/CyDocStudio-0.1.2-windows-x64.zip"><strong>Download Studio 0.1.2</strong></a><br><sub>Windows x64 · portable</sub></p>
     </td>
   </tr>
@@ -23,7 +23,7 @@
 
 A modular documentation library for application and plug-in developers. Write illustrated manuals, open the right explanation from your application and ship a searchable reader that works directly from local files. The optional **CyDoc Studio** editor adds visual and Markdown authoring.
 
-> **IN DEVELOPMENT · Reader 0.1.0 · Studio 0.1.5 sources**
+> **IN DEVELOPMENT · Reader 0.2.0 · Studio 0.2.0 sources**
 >
 > This is an early implementation with a published Windows editor. Native integrations and media compatibility still need target validation. Read the [version notes and known limitations](VERSION.md).
 
@@ -54,7 +54,7 @@ Review the [documented limits and issue tracking](VERSION.md#documented-limitati
 
 ---
 
-Studio 0.1.5 sources use CyMCPSDK 0.7.5 for the integrated assistant and local automation, and CyInstaller 0.1.0 for setup, managed updates and rollback. The published Studio 0.1.2 portable download predates these changes. See the [source version notes](VERSION.md).
+Studio 0.2.0 sources use CyMCPSDK 0.7.5 for the integrated assistant and local automation, and CyInstaller 0.1.0 for setup, managed updates and rollback on Windows and Linux X11. The published Studio 0.1.2 portable download predates these changes. See the [source version notes](VERSION.md).
 
 ## Installation
 

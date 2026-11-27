@@ -4,23 +4,35 @@ title: CyDoc Studio
 description: Écrire, organiser et publier une documentation avec l’éditeur visuel et Markdown.
 section: Premiers pas
 order: 3
-sourceRevision: 5
+sourceRevision: 6
 ---
 CyDoc Studio est l’éditeur facultatif des manuels CyDoc. Travaillez en local sans compte, ou rejoignez un espace hébergé pour écrire en équipe. Votre documentation publiée reste indépendante de Studio.
 
 ## Démarrer en local {#start}
 
-[Téléchargez Studio pour Windows x64](https://github.com/MrMybal/CyDoc/releases/tag/studio-v0.1.2), extrayez toute l’archive et lancez **CyDocStudio.exe**. Conservez ensemble les dossiers qui l’accompagnent. L’application inclut ses environnements d’exécution et s’ouvre directement, sans inscription ni connexion.
+[Consultez les téléchargements Studio disponibles](https://github.com/MrMybal/CyDoc/releases). Les paquets Studio 0.2.0 sont en préparation ; la version portable Windows actuellement publiée est la 0.1.2. Les sources permettent de créer un setup Windows `.exe` et un setup Linux `.run` (rendez ce dernier exécutable avant de le lancer). Linux nécessite un affichage X11 et OpenGL 3.3 ; Ubuntu 24.04 x64 est la cible de validation. L’installeur présente les bibliothèques d’exécution nécessaires avant l’installation.
 
-Les onglets **Éditeur**, **Documentation**, **Options** et **MCP / SDK local** occupent la fenêtre de l’application. Documentation ouvre le manuel intégré dans sa propre vue. Le retour à l’éditeur conserve votre page de travail et sa position de défilement.
+Lancez **CyDocStudio.exe** sous Windows ou **CyDocStudio** sous Linux. L’application s’ouvre directement, sans inscription ni connexion. Vous pouvez aussi extraire un paquet portable complet ; conservez ensemble les dossiers qui l’accompagnent. Les mises à jour gérées nécessitent une installation avec CyInstaller.
+
+Les onglets **Éditeur**, **Documentation**, **Assistant**, **Mises à jour**, **Options** et **MCP / SDK local** occupent la fenêtre de l’application. Documentation ouvre le manuel intégré dans sa propre vue. Le retour à l’éditeur conserve votre page de travail et sa position de défilement.
 
 L’éditeur dans le navigateur permet aussi de travailler en local sans compte lorsque son service est lancé avec `--local`. L’édition locale est limitée à la machine courante. La lecture d’un manuel exporté ne nécessite aucun service d’édition.
+
+## Utiliser l’assistant {#assistant}
+
+Dans **Assistant**, choisissez un fournisseur installé ou un service que vous avez configuré, sélectionnez un modèle, puis connectez-vous. Les connexions API utilisent le nom d’une variable d’environnement contenant votre clé. Studio n’installe pas de modèle et ne vous connecte pas automatiquement à un fournisseur.
+
+Demandez de l’aide pour organiser ou modifier votre documentation, puis relisez les changements obtenus. Arrêter une réponse annule la suite de la génération ; cela n’annule pas les modifications déjà enregistrées. Utilisez un autre nom de conversation pour commencer une nouvelle discussion.
+
+## Installer les mises à jour {#updates}
+
+Dans **Mises à jour**, recherchez une nouvelle version et ouvrez CyInstaller pour la consulter. Ouvrir cette fenêtre laisse Studio en cours d’exécution. Accepter une mise à jour demande une fermeture normale après l’enregistrement du travail en attente. Les projets restent dans leur dossier de données séparé ; CyInstaller propose aussi des commandes de vérification, de récupération et de retour arrière.
 
 ## Choisir un projet {#projects}
 
 Choisissez **Ouvrir l’exemple CyDoc** dans l’écran des projets pour obtenir un manuel complet et modifiable : pages anglaises et françaises, exemples de code, schémas, images, GIF, vidéos, meshes et galeries. Chaque copie est indépendante et permet d’expérimenter librement.
 
-Utilisez **Nouveau projet** pour commencer votre propre manuel. Les projets dans un dossier fonctionnent sans Git. Dans l’application Windows, Options permet d’autoriser et d’ouvrir le dossier d’une application existante. Les fichiers de création restent dans `.CyDocBuild/` ; les fichiers publiés vont dans `Documentation/`.
+Utilisez **Nouveau projet** pour commencer votre propre manuel. Les projets dans un dossier fonctionnent sans Git. Dans l’application de bureau, Options permet d’autoriser et d’ouvrir le dossier d’une application existante. Les fichiers de création restent dans `.CyDocBuild/` ; les fichiers publiés vont dans `Documentation/`.
 
 ## Écrire et organiser les pages {#write}
 

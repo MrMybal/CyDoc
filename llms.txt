@@ -1,6 +1,6 @@
 # CyDoc
 
-> Modular, multilingual, MIT-licensed application documentation, readable from local files without a web server. These guides describe the current 0.1.0 implementation.
+> Modular, multilingual, MIT-licensed application documentation, readable from local files without a web server. These guides describe the current 0.2.0 implementation.
 
 Exports open through `Documentation.html`; their scripts, media and manifests are contained in `DocData/`.
 The reader is for human users. Assistant guidance belongs in the separate `DocAI.md` sidecar, outside navigation and search. Publish secondary languages only when all public content is translated.

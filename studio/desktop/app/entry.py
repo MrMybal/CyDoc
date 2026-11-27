@@ -1,5 +1,7 @@
 """Frozen entry: desktop by default, native CyMCPSDK CLI/MCP with --tool."""
 import sys
+if getattr(sys, 'frozen', False):
+    sys.dont_write_bytecode = True  # Replaceable Linux modules must not add files to the installed payload.
 if '--tool' in sys.argv:
     sys.argv.remove('--tool')
     from tool import run

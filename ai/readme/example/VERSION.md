@@ -2,7 +2,7 @@
 
 [Back to README](README.md) · [Français](VERSION.fr.md)
 
-**Reader library: 0.1.0 · Studio editor: 0.1.2**<br>
+**Reader library: 0.2.0 · Studio editor: 0.1.2**<br>
 **Stage: IN DEVELOPMENT**<br>
 **Available native editor package: Windows x64**
 

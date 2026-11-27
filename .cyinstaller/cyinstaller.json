@@ -12,7 +12,10 @@
     "license": "assets/LICENSE.txt"
   },
   "source": {"github": "MrMybal/CyDoc"},
-  "platforms": {"windows": {"archs": ["x64"], "main_executable": "CyDocStudio.exe"}},
+  "platforms": {
+    "windows": {"archs": ["x64"], "main_executable": "CyDocStudio.exe"},
+    "linux": {"archs": ["x64"], "main_executable": "CyDocStudio"}
+  },
   "install": {
     "scopes": ["user"],
     "default_scope": "user",
@@ -36,11 +39,27 @@
     ]
   },
   "files": {"mutable": []},
-  "options": [{"id": "desktop_shortcut", "type": "bool", "label": {"en": "Create a desktop shortcut", "fr": "Créer un raccourci sur le bureau"}, "default": false}],
-  "prerequisites": [{"id": "vcredist-2015-2022", "arch": "x64", "min_version": "14.40", "reason": {"en": "Required by the native Studio components.", "fr": "Nécessaire aux composants natifs de Studio."}}],
+  "options": [
+    {"id": "runtime_platform", "type": "string", "label": {"en": "Platform", "fr": "Plateforme"}, "default": "{os}", "when": {"any": []}},
+    {"id": "desktop_shortcut", "type": "bool", "label": {"en": "Create a desktop shortcut", "fr": "Créer un raccourci sur le bureau"}, "default": false}
+  ],
+  "prerequisites": [
+    {"id": "vcredist-2015-2022", "arch": "x64", "min_version": "14.40", "reason": {"en": "Required by the native Studio components.", "fr": "Nécessaire aux composants natifs de Studio."}},
+    {"id": "gtk3", "reason": {"en": "Required by the Linux desktop components.", "fr": "Nécessaire aux composants du bureau Linux."}},
+    {"id": "cydoc-linux-libraries", "reason": {"en": "Required by the native editor, browser and assistant.", "fr": "Nécessaire à l’éditeur natif, au navigateur et à l’assistant."},
+      "definition": {
+        "name": "CyDoc Studio (Linux)",
+        "platforms": ["linux-x64"],
+        "detect": [{"type": "package"}],
+        "source": {"type": "system_package", "packages": {"apt": ["libglfw3", "libgl1", "libgbm1", "libnss3", "libcurl4t64|libcurl4", "libasound2t64|libasound2", "libatk-bridge2.0-0t64|libatk-bridge2.0-0", "libcups2t64|libcups2", "libxcomposite1", "libxdamage1", "libxrandr2", "libxkbcommon0"]}}
+      }
+    }
+  ],
   "integration": {"shortcuts": [
-    {"location": "start_menu", "name": "{app.name}", "target": "{install_dir}/CyDocStudio.exe"},
-    {"location": "desktop", "name": "{app.name}", "target": "{install_dir}/CyDocStudio.exe", "option": "desktop_shortcut"}
+    {"location": "start_menu", "name": "{app.name}", "target": "{install_dir}/CyDocStudio.exe", "when": {"option": "runtime_platform", "equals": "windows"}},
+    {"location": "desktop", "name": "{app.name}", "target": "{install_dir}/CyDocStudio.exe", "option": "desktop_shortcut", "when": {"option": "runtime_platform", "equals": "windows"}},
+    {"location": "start_menu", "name": "{app.name}", "target": "{install_dir}/CyDocStudio", "icon": "{install_dir}/assets/cydoc.png", "when": {"option": "runtime_platform", "equals": "linux"}},
+    {"location": "desktop", "name": "{app.name}", "target": "{install_dir}/CyDocStudio", "icon": "{install_dir}/assets/cydoc.png", "option": "desktop_shortcut", "when": {"option": "runtime_platform", "equals": "linux"}}
   ]},
   "processes": {"close_strategy": "graceful", "graceful_timeout_s": 60},
   "update": {"channels": ["stable", "beta"], "default_channel": "stable", "check_interval_hours": 24, "auto_download": false, "confirm_startup": true, "confirm_attempts": 3},

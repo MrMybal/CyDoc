@@ -1,7 +1,36 @@
-"""Win32 child-panel placement for the Studio shell (no shared ImGui ABI)."""
+"""Native child-panel placement for the Studio shell (no shared ImGui ABI)."""
 import ctypes
 from ctypes import wintypes
 import os
+
+
+class Win32Panel:
+    def __init__(self):
+        self.user = ctypes.windll.user32
+        self.user.MoveWindow.argtypes = [wintypes.HWND, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, wintypes.BOOL]
+        self.user.ShowWindow.argtypes = [wintypes.HWND, ctypes.c_int]
+
+    def find(self, title):
+        return studio_window(title)
+
+    def bounds(self, *arguments):
+        return panel_bounds(*arguments)
+
+    def move(self, handle, bounds):
+        self.user.MoveWindow(handle, *bounds, True)
+
+    def show(self, handle, visible):
+        self.user.ShowWindow(handle, 8 if visible else 0)
+
+    def close(self):
+        pass
+
+
+def native_panel():
+    if os.name == 'nt':
+        return Win32Panel()
+    from x11_window import X11Panel
+    return X11Panel()
 
 
 def studio_window(title):

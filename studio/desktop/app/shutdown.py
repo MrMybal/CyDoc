@@ -1,6 +1,25 @@
 """A nonce-bound close handshake; a missing renderer response never discards work."""
 import secrets
 import time
+import contextlib
+import os
+
+
+@contextlib.contextmanager
+def close_signals(callback):
+    """Linux updater SIGTERM requests the same durable close as the window button."""
+    previous = {}
+    if os.name != 'nt':
+        import signal
+        for number in (signal.SIGTERM, signal.SIGINT):
+            previous[number] = signal.signal(number, lambda *_: callback())
+    try:
+        yield
+    finally:
+        if previous:
+            import signal
+            for number, handler in previous.items():
+                signal.signal(number, handler)
 
 
 class CloseGuard:

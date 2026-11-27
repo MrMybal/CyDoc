@@ -1,4 +1,4 @@
-"""Windows CyUI shell embedding the same web editor through CyUI's CEF adapter."""
+"""CyUI shell embedding the same web editor through CyUI's CEF adapter."""
 import argparse
 import ctypes
 import json
@@ -12,6 +12,7 @@ import logging
 import socket
 import atexit
 from urllib.parse import urlparse
+from platform_paths import executable_name, default_data_directory, cef_files
 
 
 def stop_service(process):
@@ -40,7 +41,7 @@ def main():
     args = parser.parse_args()
     frozen = bool(getattr(sys, 'frozen', False))
     distribution = Path(sys.executable).resolve().parents[2] if frozen else None
-    data = (args.data or Path(os.environ.get('LOCALAPPDATA', str(Path.home()))) / 'CyDocStudio').resolve()
+    data = (args.data or default_data_directory()).resolve()
     from updater import UpdateService
     updates = UpdateService(distribution, ['--data',str(data), *(['--origin',args.origin] if args.origin else [])])
     atexit.register(updates.close)
@@ -86,7 +87,7 @@ def main():
     allowed_file=preferences/'allowed-folders.json'
     allowed_file.write_text(json.dumps(settings['allowedFolders']),encoding='utf-8')
     cef = (args.cef or (distribution/'runtime/cef' if frozen else Path(os.environ.get('CYDOC_CEF_DIR', 'runtime/cef')))).resolve()
-    library, helper = cef/'cyui_webcef_bridge.dll', cef/'cyui_webcef_helper.exe'
+    library, helper = cef_files(cef)
     if not library.is_file() or not helper.is_file():
         raise RuntimeError('CEF is missing. Supply --cef with the matching CyUI WebCEF runtime directory.')
     process = None
@@ -94,7 +95,7 @@ def main():
     origin = args.origin
     setup_code = None
     if not origin:
-        node = str(distribution/'runtime/node.exe') if frozen else shutil.which('node')
+        node = str(distribution/'runtime'/executable_name('node')) if frozen else shutil.which('node')
         if not node:
             raise RuntimeError('Node.js 22 or later is required by the documentation compiler.')
         ready = data/'server-ready.json'
@@ -150,16 +151,14 @@ def main():
     application_ready = False
     health_written = False
     exit_timer_requested = False
-    from shutdown import CloseGuard
+    from shutdown import CloseGuard, close_signals
     close_guard = CloseGuard()
     native_host = None
     assistant_window = 0
     assistant_bounds = None
     parent_window = 0
-    user32 = ctypes.windll.user32
-    user32.GetActiveWindow.restype = ctypes.c_void_p
-    user32.MoveWindow.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_bool]
-    user32.ShowWindow.argtypes = [ctypes.c_void_p, ctypes.c_int]
+    from native_window import native_panel
+    panel = native_panel()
     def host_theme():
         return {'protocol':'cyui.web','version':1,'type':'theme','payload':{'theme':settings['theme'],'locale':settings['language'],'localWorkspace':not bool(args.origin),'textScale':settings['textScale']}}
 
@@ -219,9 +218,8 @@ def main():
         url = origin + ('/#setup='+setup_code if setup_code else '/')
         view = runtime.create(url, (origin,), lambda w,h,p: upload('editor',w,h,p), release)
         from host import NativeHost
-        from native_window import studio_window
         os.environ['CYDOC_STUDIO_ORIGIN'] = origin
-        parent_window = studio_window(parameters.app_window_params.window_title)
+        parent_window = panel.find(parameters.app_window_params.window_title)
         native_host = NativeHost(data/'jobs')
         native_host.start(chat=True, parent=parent_window, language=settings['language'])
         broadcast_theme()
@@ -381,11 +379,10 @@ def main():
                         if assistant_window:
                             position = i.get_cursor_screen_pos(); viewport = i.get_main_viewport()
                             size = i.get_content_region_avail()
-                            from native_window import panel_bounds
-                            bounds = panel_bounds(parent_window, position, size, viewport, i.get_io().display_size)
+                            bounds = panel.bounds(parent_window, position, size, viewport, i.get_io().display_size)
                             if bounds != assistant_bounds:
-                                user32.MoveWindow(assistant_window, *bounds, True); assistant_bounds = bounds
-                            user32.ShowWindow(assistant_window, 8)
+                                panel.move(assistant_window, bounds); assistant_bounds = bounds
+                            panel.show(assistant_window, True)
                             i.dummy(size)
                         else:
                             i.text_unformatted('Starting assistant… / Démarrage de l’assistant…')
@@ -399,7 +396,7 @@ def main():
             i.end_tab_bar()
             selected_once = True
         if assistant_window and shown != 'assistant':
-            user32.ShowWindow(assistant_window, 0)
+            panel.show(assistant_window, False)
         for backend in [view, manual_view]:
             if backend is not None and backend is not shown:
                 for _ in range(256):
@@ -463,6 +460,7 @@ def main():
             native_host.close()
         if runtime:
             runtime.close()
+        panel.close()
 
     parameters.callbacks.post_init=initialize
     parameters.callbacks.pre_new_frame=pump
@@ -471,7 +469,8 @@ def main():
     parameters.callbacks.before_exit=close
     parameters.callbacks.confirm_exit=close_guard.request
     try:
-        h.run(parameters)
+        with close_signals(close_guard.request):
+            h.run(parameters)
     finally:
         stop_service(process)
         log_stream.close()

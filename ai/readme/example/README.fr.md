@@ -12,7 +12,7 @@
     </td>
     <td width="300" align="right" valign="top">
       <p><sub>Licence de l’application</sub><br><a href="../../../LICENSE"><strong>MIT</strong></a></p>
-      <p><sub>Versions</sub><br><a href="VERSION.fr.md"><strong>Lecteur 0.1.0</strong><br><strong>Studio 0.1.2</strong></a><br><strong>EN DÉVELOPPEMENT</strong></p>
+      <p><sub>Versions</sub><br><a href="VERSION.fr.md"><strong>Lecteur 0.2.0</strong><br><strong>Studio 0.1.2</strong></a><br><strong>EN DÉVELOPPEMENT</strong></p>
       <p><a href="https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/CyDocStudio-0.1.2-windows-x64.zip"><strong>Télécharger Studio</strong></a><br><sub>Windows x64 · portable</sub></p>
     </td>
   </tr>
@@ -23,7 +23,7 @@
 
 Bibliothèque de documentation modulaire pour les développeurs d’applications et de plugins. Rédigez des manuels illustrés, ouvrez la bonne explication depuis votre application et livrez un lecteur avec recherche qui fonctionne directement depuis des fichiers locaux. L’éditeur optionnel **CyDoc Studio** ajoute l’écriture visuelle et Markdown.
 
-> **EN DÉVELOPPEMENT · Lecteur 0.1.0 · Studio 0.1.2**
+> **EN DÉVELOPPEMENT · Lecteur 0.2.0 · Studio 0.1.2**
 >
 > Il s’agit d’une première implémentation avec un éditeur Windows publié. Les intégrations natives et la compatibilité des médias nécessitent encore des vérifications sur les cibles. Consultez les [notes de version et limites connues](VERSION.fr.md).
 

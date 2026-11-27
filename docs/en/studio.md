@@ -4,23 +4,35 @@ title: CyDoc Studio
 description: Write, organize and publish documentation with the visual and Markdown editor.
 section: Getting started
 order: 3
-revision: 5
+revision: 6
 ---
 CyDoc Studio is the optional editor for CyDoc manuals. Work locally without an account, or join a hosted workspace to write with your team. Your published documentation remains independent of Studio.
 
 ## Start locally {#start}
 
-[Download Studio for Windows x64](https://github.com/MrMybal/CyDoc/releases/tag/studio-v0.1.2), extract the entire archive and start **CyDocStudio.exe**. Keep its adjacent folders together. The application bundles its runtimes and opens directly without registration or sign-in.
+[See available Studio downloads](https://github.com/MrMybal/CyDoc/releases). Studio 0.2.0 packages are being prepared; the current published portable Windows build is 0.1.2. Source builds provide a Windows `.exe` setup and a Linux `.run` setup (make the latter executable before starting it). Linux requires an X11 display and OpenGL 3.3; Ubuntu 24.04 x64 is the validation target. The installer lists required runtime libraries before installation.
 
-The **Editor**, **Documentation**, **Options** and **Local MCP / SDK** tabs occupy the application window. Documentation opens the bundled manual in its own view. Returning to Editor retains your working page and scroll position.
+Start **CyDocStudio.exe** on Windows or **CyDocStudio** on Linux. The application opens directly without registration or sign-in. A portable payload can also be extracted in full; keep its adjacent folders together. Managed updates require installation with CyInstaller.
+
+The **Editor**, **Documentation**, **Assistant**, **Updates**, **Options** and **Local MCP / SDK** tabs occupy the application window. Documentation opens the bundled manual in its own view. Returning to Editor retains your working page and scroll position.
 
 The browser editor also supports account-free local work when its service is started with `--local`. Local editing is limited to the current machine. Reading an exported manual needs no editing service.
+
+## Use the assistant {#assistant}
+
+In **Assistant**, choose an installed provider or a service you have configured, select a model, then connect. API connections use the name of an environment variable containing your key. Studio does not install models or sign in to a provider automatically.
+
+Ask for help organizing or editing your documentation, then review the resulting changes. Stopping a response cancels further generation; it does not undo edits already saved. Use a separate conversation name to start another discussion.
+
+## Install updates {#updates}
+
+In **Updates**, check for a newer version and open CyInstaller to review it. Opening this window leaves Studio running. Accepting an update requests normal closure after pending work is saved. Projects remain in their separate data directory; CyInstaller also provides verification, recovery and rollback controls.
 
 ## Choose a project {#projects}
 
 Choose **Open the CyDoc example** on the Projects screen for a complete editable manual with English/French pages, code samples, diagrams, images, GIFs, videos, meshes and galleries. Each copy is independent, so you can experiment freely.
 
-Use **New project** to start your own manual. Folder projects work without Git. In the Windows application, Options lets you allow and open an existing application folder. Documentation inputs stay in `.CyDocBuild/`; published files go into `Documentation/`.
+Use **New project** to start your own manual. Folder projects work without Git. In the desktop application, Options lets you allow and open an existing application folder. Documentation inputs stay in `.CyDocBuild/`; published files go into `Documentation/`.
 
 ## Write and organize pages {#write}
 

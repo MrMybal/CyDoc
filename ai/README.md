@@ -1,6 +1,6 @@
 # CyDoc guide for AI coding assistants
 
-Use this index when integrating CyDoc into an application, writing its documentation, or changing the library. These guides describe CyDoc 0.1.0 and are included in the package. The library is not currently published to npm; use a built checkout or a locally created package archive.
+Use this index when integrating CyDoc into an application, writing its documentation, or changing the library. These guides describe CyDoc 0.2.0 and are included in the package. The library is not currently published to npm; use a built checkout or a locally created package archive.
 
 ## Choose the task
 

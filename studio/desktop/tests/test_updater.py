@@ -7,11 +7,12 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'app'))
 from updater import UpdateService, APP_ID
 from storage import prepare_preferences
 from shutdown import CloseGuard
+from platform_paths import executable_name
 
 
 def managed(root):
     engine=root/'_cyinstall';engine.mkdir(parents=True)
-    for name in ('cyinstall.exe','cyinstall-ui.exe'):(engine/name).write_bytes(b'fixture')
+    for name in ('cyinstall','cyinstall-ui'):(engine/executable_name(name)).write_bytes(b'fixture')
     (engine/'app-install.json').write_text(json.dumps({'app_id':APP_ID}),encoding='utf-8')
     (engine/'cyinstaller.json').write_text(json.dumps({'app':{'id':APP_ID}}),encoding='utf-8')
     return UpdateService(root)

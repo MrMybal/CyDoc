@@ -7,6 +7,7 @@ from pathlib import Path
 import subprocess
 import time
 import threading
+from platform_paths import executable_name
 
 APP_ID = 'mrmybal.cydocstudio'
 
@@ -40,7 +41,7 @@ class UpdateService:
         self.mode = 'development' if self.root is None else 'portable'
         if self.root:
             directory = self.root/'_cyinstall'
-            self.cli, self.ui = directory/'cyinstall.exe', directory/'cyinstall-ui.exe'
+            self.cli, self.ui = directory/executable_name('cyinstall'), directory/executable_name('cyinstall-ui')
             if directory.exists():
                 self.mode = 'repair'
                 try:

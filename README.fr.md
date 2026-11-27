@@ -12,7 +12,7 @@
     </td>
     <td width="300" align="right" valign="top">
       <p><sub>Licence de l’application</sub><br><a href="LICENSE"><strong>MIT</strong></a></p>
-      <p><sub>Versions des sources</sub><br><a href="VERSION.fr.md"><strong>Lecteur 0.1.0</strong><br><strong>Studio 0.1.5</strong></a><br><strong>EN DÉVELOPPEMENT</strong></p>
+      <p><sub>Versions des sources</sub><br><a href="VERSION.fr.md"><strong>Lecteur 0.2.0</strong><br><strong>Studio 0.2.0</strong></a><br><strong>EN DÉVELOPPEMENT</strong></p>
       <p><a href="https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/CyDocStudio-0.1.2-windows-x64.zip"><strong>Télécharger Studio 0.1.2</strong></a><br><sub>Windows x64 · portable</sub></p>
     </td>
   </tr>
@@ -23,7 +23,7 @@
 
 Bibliothèque de documentation modulaire pour les développeurs d’applications et de plugins. Rédigez des manuels illustrés, ouvrez la bonne explication depuis votre application et livrez un lecteur avec recherche qui fonctionne directement depuis des fichiers locaux. L’éditeur optionnel **CyDoc Studio** ajoute l’écriture visuelle et Markdown.
 
-> **EN DÉVELOPPEMENT · Lecteur 0.1.0 · Sources Studio 0.1.5**
+> **EN DÉVELOPPEMENT · Lecteur 0.2.0 · Sources Studio 0.2.0**
 >
 > Il s’agit d’une première implémentation avec un éditeur Windows publié. Les intégrations natives et la compatibilité des médias nécessitent encore des vérifications sur les cibles. Consultez les [notes de version et limites connues](VERSION.fr.md).
 
@@ -54,7 +54,7 @@ Consultez les [limites documentées et le suivi des problèmes](VERSION.fr.md#li
 
 ---
 
-Les sources Studio 0.1.5 utilisent CyMCPSDK 0.7.5 pour l’assistant intégré et l’automatisation locale, et CyInstaller 0.1.0 pour le setup, les mises à jour gérées et le retour arrière. Le téléchargement portable publié Studio 0.1.2 précède ces changements. Consultez les [notes de version des sources](VERSION.fr.md).
+Les sources Studio 0.2.0 utilisent CyMCPSDK 0.7.5 pour l’assistant intégré et l’automatisation locale, et CyInstaller 0.1.0 pour le setup, les mises à jour gérées et le retour arrière sous Windows et Linux X11. Le téléchargement portable publié Studio 0.1.2 précède ces changements. Consultez les [notes de version des sources](VERSION.fr.md).
 
 ## Installation
 

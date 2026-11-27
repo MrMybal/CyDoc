@@ -4,7 +4,7 @@ Start with the generated offline reader unless the application needs a custom re
 
 ## Get a local package
 
-CyDoc 0.1.0 is not published to the npm registry. In the CyDoc checkout:
+CyDoc 0.2.0 is not published to the npm registry. In the CyDoc checkout:
 
 ```sh
 npm ci
@@ -15,7 +15,7 @@ npm pack
 `npm pack` also runs the build through `prepack`. Install the resulting archive from the application project, using its actual path and version:
 
 ```sh
-npm install --prefix .CyDocBuild /path/to/cydoc-0.1.0.tgz
+npm install --prefix .CyDocBuild /path/to/cydoc-0.2.0.tgz
 ```
 
 The path above is a placeholder. A bare `npm install cydoc` is not the current distribution workflow. The core and generated-reader workflows do not require Three.js; install the optional `three` peer when using mesh support.

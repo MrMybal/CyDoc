@@ -158,8 +158,14 @@ static int run(const std::vector<std::string>& arguments) {
     }
 }
 
+#ifdef _WIN32
 int wmain(int argc, wchar_t** argv) {
     std::vector<std::string> arguments;
     for (int i = 0; i < argc; ++i) arguments.push_back(cymcp::path_utf8(std::filesystem::path(argv[i])));
     return run(arguments);
 }
+#else
+int main(int argc, char** argv) {
+    return run(std::vector<std::string>(argv, argv + argc));
+}
+#endif

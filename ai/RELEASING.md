@@ -6,7 +6,7 @@ This guide is for maintaining this checkout. Publication, release deletion and p
 
 Read `AGENTS.md`, `studio/README.md`, `.cyinstaller/README.md`, `CHANGELOG.md` and the bilingual README/version files. Check the worktree, remote branch and existing releases before mutation. Keep the three-column README composition and use only actual downloads. A source version is not a published binary. Do not delete existing releases while a requested replacement platform is still unavailable.
 
-The currently validated native shell is Windows x64. A Linux release requires a real native Linux host, matching CEF runtime, native assistant, Linux CyInstaller engine and target tests. A ZIP containing Windows executables or the browser service alone is not a native Linux Studio release. Keep publication pending until every platform required by the user passes.
+The native shell has Windows x64 and Linux X11 backends. Each Linux release requires a real native Linux build, matching CEF runtime, native assistant, Linux CyInstaller engine and target tests. A ZIP containing Windows executables or the browser service alone is not a native Linux Studio release. Keep publication pending until every platform required by the user passes.
 
 ## Validate and scan
 

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "cy.doc.studio",
   "name": "CyDocStudio",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "sdk": {
     "name": "CyMCPSDK",
     "version": "0.7.5",

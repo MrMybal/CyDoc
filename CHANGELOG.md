@@ -3,6 +3,18 @@
 These are Studio application versions. Reader and installer engine versions are independent.
 The entries describe source builds; signed release assets are published separately.
 
+## [0.2.0] - 2026-11-27
+<!-- cyinstaller: severity=recommended -->
+
+### Added
+- Native Linux x64 shell with the CEF editor and embedded CyMCPSDK assistant on X11.
+- Linux payload build, user data paths and CyInstaller lifecycle integration alongside Windows.
+- Graceful Linux update closure through the editor's durable-save handshake.
+
+### Fixed
+- Visible assistant input borders in light themes and bounded connection fields with labels above them.
+- The assistant uses the localized SDK status instead of a duplicate internal phase label.
+
 ## [0.1.5] - 2026-11-27
 <!-- cyinstaller: severity=recommended -->
 

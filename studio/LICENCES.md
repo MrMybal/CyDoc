@@ -4,7 +4,7 @@ CyDoc Studio is part of [CyDoc](https://github.com/MrMybal/CyDoc) and uses its M
 
 | Component | License | Source |
 | --- | --- | --- |
-| CyUI 1.2.0 | MIT | https://github.com/MrMybal/CyUI |
+| CyUI 1.3.0 | MIT | https://github.com/MrMybal/CyUI |
 | CyMCPSDK 0.7.5 | MIT | https://github.com/MrMybal/CyMCPSDK |
 | CyInstaller 0.1.0 | MIT | https://github.com/MrMybal/CyInstaller |
 | libcurl | curl | https://curl.se/docs/copyright.html |
@@ -18,6 +18,7 @@ CyDoc Studio is part of [CyDoc](https://github.com/MrMybal/CyDoc) and uses its M
 | esbuild | MIT | https://github.com/evanw/esbuild |
 | Dear ImGui | MIT | https://github.com/ocornut/imgui |
 | imgui-bundle | MIT and bundled component licenses | https://github.com/pthom/imgui_bundle |
+| python-xlib 0.33 (Linux only) | LGPL v2 or later; supplied as replaceable source outside the frozen archive | https://github.com/python-xlib/python-xlib |
 | CEF / Chromium | BSD-style and component licenses | https://bitbucket.org/chromiumembedded/cef |
 | Node.js | MIT and bundled component licenses | https://github.com/nodejs/node |
 | CPython | PSF and bundled component licenses | https://github.com/python/cpython |

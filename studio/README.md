@@ -1,12 +1,12 @@
 # CyDoc Studio
 
-An optional authoring application for CyDoc: a browser editor, a Windows CyUI/CEF shell, and local JavaScript/Python SDK access and native CyMCPSDK automation. The static reader remains independent: installing Studio does not add editor dependencies to exported manuals.
+An optional authoring application for CyDoc: a browser editor, native Windows/Linux CyUI/CEF shells, local JavaScript/Python SDK access and native CyMCPSDK automation. The static reader remains independent: installing Studio does not add editor dependencies to exported manuals.
 
 Studio supports English and French interfaces, visual and Markdown editing, shared Yjs documents, live presence, automatic saving, page properties and hierarchy, private working history, local media, reader previews and publication. Projects work in ordinary folders without Git. Git can be enabled separately, with documentation commits, diffs, branches, history and HTTPS remotes.
 
 ## Windows download
 
-Current source builds are **Studio 0.1.5**, with CyInstaller setup, managed Updates and graceful save-before-close. The published portable 0.1.2 archive below predates this integration. The [installer contract](../.cyinstaller/README.md) documents local signing, packaging and isolated end-to-end tests; local generation does not publish an online update feed.
+Current source builds are **Studio 0.2.0**, with native Linux X11 support, CyInstaller setup, managed Updates and graceful save-before-close. The published portable 0.1.2 archive below predates this integration. The [installer contract](../.cyinstaller/README.md) documents local signing, packaging and isolated end-to-end tests; local generation does not publish an online update feed.
 
 [Download CyDoc Studio 0.1.2](https://github.com/MrMybal/CyDoc/releases/tag/studio-v0.1.2). Extract the complete Windows x64 ZIP, then start `CyDocStudio.exe`. Keep the adjacent `app/`, `runtime/` and `LICENCES/` directories. Node.js, Python and CEF are bundled; no separate runtime installation or local account setup is needed. This is a portable application, not an installer, and its executables are not code-signed.
 
@@ -149,6 +149,24 @@ python studio/desktop/app/main.py --cef /path/to/CyUI/build/cef
 The default is the library’s Dark theme. Use **Options** to persist language, one of the six library themes (Light, Dark, Midnight, Nord, Paper and High contrast), text scale and an allowlist of application folders. Choosing a local folder opens the project form; the administrator confirms the import or initialization. Saved UI configurations contain versioned appearance values, not passwords or tokens. `--origin https://your-studio.example.com` connects the same shell to an online service.
 
 The local desktop service prefers port 4310. If another service already uses it, Studio selects an available port and remembers it; its MCP panel shows the actual endpoint. The current Python CEF bridge runs **without the CEF process sandbox on Windows**, as documented by CyUI. Its exact-origin navigation policy remains active. Production deployments that require a sandboxed native browser must supply CyUI's documented sandbox-capable native bootstrap; this build does not claim sandboxing. Windows CEF IME/accessibility, codecs and WebGL behavior need target-specific validation beyond launching the editor. No Linux/macOS desktop package is supplied here.
+
+## Build Linux x64
+
+Build natively on Linux; Ubuntu 24.04 x64 is the validation target. The shell needs X11 (or XWayland), OpenGL 3.3, GTK 3, GLFW 3 and libcurl. Pure Wayland without `DISPLAY` is not supported. CEF runs without its process sandbox in this integration; do not infer sandboxing from the Linux SDK's capabilities.
+
+Prepare Node.js 22+, Python 3.12 with venv support, CMake 3.24+, Ninja, GCC 13+ and the development headers for libcurl, GLFW, X11 and OpenGL. Supply the same CyMCPSDK revision as Windows, a local CyUI source checkout, the matching Linux CEF SDK and the Linux CyInstaller sources/notices.
+
+```sh
+python3 -m venv studio/runtime/python
+studio/runtime/python/bin/python studio/desktop/build-linux.py \
+  --sdk-root /path/to/CyMCPSDK --cyui-root /path/to/CyUI \
+  --cef-root /path/to/cef_binary_linux64 --cyinstaller-root /path/to/CyInstaller \
+  --out artifacts/CyDocStudio-linux-x64-payload --install
+```
+
+The build refuses nonempty payload/work directories. `--native-build-directory` and `--cef-build-directory` can reuse dedicated compiler caches. A separately verified Git archive without `.git` can supply `--sdk-snapshot-revision` with the pinned SDK revision. The payload contains a `CyDocStudio` launcher, native `runtime/desktop/CyDocStudioRuntime`, Node, CEF and notices. Linux settings/projects live under `$XDG_DATA_HOME/CyDocStudio` or `~/.local/share/CyDocStudio`; `--data` selects another location.
+
+Validate the frozen package and native startup on the target before generating a release. A private Xvfb screen can test the actual native editor and child assistant without controlling a user's desktop. Capture the X11 screen or child window to include the assistant: reading only the parent's OpenGL framebuffer omits native child windows.
 
 ## Development checks
 

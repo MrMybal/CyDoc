@@ -1,7 +1,7 @@
 {
   "name": "CyDoc",
   "logo": "assets/branding/cydoc-logo-v1.png",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "defaultLocale": "en",
   "homePage": "overview",
   "landingPage": true,

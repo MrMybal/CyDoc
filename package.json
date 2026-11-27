@@ -1,6 +1,6 @@
 {
   "name": "cydoc",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Lightweight, modular, multilingual documentation for apps. Works locally without a web server.",
   "repository": {
     "type": "git",
