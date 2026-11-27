@@ -4,13 +4,13 @@ title: CyDoc Studio
 description: Write, organize and publish documentation with the visual and Markdown editor.
 section: Getting started
 order: 3
-revision: 6
+revision: 7
 ---
 CyDoc Studio is the optional editor for CyDoc manuals. Work locally without an account, or join a hosted workspace to write with your team. Your published documentation remains independent of Studio.
 
 ## Start locally {#start}
 
-[See available Studio downloads](https://github.com/MrMybal/CyDoc/releases). Studio 0.2.0 packages are being prepared; the current published portable Windows build is 0.1.2. Source builds provide a Windows `.exe` setup and a Linux `.run` setup (make the latter executable before starting it). Linux requires an X11 display and OpenGL 3.3; Ubuntu 24.04 x64 is the validation target. The installer lists required runtime libraries before installation.
+[See available Studio downloads](https://github.com/MrMybal/CyDoc/releases). Studio 0.2.0 provides native packages for Windows x64 and Linux x64: a Windows `.exe` setup and a Linux `.run` setup (make the latter executable before starting it). Linux requires an X11 display and OpenGL 3.3; Ubuntu 24.04 x64 is the validation target. The installer lists required runtime libraries before installation.
 
 Start **CyDocStudio.exe** on Windows or **CyDocStudio** on Linux. The application opens directly without registration or sign-in. A portable payload can also be extracted in full; keep its adjacent folders together. Managed updates require installation with CyInstaller.
 
@@ -86,7 +86,7 @@ The Windows Local MCP / SDK tab displays the running local endpoint and integrat
 
 ## Ask the integrated assistant {#assistant}
 
-Current source builds include an **Assistant** tab powered by CyMCPSDK. This tab is newer than the published Studio 0.1.2 download.
+Studio includes an **Assistant** tab powered by CyMCPSDK.
 
 1. Open Assistant, then **Connection settings**. Choose a detected provider, or enter its executable or service URL. Detection alone does not confirm that its account is signed in.
 2. Choose a model from the provider's catalogue. Native CLI defaults and installed local services can also use an empty model field. For an API key, enter the name of its environment variable in the connection settings.
@@ -98,7 +98,7 @@ Give a conversation a name to keep its private history, and leave **Restore save
 
 ## Install and update Studio {#updates}
 
-Studio 0.1.3 source builds add CyInstaller setup and an **Updates** tab. The published portable 0.1.2 download predates this feature. For a first managed installation, close the portable editor and run the offline setup into a separate, empty installation folder. Your existing projects, job outputs and browser drafts retain their data locations. Preferences are copied into the existing data folder's `config/` subdirectory; their old copies remain available.
+Studio 0.2.0 includes CyInstaller setup and an **Updates** tab. For a first managed installation, close the portable editor and run the offline setup into a separate, empty installation folder. Your existing projects, job outputs and browser drafts retain their data locations. Preferences are copied into the existing data folder's `config/` subdirectory; their old copies remain available.
 
 In an installed copy, open Updates and select **Check for updates** for a fresh check. **Open CyInstaller** displays the available release and its notes. Choosing **Later** keeps Studio open. After you accept an update, Studio waits for pending work to be saved, then lets the installer close and replace the program. If saving fails, reconnect the editor and retry; the update must not discard a draft.
 

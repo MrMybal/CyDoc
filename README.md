@@ -12,8 +12,8 @@
     </td>
     <td width="300" align="right" valign="top">
       <p><sub>Application license</sub><br><a href="LICENSE"><strong>MIT</strong></a></p>
-      <p><sub>Source versions</sub><br><a href="VERSION.md"><strong>Reader 0.2.0</strong><br><strong>Studio 0.2.0</strong></a><br><strong>IN DEVELOPMENT</strong></p>
-      <p><a href="https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/CyDocStudio-0.1.2-windows-x64.zip"><strong>Download Studio 0.1.2</strong></a><br><sub>Windows x64 · portable</sub></p>
+      <p><sub>Versions</sub><br><a href="VERSION.md"><strong>Reader 0.2.0</strong><br><strong>Studio 0.2.0</strong></a><br><strong>IN DEVELOPMENT</strong></p>
+      <p><a href="https://github.com/MrMybal/CyDoc/releases/tag/v0.2.0"><strong>Download Studio 0.2.0</strong></a><br><sub>Windows x64 · Linux x64 (X11)</sub></p>
     </td>
   </tr>
 </table>
@@ -23,9 +23,9 @@
 
 A modular documentation library for application and plug-in developers. Write illustrated manuals, open the right explanation from your application and ship a searchable reader that works directly from local files. The optional **CyDoc Studio** editor adds visual and Markdown authoring.
 
-> **IN DEVELOPMENT · Reader 0.2.0 · Studio 0.2.0 sources**
+> **IN DEVELOPMENT · Reader 0.2.0 · Studio 0.2.0**
 >
-> This is an early implementation with a published Windows editor. Native integrations and media compatibility still need target validation. Read the [version notes and known limitations](VERSION.md).
+> This is an early implementation with a Windows and Linux editor. Native integrations and media compatibility still need target validation. Read the [version notes and known limitations](VERSION.md).
 
 [![The CyDoc reader with a page tree, a quickstart guide and a page outline](website/assets/screenshots/reader-guide.webp)](website/assets/screenshots/reader-guide.webp)
 
@@ -44,29 +44,27 @@ Studio provides visual/Markdown editing, a page tree, media import, page propert
 - **English and French:** English originals and complete, current French translations are required for publication.
 - **Optional media:** image, video, GIF, mesh, gallery and graph viewers. Include only the modules needed by the manual; only mesh uses Three.js.
 - **Technical content:** build-time code highlighting, SVG diagrams, annotated source extraction, Doxygen/TypeDoc imports and API references without raw implementation listings.
-- **Optional authoring tools:** visual/Markdown editing, optional Git, hosted collaboration, Windows Studio and local SDK/MCP automation through CyMCPSDK.
+- **Optional authoring tools:** visual/Markdown editing, optional Git, hosted collaboration, Windows/Linux Studio and local SDK/MCP automation through CyMCPSDK.
 
 ### Compatibility and limits
 
-The reader targets modern browsers and WebViews on Windows, Linux, macOS and Android. Native integration examples need validation on your devices. The supplied native Studio package is for **Windows x64**. Video codecs, local storage and WebGL depend on the runtime.
+The reader targets modern browsers and WebViews on Windows, Linux, macOS and Android. Native integration examples need validation on your devices. Native Studio packages target **Windows x64** and **Linux x64 on X11**, validated on Ubuntu 24.04. macOS Studio is not supplied. Video codecs, local storage and WebGL depend on the runtime.
 
 Review the [documented limits and issue tracking](VERSION.md#documented-limitations) before choosing a target.
 
 ---
 
-Studio 0.2.0 sources use CyMCPSDK 0.7.5 for the integrated assistant and local automation, and CyInstaller 0.1.0 for setup, managed updates and rollback on Windows and Linux X11. The published Studio 0.1.2 portable download predates these changes. See the [source version notes](VERSION.md).
+Studio 0.2.0 uses CyMCPSDK 0.7.5 for the integrated assistant and local automation, and CyInstaller 0.1.0 for setup, managed updates and rollback on Windows and Linux X11. See the [version notes](VERSION.md).
 
 ## Installation
 
-### Use the Windows editor
+### Install Studio on Windows or Linux
 
-1. [Download CyDoc Studio 0.1.2 for Windows x64](https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/CyDocStudio-0.1.2-windows-x64.zip).
-2. Extract the complete archive and start `CyDocStudio.exe`. Keep `app/`, `runtime/` and `LICENCES/` beside it.
-3. Choose **Open the CyDoc example**, or create a local project. Local use requires no account.
+1. Download the [Windows x64 setup](https://github.com/MrMybal/CyDoc/releases/download/v0.2.0/CyDocStudio-0.2.0-win-x64-setup.exe) or [Linux x64 setup](https://github.com/MrMybal/CyDoc/releases/download/v0.2.0/CyDocStudio-0.2.0-linux-x64-setup.run).
+2. Close any older Studio copy. Run the Windows setup, or on Linux run `chmod +x CyDocStudio-0.2.0-linux-x64-setup.run` then `./CyDocStudio-0.2.0-linux-x64-setup.run`. Choose a separate, empty destination when migrating from a portable copy.
+3. Start Studio and choose **Open the CyDoc example**, or create a local project. Local use requires no account.
 
-The application is portable. Its runtimes are bundled. [Release notes and checksums](https://github.com/MrMybal/CyDoc/releases/tag/studio-v0.1.2) accompany the ZIP. The current Windows Python/CEF bridge runs without the CEF process sandbox; open trusted projects.
-
-For the current source version with Assistant and managed updates, [build the Windows editor](studio/README.md#build-windows) and [create its signed CyInstaller setup](.cyinstaller/README.md#build-and-release-locally). A native Linux Studio download is not available yet.
+CyInstaller manages updates and rollback; projects and settings stay outside the installation. Python, Node and CEF are bundled. Linux requires X11, OpenGL 3.3, GTK 3, GLFW and libcurl; Ubuntu 24.04 x64 is the tested target. [Release notes, portable payloads, online bootstraps and SHA-256 checksums](https://github.com/MrMybal/CyDoc/releases/tag/v0.2.0) accompany both setups. Updates use Ed25519 signatures; Windows Authenticode is not configured. The Python/CEF bridge runs without the CEF process sandbox; open trusted projects.
 
 ### Use the library or browser editor
 

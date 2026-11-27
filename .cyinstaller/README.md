@@ -11,14 +11,14 @@ Build the complete Windows payload with `studio/desktop/build.ps1`. The payload 
 The build copies the reader's runtime dependency closure (`marked`, `prismjs`, `esbuild`, `three`) and the service's closure (`yjs`, `ws`, `fflate`), preserving package data, nested versions and licenses. Browser authoring dependencies are already bundled into Studio's generated UI. OpenGL modules stay in the frozen Python archive rather than being duplicated as thousands of source files. Do not replace these closures with a blanket copy of development `node_modules`.
 
 ```powershell
-./studio/desktop/release.ps1 -AppDirectory artifacts/CyDocStudio-0.1.5-payload -OutputDirectory artifacts/CyDocStudio-0.1.5-release -SigningKey /private/path/publisher.key
+./studio/desktop/release.ps1 -AppDirectory artifacts/CyDocStudio-0.2.0-win-x64-payload -OutputDirectory artifacts/CyDocStudio-0.2.0-win-release -SigningKey /private/path/publisher.key
 ```
 
 The private key is stored outside Git and the payload; only its public counterpart is in `cyinstaller.json`. Pass the private path explicitly or through `CYINSTALLER_SIGNING_KEY_FILE`. The script never creates or replaces signing keys. It validates source/payload versions and delegates the whole release to `cyinstall release`, using the root Studio `CHANGELOG.md`. Future releases pass `-Previous path/to/update.json` to retain history/trust. Do not put the output inside the payload.
 
 Outputs include payload and engine ZIPs, offline setup, online bootstrap, `update.json`, its Ed25519 signature and checksums. `-OfflineOnly` omits the bootstrap. Ed25519 update signatures are distinct from Windows Authenticode; no Authenticode certificate is configured here.
 
-`source.github` names the application distribution repository `MrMybal/CyDoc`. Publish all generated files together before expecting online discovery/bootstrap to work. Local packaging uploads nothing and adds no workflow. The existing portable 0.1.2 download remains a legacy release until new publication is explicitly requested.
+`source.github` names the application distribution repository `MrMybal/CyDoc`. Publish all generated files together before expecting online discovery/bootstrap to work. Local packaging uploads nothing and adds no workflow. Studio 0.2.0 publishes both native platforms together. Keep the previous download available until that replacement is verified.
 
 ## Installation and data
 
@@ -44,13 +44,11 @@ Opening the update window leaves Studio usable. When an update is accepted, the 
 - `studio/desktop/test-installer.py`: real signed sandbox releases, occupied destination refusal, installed editor startup/confirmation, signature/hash failures, update/relaunch, rollback and uninstall data retention.
 - `studio/desktop/test-installer-headless.py`: the real payloads from two local release directories, isolated signing/registration, update, service/editor initialization, rollback and data retention, without launching the native editor or installer UI.
 - `studio/desktop/test-browser.mjs`: packaged editor in a disposable headless Chromium profile, French/light layouts, language/theme synchronization, saving and offline close protection. Its native bridge is simulated; this does not validate native CEF rendering or installer dialogs.
-- `studio/desktop/test-installer-headless.py`: the real payloads from two local release directories, isolated signing/registration, update, service/editor initialization, rollback and data retention, without launching the native editor or installer UI.
-- `studio/desktop/test-browser.mjs`: packaged editor in a disposable headless Chromium profile, French/light layouts, language/theme synchronization, saving and offline close protection. Its native bridge is simulated; this does not validate native CEF rendering or installer dialogs.
 
 The end-to-end test uses the official `CYI_SANDBOX`/`CYI_RELEASES_DIR` fixture mechanism and a separate temporary key outside the checkout. It never publishes a fake future version, changes production trust, installs prerequisites globally or clears other applications' sandbox registrations. Process/protocol tests and native startup are reported separately from visual GUI approval and online GitHub publication.
 
 ```powershell
-./studio/runtime/python/Scripts/python.exe studio/desktop/test-installer.py --payload artifacts/CyDocStudio-0.1.5-payload --work .tmp/installer-acceptance-new
+./studio/runtime/python/Scripts/python.exe studio/desktop/test-installer.py --payload artifacts/CyDocStudio-0.2.0-win-x64-payload --work .tmp/installer-acceptance-new
 ```
 
 Use a fresh work directory for each run. `--reuse-releases .tmp/earlier-run/releases` copies an existing isolated fixture feed to avoid rebuilding it while debugging the harness; it refuses production trust. The setup itself runs directly with `--silent --dir ... --log ...`. Its interface arguments are separate from the engine's JSON CLI. Full file-by-file replacement/rollback of the bundled runtimes can take several minutes; engine operations have a fifteen-minute test deadline.
@@ -60,21 +58,20 @@ For background validation while someone uses the desktop, use the headless scrip
 ```powershell
 $env:PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = '1'
 npm install --prefix .tmp/headless-test-tools --ignore-scripts --no-audit --no-fund playwright@1.57.0
-node studio/desktop/test-browser.mjs --studio artifacts/CyDocStudio-0.1.5-payload/app/cydoc/studio --work .tmp/browser-acceptance-new
-./studio/runtime/python/Scripts/python.exe studio/desktop/test-installer-headless.py --previous-release artifacts/CyDocStudio-0.1.4-release --next-release artifacts/CyDocStudio-0.1.5-release --work .tmp/installer-background-new
-```
-
-`test-browser.mjs --chrome PATH --playwright PATH` overrides the local Chrome executable and Playwright module directory. It blocks external requests and uses only its isolated loopback service. The headless installer script requires that tooling too. It never passes `--relaunch`, never invokes `cyinstall-ui` or Studio's desktop executable, and uses a unique fixture application ID. Confirmation follows the packaged service and headless editor initialization; native CEF startup, recovery dialogs and the update window's **Later** interaction still need separate native validation.
-
-For background validation while someone uses the desktop, use the headless scripts instead of `test-installer.py`, which launches native windows. Install the optional browser test tooling in an ignored directory without download/install scripts, and use an existing Chrome executable:
-
-```powershell
-$env:PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = '1'
-npm install --prefix .tmp/headless-test-tools --ignore-scripts --no-audit --no-fund playwright@1.57.0
-node studio/desktop/test-browser.mjs --studio artifacts/CyDocStudio-0.1.5-payload/app/cydoc/studio --work .tmp/browser-acceptance-new
-./studio/runtime/python/Scripts/python.exe studio/desktop/test-installer-headless.py --previous-release artifacts/CyDocStudio-0.1.4-release --next-release artifacts/CyDocStudio-0.1.5-release --work .tmp/installer-background-new
+node studio/desktop/test-browser.mjs --studio artifacts/CyDocStudio-0.2.0-win-x64-payload/app/cydoc/studio --work .tmp/browser-acceptance-new
+./studio/runtime/python/Scripts/python.exe studio/desktop/test-installer-headless.py --previous-release artifacts/CyDocStudio-0.1.4-release --next-release artifacts/CyDocStudio-0.2.0-win-release --work .tmp/installer-background-new
 ```
 
 `test-browser.mjs --chrome PATH --playwright PATH` overrides the local Chrome executable and Playwright module directory. It blocks external requests and uses only its isolated loopback service. The headless installer script requires that tooling too. It never passes `--relaunch`, never invokes `cyinstall-ui` or Studio's desktop executable, and uses a unique fixture application ID. Confirmation follows the packaged service and headless editor initialization; native CEF startup, recovery dialogs and the update window's **Later** interaction still need separate native validation.
 
 The harness records pre-update file hashes in `before-update.json` and completed checks in `checks.json`. If only the post-update wait/reporting was interrupted after a confirmed relaunch, `--resume-after-update --resume-log path/to/original-captured.log` continues that same work directory. It first requires the installed version, confirmed startup and recorded hashes to match; the final report explicitly records resumption. Native shutdown may drain services after the window closes, so the unowned relaunch has a ninety-second exit deadline. Process results on stdout use JSON; the engine's operation log is human-readable text.
+
+## Linux and combined publication
+
+Build on Linux with `studio/desktop/build-linux.py`, then use `pack-linux.py` with the matching Linux engine/UI. Keep the publisher private key on the signing machine. Transfer the unsigned Linux stage there and call `merge-release.py --windows WINDOWS_STAGE --linux LINUX_STAGE --engine CYINSTALL_EXE --key PRIVATE_KEY --out FRESH_RELEASE_DIR`. The merge validates platform hashes and manifest identity, generates common update metadata, signs it with the permanent key and recomputes checksums.
+
+Linux native rendering can be checked with `test-native-linux.py` in its private Xvfb display. `test-installer-linux.py` checks an isolated native install/update/relaunch/rollback cycle; its earlier version is a local fixture, never a public release. Neither script uses the interactive desktop.
+
+On Windows, `test-native-windows.py --release STAGE --work .tmp/FRESH_DIR` checks the actual offline setup and native editor/assistant/updates on a private invisible desktop. It never switches desktops. `--resume-setup` may reuse only that same test directory's completed setup. The production payload, permanent trust and user workspace are not modified by these fixtures.
+
+Run `node studio/desktop/verify-release.mjs --release COMBINED_STAGE --report .tmp/release-verification.json` after merging. It verifies the permanent manifest identity, Ed25519 signature, both platform asset sets, exact asset sizes and all SHA-256 checksums, using Node built-ins. It does not replace native setup or archive-to-payload verification.

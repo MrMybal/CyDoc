@@ -2,15 +2,15 @@
 
 [Retour au README](README.fr.md) · [English](VERSION.md)
 
-**Bibliothèque du lecteur : 0.2.0 · Sources Studio : 0.2.0**<br>
+**Bibliothèque du lecteur : 0.2.0 · Studio : 0.2.0**<br>
 **Statut : EN DÉVELOPPEMENT**<br>
-**Paquet natif de l’éditeur disponible : Windows x64**
+**Paquets natifs de l’éditeur : Windows x64 et Linux x64 (X11)**
 
-CyDoc est une première implémentation. Studio 0.1.2 est une release portable publiée ; cette publication ne garantit pas la maturité de toutes les intégrations. Consultez les limites documentées avant de dépendre d’un environnement cible.
+CyDoc est une première implémentation. Studio 0.2.0 fournit des installeurs CyInstaller Windows et Linux ; cette publication ne garantit pas la maturité de toutes les intégrations. Consultez les limites documentées avant de dépendre d’un environnement cible.
 
-## Sources Studio 0.2.0 — Linux natif
+## Studio 0.2.0 — installeurs Windows et Linux natif
 
-Le shell natif et l’assistant intégré prennent en charge Linux X11 en plus de Windows. Ubuntu 24.04 x64 est la cible de validation Linux, avec un affichage X11 et OpenGL 3.3. Les données suivent les chemins XDG, les signaux de mise à jour utilisent la confirmation de sauvegarde avant fermeture, et le formulaire de connexion de l’assistant affiche des bordures visibles et des libellés au-dessus des champs. La compilation et les tests locaux restent distincts de la publication.
+Le shell natif et l’assistant intégré prennent en charge Linux X11 en plus de Windows. Ubuntu 24.04 x64 est la cible de validation Linux, avec un affichage X11 et OpenGL 3.3. Les données suivent les chemins XDG, les signaux de mise à jour utilisent la confirmation de sauvegarde avant fermeture, et le formulaire de connexion de l’assistant affiche des bordures visibles et des libellés au-dessus des champs. Les [installeurs hors ligne, bootstraps en ligne et paquets portables](https://github.com/MrMybal/CyDoc/releases/tag/v0.2.0) sont accompagnés du manifeste de mise à jour signé et des sommes SHA-256. Les changements 0.1.3 à 0.1.5 ci-dessous sont inclus dans 0.2.0.
 
 ## Sources Studio 0.1.5 — langue de l’interface partagée
 
@@ -50,7 +50,7 @@ Les notes publiées ne donnent pas de liste détaillée de bugs confirmés. Cons
 ## Limites documentées
 
 - Les intégrations natives du lecteur sont des exemples de sources. Les vérifications sur Windows, Linux, macOS et Android restent nécessaires ; les sources ne signifient pas qu’un exécutable est fourni pour chaque plateforme.
-- Le paquet natif Studio fourni est réservé à Windows x64. Aucun paquet natif Linux/macOS n’est inclus. Le pont Windows Python/CEF actuel fonctionne sans le bac à sable de processus CEF.
+- Studio est fourni pour Windows x64 et Linux x64 sous X11 (Ubuntu 24.04 testé). macOS et Wayland sans X11 ne sont pas pris en charge. Le pont Python/CEF fonctionne sans le bac à sable de processus CEF. Les connexions aux fournisseurs IA réels nécessitent leur propre configuration et validation.
 - Les codecs vidéo dépendent du navigateur ou du moteur. Le mesh nécessite WebGL 2. Aucun transcodeur vidéo ni décodeur Draco ou KTX2 n’est inclus.
 - Le lecteur charge toutes les pages ensemble. La segmentation du contenu/de la recherche pour les grands manuels et la disposition RTL ne sont pas implémentées. L’interface intégrée est en anglais et en français.
 - Les réglages avancés des médias, schémas et graphes utilisent des blocs JSON/Markdown ; tous n’ont pas d’éditeur visuel spécialisé.

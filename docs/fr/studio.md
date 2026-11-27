@@ -4,13 +4,13 @@ title: CyDoc Studio
 description: Écrire, organiser et publier une documentation avec l’éditeur visuel et Markdown.
 section: Premiers pas
 order: 3
-sourceRevision: 6
+sourceRevision: 7
 ---
 CyDoc Studio est l’éditeur facultatif des manuels CyDoc. Travaillez en local sans compte, ou rejoignez un espace hébergé pour écrire en équipe. Votre documentation publiée reste indépendante de Studio.
 
 ## Démarrer en local {#start}
 
-[Consultez les téléchargements Studio disponibles](https://github.com/MrMybal/CyDoc/releases). Les paquets Studio 0.2.0 sont en préparation ; la version portable Windows actuellement publiée est la 0.1.2. Les sources permettent de créer un setup Windows `.exe` et un setup Linux `.run` (rendez ce dernier exécutable avant de le lancer). Linux nécessite un affichage X11 et OpenGL 3.3 ; Ubuntu 24.04 x64 est la cible de validation. L’installeur présente les bibliothèques d’exécution nécessaires avant l’installation.
+[Consultez les téléchargements Studio disponibles](https://github.com/MrMybal/CyDoc/releases). Studio 0.2.0 fournit des paquets natifs Windows x64 et Linux x64 : un setup Windows `.exe` et un setup Linux `.run` (rendez ce dernier exécutable avant de le lancer). Linux nécessite un affichage X11 et OpenGL 3.3 ; Ubuntu 24.04 x64 est la cible de validation. L’installeur présente les bibliothèques d’exécution nécessaires avant l’installation.
 
 Lancez **CyDocStudio.exe** sous Windows ou **CyDocStudio** sous Linux. L’application s’ouvre directement, sans inscription ni connexion. Vous pouvez aussi extraire un paquet portable complet ; conservez ensemble les dossiers qui l’accompagnent. Les mises à jour gérées nécessitent une installation avec CyInstaller.
 
@@ -86,7 +86,7 @@ L’onglet Windows MCP / SDK local affiche l’adresse du service local en cours
 
 ## Utiliser l’assistant intégré {#assistant}
 
-Les compilations actuelles depuis les sources incluent un onglet **Assistant** utilisant CyMCPSDK. Cet onglet est plus récent que le téléchargement publié Studio 0.1.2.
+Studio inclut un onglet **Assistant** utilisant CyMCPSDK.
 
 1. Ouvrez Assistant, puis **Réglages de connexion**. Choisissez un fournisseur détecté ou indiquez son exécutable ou l’URL de son service. La détection seule ne confirme pas que son compte est connecté.
 2. Choisissez un modèle dans le catalogue du fournisseur. Les CLI natifs et les services locaux installés peuvent aussi utiliser un champ modèle vide. Pour une clé API, indiquez le nom de sa variable d’environnement dans les réglages de connexion.
@@ -98,7 +98,7 @@ Donnez un nom à la conversation pour conserver son historique privé et laissez
 
 ## Installer et mettre à jour Studio {#updates}
 
-Les sources Studio 0.1.3 ajoutent le setup CyInstaller et un onglet **Mises à jour**. Le téléchargement portable publié 0.1.2 précède cette fonction. Pour une première installation gérée, fermez l’éditeur portable et lancez le setup hors ligne vers un dossier d’installation distinct et vide. Vos projets, résultats de tâches et brouillons du navigateur conservent leurs emplacements de données. Les préférences sont copiées dans le sous-dossier `config/` du dossier de données existant ; leurs anciennes copies restent disponibles.
+Studio 0.2.0 inclut le setup CyInstaller et un onglet **Mises à jour**. Pour une première installation gérée, fermez l’éditeur portable et lancez le setup hors ligne vers un dossier d’installation distinct et vide. Vos projets, résultats de tâches et brouillons du navigateur conservent leurs emplacements de données. Les préférences sont copiées dans le sous-dossier `config/` du dossier de données existant ; leurs anciennes copies restent disponibles.
 
 Dans une copie installée, ouvrez Mises à jour et sélectionnez **Rechercher des mises à jour** pour un nouveau contrôle. **Ouvrir CyInstaller** affiche la version disponible et ses notes. Choisir **Plus tard** laisse Studio ouvert. Après votre accord, Studio attend la sauvegarde du travail en cours, puis laisse l’installeur fermer et remplacer le programme. Si la sauvegarde échoue, reconnectez l’éditeur et réessayez ; la mise à jour ne doit pas supprimer un brouillon.
 

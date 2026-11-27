@@ -12,8 +12,8 @@
     </td>
     <td width="300" align="right" valign="top">
       <p><sub>Licence de l’application</sub><br><a href="LICENSE"><strong>MIT</strong></a></p>
-      <p><sub>Versions des sources</sub><br><a href="VERSION.fr.md"><strong>Lecteur 0.2.0</strong><br><strong>Studio 0.2.0</strong></a><br><strong>EN DÉVELOPPEMENT</strong></p>
-      <p><a href="https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/CyDocStudio-0.1.2-windows-x64.zip"><strong>Télécharger Studio 0.1.2</strong></a><br><sub>Windows x64 · portable</sub></p>
+      <p><sub>Versions</sub><br><a href="VERSION.fr.md"><strong>Lecteur 0.2.0</strong><br><strong>Studio 0.2.0</strong></a><br><strong>EN DÉVELOPPEMENT</strong></p>
+      <p><a href="https://github.com/MrMybal/CyDoc/releases/tag/v0.2.0"><strong>Télécharger Studio 0.2.0</strong></a><br><sub>Windows x64 · Linux x64 (X11)</sub></p>
     </td>
   </tr>
 </table>
@@ -23,9 +23,9 @@
 
 Bibliothèque de documentation modulaire pour les développeurs d’applications et de plugins. Rédigez des manuels illustrés, ouvrez la bonne explication depuis votre application et livrez un lecteur avec recherche qui fonctionne directement depuis des fichiers locaux. L’éditeur optionnel **CyDoc Studio** ajoute l’écriture visuelle et Markdown.
 
-> **EN DÉVELOPPEMENT · Lecteur 0.2.0 · Sources Studio 0.2.0**
+> **EN DÉVELOPPEMENT · Lecteur 0.2.0 · Studio 0.2.0**
 >
-> Il s’agit d’une première implémentation avec un éditeur Windows publié. Les intégrations natives et la compatibilité des médias nécessitent encore des vérifications sur les cibles. Consultez les [notes de version et limites connues](VERSION.fr.md).
+> Il s’agit d’une première implémentation avec un éditeur Windows et Linux. Les intégrations natives et la compatibilité des médias nécessitent encore des vérifications sur les cibles. Consultez les [notes de version et limites connues](VERSION.fr.md).
 
 [![Le lecteur CyDoc avec son arborescence, un guide de démarrage et le sommaire de la page](website/assets/screenshots/reader-guide.webp)](website/assets/screenshots/reader-guide.webp)
 
@@ -44,29 +44,27 @@ Studio fournit un éditeur visuel/Markdown, une arborescence, l’import de méd
 - **Anglais et français** : originaux anglais et traduction française complète et à jour exigés avant publication.
 - **Médias optionnels** : lecteurs d’images, vidéos, GIF, meshes, galeries et graphes. Inclure seulement les modules nécessaires ; seul le mesh utilise Three.js.
 - **Contenu technique** : coloration du code à la compilation, schémas SVG, extraction d’annotations, imports Doxygen/TypeDoc et références d’API sans affichage des implémentations brutes.
-- **Écriture et automatisation optionnelles** : édition visuelle/Markdown, Git facultatif, collaboration hébergée, Studio Windows et SDK/MCP local via CyMCPSDK.
+- **Écriture et automatisation optionnelles** : édition visuelle/Markdown, Git facultatif, collaboration hébergée, Studio Windows/Linux et SDK/MCP local via CyMCPSDK.
 
 ### Compatibilité et limites
 
-Le lecteur cible les navigateurs et WebViews modernes sur Windows, Linux, macOS et Android. Les exemples d’intégration native nécessitent une validation sur vos appareils. Le paquet natif Studio disponible est pour **Windows x64**. Les codecs vidéo, le stockage local et WebGL dépendent de l’environnement.
+Le lecteur cible les navigateurs et WebViews modernes sur Windows, Linux, macOS et Android. Les exemples d’intégration native nécessitent une validation sur vos appareils. Les paquets natifs Studio ciblent **Windows x64** et **Linux x64 sous X11**, validé sur Ubuntu 24.04. Studio pour macOS n’est pas fourni. Les codecs vidéo, le stockage local et WebGL dépendent de l’environnement.
 
 Consultez les [limites documentées et le suivi des problèmes](VERSION.fr.md#limites-documentées) avant de choisir votre cible.
 
 ---
 
-Les sources Studio 0.2.0 utilisent CyMCPSDK 0.7.5 pour l’assistant intégré et l’automatisation locale, et CyInstaller 0.1.0 pour le setup, les mises à jour gérées et le retour arrière sous Windows et Linux X11. Le téléchargement portable publié Studio 0.1.2 précède ces changements. Consultez les [notes de version des sources](VERSION.fr.md).
+Studio 0.2.0 utilise CyMCPSDK 0.7.5 pour l’assistant intégré et l’automatisation locale, et CyInstaller 0.1.0 pour le setup, les mises à jour gérées et le retour arrière sous Windows et Linux X11. Consultez les [notes de version](VERSION.fr.md).
 
 ## Installation
 
-### Utiliser l’éditeur Windows
+### Installer Studio sous Windows ou Linux
 
-1. [Téléchargez CyDoc Studio 0.1.2 pour Windows x64](https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/CyDocStudio-0.1.2-windows-x64.zip).
-2. Extrayez toute l’archive et lancez `CyDocStudio.exe`. Gardez `app/`, `runtime/` et `LICENCES/` à côté.
-3. Choisissez **Open the CyDoc example**, ou créez un projet local. Aucun compte n’est requis en local.
+1. Téléchargez le [setup Windows x64](https://github.com/MrMybal/CyDoc/releases/download/v0.2.0/CyDocStudio-0.2.0-win-x64-setup.exe) ou le [setup Linux x64](https://github.com/MrMybal/CyDoc/releases/download/v0.2.0/CyDocStudio-0.2.0-linux-x64-setup.run).
+2. Fermez toute ancienne copie de Studio. Lancez le setup Windows ou, sous Linux, `chmod +x CyDocStudio-0.2.0-linux-x64-setup.run` puis `./CyDocStudio-0.2.0-linux-x64-setup.run`. Utilisez une destination distincte et vide pour migrer depuis une copie portable.
+3. Lancez Studio et choisissez **Open the CyDoc example**, ou créez un projet local. Aucun compte n’est requis en local.
 
-L’application est portable et ses moteurs d’exécution sont inclus. Les [notes de release et sommes de contrôle](https://github.com/MrMybal/CyDoc/releases/tag/studio-v0.1.2) accompagnent le ZIP. Le pont Windows Python/CEF actuel s’exécute sans le bac à sable de processus CEF ; ouvrez des projets de confiance.
-
-Pour la version actuelle des sources avec l’assistant et les mises à jour gérées, [compilez l’éditeur Windows](studio/README.md#build-windows) et [créez son setup CyInstaller signé](.cyinstaller/README.md#build-and-release-locally). Le téléchargement natif de Studio pour Linux n’est pas encore disponible.
+CyInstaller gère les mises à jour et le retour arrière ; les projets et préférences restent hors de l’installation. Python, Node et CEF sont inclus. Linux nécessite X11, OpenGL 3.3, GTK 3, GLFW et libcurl ; Ubuntu 24.04 x64 est la cible testée. Les [notes de release, paquets portables, setups en ligne et sommes SHA-256](https://github.com/MrMybal/CyDoc/releases/tag/v0.2.0) accompagnent les deux installeurs. Les mises à jour utilisent des signatures Ed25519 ; Authenticode Windows n’est pas configuré. Le pont Python/CEF fonctionne sans le bac à sable de processus CEF ; ouvrez des projets de confiance.
 
 ### Utiliser la bibliothèque ou l’éditeur dans le navigateur
 

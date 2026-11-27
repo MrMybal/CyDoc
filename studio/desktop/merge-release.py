@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -49,7 +50,9 @@ def main():
         if digest(bootstrap)!=sums.get(bootstrap.name):parser.error('Invalid bootstrap checksum: '+bootstrap.name)
         selected.append(bootstrap)
     output.mkdir(parents=True,exist_ok=True)
-    for path in selected:shutil.copy2(path,output/path.name)
+    for path in selected:
+        try:os.link(path,output/path.name)
+        except OSError:shutil.copy2(path,output/path.name)
     shutil.copyfile(manifest,output/'cyinstaller.json')
     command=[str(args.engine.resolve(strict=True)),'release-manifest','--manifest',str(manifest),'--changelog',str(repo/'CHANGELOG.md'),
              '--version',version,'--assets',str(output)]

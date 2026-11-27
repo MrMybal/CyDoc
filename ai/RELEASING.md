@@ -12,7 +12,7 @@ The native shell has Windows x64 and Linux X11 backends. Each Linux release requ
 
 Use Node.js 22+. Run `npm test`, `npm run build --prefix studio`, `npm test --prefix studio` and `node studio/desktop/test.mjs`. Select the actual packaged executable and host with `CYDOC_TEST_EXECUTABLE` and `CYDOC_CYMCP_HOST`; exercise both the account-free and account modes. Deterministic assistant tests do not prove real provider authentication.
 
-Use `studio/desktop/verify-package.py` against each complete Windows payload. The optional headless browser and real installer update/rollback tests are documented in `.cyinstaller/README.md`; the native installer test opens windows and must not run while the user reserves desktop control. Keep all fixtures, reports and screenshots in ignored temporary directories. Never clear other applications' sandbox registrations.
+Use `studio/desktop/verify-package.py` on each target OS against its complete payload. The optional headless browser and real installer update/rollback tests are documented in `.cyinstaller/README.md`. `test-native-windows.py` creates a private invisible Windows desktop and never switches to it; `test-installer-linux.py` uses a private Xvfb display. They exercise the actual offline setups without touching the input desktop. The older `test-installer.py` opens windows on the active Windows desktop and must not run while the user reserves desktop control. Keep all fixtures, reports and screenshots in ignored temporary directories. Never clear other applications' sandbox registrations.
 
 With a trusted local Gitleaks executable, scan the candidate source snapshot, staged changes, Git history and assembled payloads. Redact findings in logs. Example Git commands:
 

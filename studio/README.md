@@ -126,7 +126,7 @@ The Windows **Assistant** tab hosts the SDK's native ChatUI in a child window wi
 
 The **Local MCP / SDK** tab shows the live loopback HTTP endpoint and copyable configuration. New profiles use **Free**, without a token or an additional Registry write restriction. The saved profiles `local-controlled`, `token-only` and `protected` remain supported. Controlled profiles allow read operations; token profiles require `CYDOC_MCP_TOKEN`. Online Studio account permissions still apply behind the local bridge. Public discovery lives at `/.well-known/cymcp`; `/v1` retains separate private host authentication.
 
-[Agent integration and configuration](../ai/STUDIO.md) documents all operations, cancellation, profiles and optional connections to other applications. Settings and credentials are never added to the exported human manual. The published Studio 0.1.2 download predates this source migration; build the current sources for the Assistant and CyMCPSDK integration.
+[Agent integration and configuration](../ai/STUDIO.md) documents all operations, cancellation, profiles and optional connections to other applications. Settings and credentials are never added to the exported human manual. [Studio 0.2.0 downloads](https://github.com/MrMybal/CyDoc/releases/tag/v0.2.0) include the Assistant and CyMCPSDK integration on Windows x64 and Linux X11 x64.
 
 ## Build Windows
 
@@ -148,7 +148,7 @@ python studio/desktop/app/main.py --cef /path/to/CyUI/build/cef
 
 The default is the library’s Dark theme. Use **Options** to persist language, one of the six library themes (Light, Dark, Midnight, Nord, Paper and High contrast), text scale and an allowlist of application folders. Choosing a local folder opens the project form; the administrator confirms the import or initialization. Saved UI configurations contain versioned appearance values, not passwords or tokens. `--origin https://your-studio.example.com` connects the same shell to an online service.
 
-The local desktop service prefers port 4310. If another service already uses it, Studio selects an available port and remembers it; its MCP panel shows the actual endpoint. The current Python CEF bridge runs **without the CEF process sandbox on Windows**, as documented by CyUI. Its exact-origin navigation policy remains active. Production deployments that require a sandboxed native browser must supply CyUI's documented sandbox-capable native bootstrap; this build does not claim sandboxing. Windows CEF IME/accessibility, codecs and WebGL behavior need target-specific validation beyond launching the editor. No Linux/macOS desktop package is supplied here.
+The local desktop service prefers port 4310. If another service already uses it, Studio selects an available port and remembers it; its MCP panel shows the actual endpoint. The current Python CEF bridge runs **without the CEF process sandbox on Windows**, as documented by CyUI. Its exact-origin navigation policy remains active. Production deployments that require a sandboxed native browser must supply CyUI's documented sandbox-capable native bootstrap; this build does not claim sandboxing. Windows CEF IME/accessibility, codecs and WebGL behavior need target-specific validation beyond launching the editor. A Linux X11 x64 package is available; no macOS desktop package is supplied.
 
 ## Build Linux x64
 
