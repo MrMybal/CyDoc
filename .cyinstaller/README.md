@@ -70,7 +70,7 @@ The harness records pre-update file hashes in `before-update.json` and completed
 
 Build on Linux with `studio/desktop/build-linux.py`, then use `pack-linux.py` with the matching Linux engine/UI. Keep the publisher private key on the signing machine. Transfer the unsigned Linux stage there and call `merge-release.py --windows WINDOWS_STAGE --linux LINUX_STAGE --engine CYINSTALL_EXE --key PRIVATE_KEY --out FRESH_RELEASE_DIR`. The merge validates platform hashes and manifest identity, generates common update metadata, signs it with the permanent key and recomputes checksums.
 
-Linux native rendering can be checked with `test-native-linux.py` in its private Xvfb display. `test-installer-linux.py` checks an isolated native install/update/relaunch/rollback cycle; its earlier version is a local fixture, never a public release. Neither script uses the interactive desktop.
+Linux native rendering can be checked with `test-native-linux.py` in its private Xvfb display. `test-installer-linux.py` checks an isolated native install/update/relaunch/rollback cycle; its next version is a local fixture, never a public release. Neither script uses the interactive desktop.
 
 On Windows, `test-native-windows.py --release STAGE --work .tmp/FRESH_DIR` checks the actual offline setup and native editor/assistant/updates on a private invisible desktop. It never switches desktops. `--resume-setup` may reuse only that same test directory's completed setup. The production payload, permanent trust and user workspace are not modified by these fixtures.
 
