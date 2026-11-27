@@ -1,6 +1,7 @@
 import { createLink, parseLink } from './index.js';
 import type { Documentation, DocPage, DocRoute } from './types.js';
 import { icon } from './icons.js';
+import { mountDiagramTools } from './diagram-tools.js';
 
 const esc = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 export function activateTab(button: HTMLElement) {
@@ -22,17 +23,19 @@ export function readingStore(namespace: string) {
   const key = `cydoc:reading:${namespace}`;
   const empty = (): ReadingData => ({ bookmarks: [], history: [], notes: {}, positions: {} });
   let data = empty();
+  let persistent = true;
   try {
     const raw = JSON.parse(localStorage.getItem(key) || 'null');
     if (raw) data = { bookmarks: Array.isArray(raw.bookmarks) ? raw.bookmarks.filter(validPage).slice(0, 500) : [], history: Array.isArray(raw.history) ? raw.history.filter(validPage).slice(0, 30) : [], notes: Object.fromEntries((Object.entries(raw.notes || {}) as Array<[string, string]>).filter(([, value]) => typeof value === 'string' && value.length <= 10000)), positions: Object.fromEntries((Object.entries(raw.positions || {}) as Array<[string, number]>).filter(([, value]) => typeof value === 'number' && Number.isFinite(value) && value >= 0)) };
-  } catch { /* A file origin may not grant persistent storage. The UI still works in memory. */ }
+  } catch { persistent = false; /* Keep the active reader's data in memory when storage is unavailable. */ }
   function validPage(value: SavedPage) { return value && typeof value.id === 'string' && typeof value.locale === 'string' && typeof value.title === 'string' && typeof value.href === 'string' && /^(file:|https?:|#\/)/.test(value.href); }
-  return { data, save() { try { localStorage.setItem(key, JSON.stringify(data)); return true; } catch { return false; } } };
+  return { data, get persistent() { return persistent; }, save() { try { localStorage.setItem(key, JSON.stringify(data)); persistent = true; } catch { persistent = false; } return persistent; } };
 }
 
-export function mountReaderTools(root: HTMLElement, data: Documentation, page: DocPage, route: DocRoute, options: { signal: AbortSignal; storageId?: string; toast: (text: string) => void }) {
+export function mountReaderTools(root: HTMLElement, data: Documentation, page: DocPage, route: DocRoute, options: { signal: AbortSignal; storageId?: string; store?: ReturnType<typeof readingStore>; toast: (text: string) => void }) {
   const { signal } = options, fr = route.locale.startsWith('fr'), t = (a: string, b: string) => fr ? a : b;
-  const store = readingStore(options.storageId || data.name), saved = store.data;
+  mountDiagramTools(root, route.locale, signal);
+  const store = options.store || readingStore(options.storageId || data.name), saved = store.data;
   const pageKey = `${route.locale}:${page.id}`;
   const current: SavedPage = { id: page.id, locale: route.locale, title: page.title, href: createLink({ ...route, pageId: page.id }, location.href), time: Date.now() };
   saved.history = [current, ...saved.history.filter(item => item.id !== page.id || item.locale !== route.locale)].slice(0, 30); store.save();
@@ -57,7 +60,8 @@ export function mountReaderTools(root: HTMLElement, data: Documentation, page: D
   const dialog = document.createElement('dialog'); dialog.className = 'personal-dialog'; dialog.setAttribute('aria-label', t('Mon espace local', 'My local space')); root.append(dialog);
   function drawPersonal() {
     const list = (items: SavedPage[]) => items.length ? `<ul>${items.map(item => `<li><a href="${esc(item.href)}">${esc(item.title)}</a><small>${esc(item.locale)}</small></li>`).join('')}</ul>` : `<p class="muted">${t('Aucune page enregistrée.', 'No saved pages.')}</p>`;
-    dialog.innerHTML = `<div class="personal-header"><h2>${t('Mon espace', 'My space')}</h2><button type="button" data-personal-close aria-label="${t('Fermer', 'Close')}">${icon('close')}</button></div><p class="personal-local">${t('Conservé sur cet appareil. Exportez vos données pour les sauvegarder.', 'Stored on this device. Export your data to back it up.')}</p><h3>${t('Favoris', 'Bookmarks')}</h3>${list(saved.bookmarks)}<h3>${t('Pages récentes', 'Recent pages')}</h3>${list(saved.history)}<h3>${t('Notes personnelles', 'Personal notes')}</h3><ul>${Object.entries(saved.notes).filter(([, note]) => note.trim()).map(([key, note]) => `<li><strong>${esc(key)}</strong><p>${esc(note)}</p></li>`).join('')}</ul><button type="button" data-personal-export>${t('Exporter favoris et notes', 'Export bookmarks and notes')}</button>`;
+    const storageNotice = store.persistent ? t('Conservé sur cet appareil. Exportez vos données pour les sauvegarder.', 'Stored on this device. Export your data to back it up.') : t('Conservé pour cette session uniquement. Exportez vos données avant de fermer le lecteur.', 'Kept for this session only. Export your data before closing the reader.');
+    dialog.innerHTML = `<div class="personal-header"><h2>${t('Mon espace', 'My space')}</h2><button type="button" data-personal-close aria-label="${t('Fermer', 'Close')}">${icon('close')}</button></div><p class="personal-local">${storageNotice}</p><h3>${t('Favoris', 'Bookmarks')}</h3>${list(saved.bookmarks)}<h3>${t('Pages récentes', 'Recent pages')}</h3>${list(saved.history)}<h3>${t('Notes personnelles', 'Personal notes')}</h3><ul>${Object.entries(saved.notes).filter(([, note]) => note.trim()).map(([key, note]) => `<li><strong>${esc(key)}</strong><p>${esc(note)}</p></li>`).join('')}</ul><button type="button" data-personal-export>${t('Exporter favoris et notes', 'Export bookmarks and notes')}</button>`;
   }
   const notes = document.createElement('details'); notes.className = 'personal-notes';
   notes.innerHTML = `<summary>${icon('file')}${t('Mes notes sur cette page', 'My notes on this page')}</summary><label><span>${t('Notes privées, conservées localement', 'Private notes, stored locally')}</span><textarea maxlength="10000" rows="5" placeholder="${t('Écrivez votre note…', 'Write your note…')}">${esc(saved.notes[pageKey] || '')}</textarea></label><div class="note-actions"><button type="button" data-save-note>${t('Enregistrer', 'Save')}</button><span role="status"></span></div>`;
@@ -69,7 +73,7 @@ export function mountReaderTools(root: HTMLElement, data: Documentation, page: D
     const target = (event.target as HTMLElement).closest<HTMLElement>('button,a'); if (!target) return;
     if (target.hasAttribute('data-personal')) { drawPersonal(); dialog.showModal(); }
     if (target.hasAttribute('data-personal-close') || target.closest('.personal-dialog') && target.matches('a')) dialog.close();
-    if (target.hasAttribute('data-bookmark')) { const exists = bookmark.getAttribute('aria-pressed') === 'true'; saved.bookmarks = exists ? saved.bookmarks.filter(item => item.id !== page.id || item.locale !== route.locale) : [current, ...saved.bookmarks].slice(0, 500); store.save(); updateBookmark(); options.toast(exists ? t('Favori retiré', 'Bookmark removed') : t('Page ajoutée aux favoris', 'Page bookmarked')); }
+    if (target.hasAttribute('data-bookmark')) { const exists = bookmark.getAttribute('aria-pressed') === 'true'; saved.bookmarks = exists ? saved.bookmarks.filter(item => item.id !== page.id || item.locale !== route.locale) : [current, ...saved.bookmarks].slice(0, 500); const persisted = store.save(); updateBookmark(); options.toast((exists ? t('Favori retiré', 'Bookmark removed') : t('Page ajoutée aux favoris', 'Page bookmarked')) + (persisted ? '' : t(' pour cette session. Exportez vos données avant de fermer.', ' for this session. Export your data before closing.'))); }
     if (target.hasAttribute('data-personal-export')) {
       const url = URL.createObjectURL(new Blob([JSON.stringify({ type: 'cydoc-reading-data', schemaVersion: 1, documentation: data.name, ...saved }, null, 2)], { type: 'application/json' }));
       const anchor = document.createElement('a'); anchor.href = url; anchor.download = 'cydoc-personal.json'; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -92,7 +96,7 @@ export function mountReaderTools(root: HTMLElement, data: Documentation, page: D
   const position = saved.positions[pageKey];
   if (!route.anchor && !route.state && position && position > 100) {
     const resume = document.createElement('button'); resume.type = 'button'; resume.className = 'resume-reading'; resume.textContent = t('Reprendre ma lecture', 'Resume reading');
-    root.querySelector('.toc')?.append(resume); resume.addEventListener('click', () => window.scrollTo({ top: position, behavior: 'smooth' }), { signal });
+    root.querySelector('.article-header')?.append(resume); resume.addEventListener('click', () => window.scrollTo({ top: position, behavior: 'smooth' }), { signal });
   }
-  signal.addEventListener('abort', () => { clearTimeout(timer); remember(); dialog.remove(); }, { once: true });
+  signal.addEventListener('abort', () => { clearTimeout(timer); saved.notes[pageKey] = notes.querySelector('textarea')!.value; remember(); dialog.remove(); }, { once: true });
 }

@@ -1,5 +1,6 @@
 export type * from './types.js';
 import type { Documentation, DocPage, DocRoute, SearchResult, ResolvedPage, SearchOptions } from './types.js';
+import { searchExcerpt } from './search-text.js';
 
 export function normalize(text: string): string {
   return text.normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase().trim();
@@ -64,14 +65,20 @@ export function createDocumentation(data: Documentation) {
   const locales = new Set(data.locales.map(locale => locale.code));
   if (!locales.has(data.defaultLocale)) throw new Error('Default locale must be declared');
   const index = new Map<string, DocPage>();
-  const searchIndex = new Map<DocPage, { title: string; description: string; text: string; words: string[] }>();
+  const searchIndex = new Map<DocPage, { title: string; description: string; text: string; all: string; words: string[]; sections: Array<{ anchor: string; title: string; heading: string; text: string; original: string }> }>();
   for (const page of data.pages) {
     if (!page.id || !locales.has(page.locale)) throw new Error(`Invalid page: ${page.id}`);
     const key = `${page.locale}\0${page.id}`;
     if (index.has(key)) throw new Error(`Duplicate page: ${page.locale}/${page.id}`);
     index.set(key, page);
     const text = normalize(`${page.text} ${page.symbol || ''}`);
-    searchIndex.set(page, { title: normalize(page.title), description: normalize(page.description), text, words: [...new Set(normalize(`${page.title} ${page.description} ${text}`).split(/[^\p{L}\p{N}_]+/u).filter(word => word.length >= 3))] });
+    const all=normalize(`${page.title} ${page.description} ${text} ${page.headings.map(heading=>heading.text).join(' ')}`);
+    const sections=page.headings.map(heading=>{
+      const range=page.searchSections?.find(range=>range.anchor===heading.id&&Number.isInteger(range.start)&&Number.isInteger(range.end)&&range.start>=0&&range.end>=range.start&&range.end<=page.text.length);
+      const original=range?page.text.slice(range.start,range.end):'';
+      return {anchor:heading.id,title:heading.text,heading:normalize(heading.text),text:normalize(original),original};
+    });
+    searchIndex.set(page, { title: normalize(page.title), description: normalize(page.description), text, all, sections, words: [...new Set(all.split(/[^\p{L}\p{N}_]+/u).filter(word => word.length >= 3))] });
   }
   const pageIds = [...new Set(data.pages.map(page => page.id))];
   const completeLocales = data.locales.filter(locale => pageIds.length && pageIds.every(id => {
@@ -103,11 +110,14 @@ export function createDocumentation(data: Documentation) {
     return page ? { page, requestedLocale: locale, fallback: page.locale !== locale } : undefined;
   }
 
-  function pages(locale = data.defaultLocale): DocPage[] {
-    return pageIds
+  const orderedPages=new Map<string,DocPage[]>();
+  function ordered(locale: string): DocPage[] {
+    if(!orderedPages.has(locale))orderedPages.set(locale,pageIds
       .map(id => resolve(id, locale)?.page).filter((page): page is DocPage => !!page)
-      .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title, locale));
+      .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title, locale)));
+    return orderedPages.get(locale)!;
   }
+  function pages(locale = data.defaultLocale): DocPage[] { return [...ordered(locale)]; }
 
   for (const page of data.pages) {
     const visited = new Set<string>([page.id]);
@@ -119,28 +129,36 @@ export function createDocumentation(data: Documentation) {
       if (!parent) throw new Error(`Missing navigation parent: ${ancestor.parent}`);
       ancestor = parent;
     }
+    for(const direction of ['previous','next'] as const) {
+      const value=page[direction];if(value===undefined||value==='')continue;
+      if(typeof value!=='string'||value.trim()!==value)throw new Error(`Invalid learning path: ${page.id}/${direction}`);
+      const parts=value.split('#');
+      if(!parts[0]||parts.length>2||(parts.length===2&&!parts[1]))throw new Error(`Invalid learning path: ${page.id}/${direction}`);
+      const target=canonicalRoute({locale:page.locale,pageId:parts[0],anchor:parts[1]}),destination=resolve(target.pageId,page.locale)?.page;
+      if(!destination||(target.anchor&&!hasAnchor(destination,target.anchor))||(destination.id===page.id&&!target.anchor))throw new Error(`Invalid learning path destination: ${page.id}/${direction}: ${value}`);
+    }
   }
 
   function search(query: string, locale = data.defaultLocale, limit = 12, options: SearchOptions = {}): SearchResult[] {
     const terms = normalize(query).slice(0, 200).split(/\s+/).filter(Boolean).slice(0, 12);
     if (!terms.length) return [];
-    return pages(locale).flatMap(page => {
+    return ordered(locale).flatMap(page => {
       if (options.language && !page.languages?.includes(options.language)) return [];
       if (options.kind && (page.kind || (page.sourcePageId ? 'api' : 'guide')) !== options.kind) return [];
       const item = searchIndex.get(page)!;
-      let penalty = 0;
+      let penalty = 0; const matchedTerms: string[]=[];
       if (!terms.every(term => {
-        if (`${item.title} ${item.description} ${item.text}`.includes(term)) return true;
+        if (item.all.includes(term)) {matchedTerms.push(term);return true;}
         if (options.fuzzy === false || term.length < 4 || term.length > 60) return false;
         const max = term.length > 7 ? 2 : 1;
-        const found = item.words.some(word => word.length <= 60 && distance(term, word, max) <= max);
-        if (found) penalty += 3; return found;
+        const found = item.words.find(word => word.length <= 60 && distance(term, word, max) <= max);
+        if (found) {penalty += 3;matchedTerms.push(found);} return !!found;
       })) return [];
       const score = terms.reduce((sum, term) => sum + (item.title.includes(term) ? 12 : 0) + (item.description.includes(term) ? 5 : 0) + (item.text.includes(term) ? 1 : 0), 0) - penalty;
-      const match = item.text.indexOf(terms[0]!);
-      const start = Math.max(0, match - 45);
+      const section=terms.every(term=>item.title.includes(term))?undefined:item.sections.map(section=>({section,score:matchedTerms.reduce((sum,term)=>sum+(section.heading.includes(term)?8:0)+(section.text.includes(term)?1:0),0)})).filter(item=>item.score>0).sort((a,b)=>b.score-a.score)[0]?.section;
       const line = page.kind === 'source' ? page.code?.split('\n').findIndex(line => normalize(line).includes(terms[0]!)) : undefined;
-      return [{ page, score, excerpt: `${start ? '…' : ''}${page.text.slice(start, start + 145)}${page.text.length > start + 145 ? '…' : ''}`, ...(line !== undefined && line >= 0 ? { anchor: `L${line + 1}` } : {}) }];
+      const excerpt=searchExcerpt(section?.original||page.text||page.description,matchedTerms);
+      return [{ page, score, excerpt, matchedTerms, ...(line !== undefined && line >= 0 ? { anchor: `L${line + 1}` } : section ? {anchor:section.anchor,section:section.title} : {}) }];
     }).sort((a, b) => b.score - a.score || a.page.order - b.page.order).slice(0, Math.max(0, limit));
   }
   return { data, resolve, pages, search, link: createLink, canonicalRoute, availableLocales: () => [...completeLocales] };

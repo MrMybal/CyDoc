@@ -1,0 +1,48 @@
+{
+  "$schema": "https://raw.githubusercontent.com/MrMybal/CyInstaller/main/schema/cyinstaller.schema.json",
+  "schema_version": 1,
+  "app": {
+    "id": "mrmybal.cydocstudio",
+    "name": "CyDoc Studio",
+    "file_name": "CyDocStudio",
+    "publisher": "CyberAlien",
+    "description": {"en": "Write, illustrate and publish application documentation.", "fr": "Écrire, illustrer et publier la documentation d’une application."},
+    "homepage": "https://github.com/MrMybal/CyDoc",
+    "icon": "assets/cydoc.ico",
+    "license": "assets/LICENSE.txt"
+  },
+  "source": {"github": "MrMybal/CyDoc"},
+  "platforms": {"windows": {"archs": ["x64"], "main_executable": "CyDocStudio.exe"}},
+  "install": {
+    "scopes": ["user"],
+    "default_scope": "user",
+    "default_dir": {"user": "{programs}/CyDocStudio-CyInstaller"},
+    "allow_custom_dir": true,
+    "launch_after_install": true
+  },
+  "paths": {
+    "config": "{localappdata}/CyDocStudio/config",
+    "data": "{localappdata}/CyDocStudio/jobs",
+    "cache": "{localappdata}/CyDocStudio/browser-profile/Default/Cache",
+    "logs": "{localappdata}/CyDocStudio/logs",
+    "extra": [
+      {"path": "{localappdata}/CyDocStudio/workspace", "category": "user_files"},
+      {"path": "{localappdata}/CyDocStudio/browser-profile", "category": "user_files"},
+      {"path": "{localappdata}/CyDocStudio/desktop-settings.json", "category": "config"},
+      {"path": "{localappdata}/CyDocStudio/desktop.ini", "category": "config"},
+      {"path": "{localappdata}/CyDocStudio/allowed-folders.json", "category": "config"},
+      {"path": "{localappdata}/CyDocStudio/desktop.log", "category": "logs"},
+      {"path": "{localappdata}/CyDocStudio/server.log", "category": "logs"}
+    ]
+  },
+  "files": {"mutable": []},
+  "options": [{"id": "desktop_shortcut", "type": "bool", "label": {"en": "Create a desktop shortcut", "fr": "Créer un raccourci sur le bureau"}, "default": false}],
+  "prerequisites": [{"id": "vcredist-2015-2022", "arch": "x64", "min_version": "14.40", "reason": {"en": "Required by the native Studio components.", "fr": "Nécessaire aux composants natifs de Studio."}}],
+  "integration": {"shortcuts": [
+    {"location": "start_menu", "name": "{app.name}", "target": "{install_dir}/CyDocStudio.exe"},
+    {"location": "desktop", "name": "{app.name}", "target": "{install_dir}/CyDocStudio.exe", "option": "desktop_shortcut"}
+  ]},
+  "processes": {"close_strategy": "graceful", "graceful_timeout_s": 60},
+  "update": {"channels": ["stable", "beta"], "default_channel": "stable", "check_interval_hours": 24, "auto_download": false, "confirm_startup": true, "confirm_attempts": 3},
+  "signing": {"publisher_key": "ed25519:HzTL8zuIG3Toj2qb13Uw/Si+qL0AbwoKpc6zq51iQuo="}
+}

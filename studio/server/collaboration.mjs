@@ -37,6 +37,10 @@ export class Collaboration {
     const data = JSON.stringify(message);
     for (const [socket] of room.clients) if (socket !== except && socket.readyState === 1) socket.send(data);
   }
+  acknowledge(room, vector, bodyHash) {
+    this.broadcast(room, { type: 'saved', revisionToken: room.page.revisionToken, revision: room.page.revision,
+      sourceRevision: room.page.sourceRevision || null, vector, bodyHash });
+  }
   presence(room) {
     this.broadcast(room, { type: 'presence', users: [...room.clients.values()].map(client => ({ id: client.user.id, name: client.user.name, role: this.db.role(client.user, room.project) })) });
   }
@@ -62,22 +66,32 @@ export class Collaboration {
         const trial = new Y.Doc(); Y.applyUpdate(trial, Y.encodeStateAsUpdate(room.doc)); Y.applyUpdate(trial, update);
         const length = trial.getText('markdown').length; trial.destroy();
         if (length > 2 * 1024 * 1024) return socket.close(1009, 'Page is too large.');
-        Y.applyUpdate(room.doc, update, socket);
+        let changed = false;
+        const markChanged = () => { changed = true; };
+        room.doc.on('update', markChanged);
+        try { Y.applyUpdate(room.doc, update, socket); }
+        finally { room.doc.off('update', markChanged); }
+        // Initial sync and duplicate updates can be no-ops. Acknowledge only
+        // after queued writes finish; do not create a new document revision.
+        if (!changed) this.flush(room, true).catch(() => {});
       } catch { socket.close(1008, 'Editing is not permitted.'); }
     });
     socket.on('close', () => { room.clients.delete(socket); this.presence(room); });
   }
-  async flush(room) {
+  async flush(room, acknowledgeClean = false) {
     clearTimeout(room.timer);
     room.saving = room.saving.catch(() => {}).then(async () => {
       if (room.error) throw room.error;
-      if (!room.dirty) return room.page;
+      if (!room.dirty) {
+        if (acknowledgeClean) this.acknowledge(room, Buffer.from(Y.encodeStateVector(room.doc)).toString('base64'), digest(room.shared.toString()));
+        return room.page;
+      }
       const body = room.shared.toString(), update = Y.encodeStateAsUpdate(room.doc), vector = Buffer.from(Y.encodeStateVector(room.doc)).toString('base64');
       room.dirty = false;
       try {
         room.page = await this.workspace.writeBody(room.project, room.locale, room.id, body, room.page.revisionToken);
         await atomic(room.file, update);
-        this.broadcast(room, { type: 'saved', revisionToken: room.page.revisionToken, revision: room.page.revision,sourceRevision:room.page.sourceRevision||null,vector });
+        this.acknowledge(room, vector, digest(body));
         if(room.locale==='en')for(const related of this.rooms.values())if(related.project.id===room.project.id&&related.id===room.id&&related.locale==='fr')this.broadcast(related,{type:'original-revision',id:room.id,revision:room.page.revision});
         return room.page;
       } catch (error) {

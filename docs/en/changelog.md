@@ -16,7 +16,7 @@ The optional [Studio editor](doc:studio#start) adds:
 - Optional Git with documentation commits, diffs, branches, history and supported HTTPS remotes.
 - A portable Windows x64 application built with CyUI and CEF, with bundled runtimes and full-window Editor, Documentation, Options and Local MCP / SDK tabs.
 - All six library themes shared by the editor, native shell and bundled manual.
-- JavaScript/Python SDKs and 22 local CyToolsCore MCP operations.
+- JavaScript/Python SDKs and 22 local MCP operations.
 
 Studio has separate dependencies. The reader library remains version 0.1.0 and exported manuals still open directly through `file://`.
 

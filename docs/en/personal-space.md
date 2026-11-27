@@ -7,6 +7,6 @@ order: 35
 ---
 Open the **My space** icon in the header to find bookmarks and recent pages. The heart beside the title bookmarks a page. **My notes on this page** stores private notes, exportable from My space.
 
-Reading position is remembered. When returning to a page, **Resume reading** in the contents returns to that position. Explicit section or media links retain priority.
+Reading position is remembered. When returning to a page, **Resume reading** below the page description returns to that position. Explicit section or media links retain priority.
 
-Data stays in browser or WebView storage. If storage is unavailable, notes work during reading and the save status asks you to export before closing. `storageId` lets the host choose its data namespace.
+Data stays in browser or WebView storage. If storage is unavailable, notes and bookmarks remain available across pages for the current reading session. The reader asks you to export before closing. The downloaded JSON keeps a copy of your data; this release has no import command. `storageId` lets the host choose its data namespace.

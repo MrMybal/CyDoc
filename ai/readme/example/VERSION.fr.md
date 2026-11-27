@@ -8,13 +8,17 @@
 
 CyDoc est une première implémentation. Studio 0.1.2 est une release portable publiée ; cette publication ne garantit pas la maturité de toutes les intégrations. Consultez les limites documentées avant de dépendre d’un environnement cible.
 
+## Compilation des sources — migration CyMCPSDK
+
+Les sources actuelles remplacent le précédent moteur d’automatisation par CyMCPSDK 0.7.5, révision `35d2d4f`. Elles ajoutent l’onglet Assistant natif, des opérations communes au chat, au CLI et à MCP, ainsi que l’annonce locale publique. Les tâches et exports existants sont conservés. Ces changements ne sont pas inclus dans le téléchargement publié Studio 0.1.2.
+
 ## Studio 0.1.2
 
 - Écriture visuelle/Markdown, arborescence, propriétés, sauvegarde automatique, historique et import de médias locaux.
 - Projets locaux sans compte, avec un exemple CyDoc bilingue modifiable.
 - Git facultatif, édition en ligne authentifiée séparée, invitations, rôles et écriture simultanée.
 - Interface Windows CyUI/CEF avec onglets occupant la fenêtre pour l’éditeur, la documentation, les options et le MCP/SDK local.
-- Six thèmes partagés, SDK JavaScript/Python et 22 opérations CyToolsCore MCP.
+- Six thèmes partagés, SDK JavaScript/Python et 22 opérations MCP.
 - Export statique anglais/français complet, avec le fichier DocAI.md séparé.
 
 [Téléchargement et notes officielles](https://github.com/MrMybal/CyDoc/releases/tag/studio-v0.1.2) · [Sommes SHA-256](https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/SHA256SUMS.txt)

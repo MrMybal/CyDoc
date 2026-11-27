@@ -4,6 +4,8 @@ title: Médias et lecteurs
 description: Des lecteurs optionnels pour explorer, annoter et comparer vos images, vidéos et meshes.
 section: Créer du contenu
 order: 11
+previous: rich-content
+next: diagrams
 ---
 Chaque lecteur de média est un module optionnel. L’application choisit ceux qu’elle distribue ; le noyau n’importe aucun lecteur ni moteur 3D. Les modules sont chargés à l’approche de leur contenu, puis libèrent leurs ressources à la fermeture de la page.
 

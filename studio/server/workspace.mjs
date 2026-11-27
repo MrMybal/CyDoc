@@ -8,7 +8,7 @@ import { git, gitAction, remoteUrl } from './git.mjs';
 
 export const modules = ['image', 'video', 'gallery', 'gif', 'mesh', 'graph'];
 export function serialize(metadata, body) {
-  const rows = Object.entries(metadata).filter(([, value]) => value !== undefined && value !== '').map(([key, value]) => {
+  const rows = Object.entries(metadata).filter(([key, value]) => value !== undefined && (value !== '' || ['previous','next'].includes(key))).map(([key, value]) => {
     if (!/^[a-zA-Z]+$/.test(key) || /[\r\n]/.test(String(value))) fail(400, 'Metadata must contain single-line values.');
     return `${key}: ${value}`;
   });
@@ -235,7 +235,7 @@ export class Workspace {
     const page = await this.page(project, locale, id), { config } = await this.config(project);
     const compiled = compileMarkdown(page.body, { locale, pageId: id, linkedDocs: config.linkedDocs, glossary: config.glossary?.[locale] });
     const { mediaBlocks, ...rendered } = compiled;
-    return { manifest: { schemaVersion: 1, name: config.name, version: config.version, logo: config.logo, defaultLocale: locale, locales: [{ code: locale, label: locale === 'en' ? 'English' : 'Français' }], pages: [{ ...page, ...rendered, order: 0, parent: undefined }] }, modules: config.modules || [], mediaBlocks };
+    return { manifest: { schemaVersion: 1, name: config.name, version: config.version, logo: config.logo, defaultLocale: locale, locales: [{ code: locale, label: locale === 'en' ? 'English' : 'Français' }], pages: [{ ...page, ...rendered, description:page.description||'', kind:page.kind||rendered.kind, order: 0, parent: undefined, previous:undefined, next:undefined }] }, modules: config.modules || [], mediaBlocks };
   }
   async publish(project) {
     return this.lock(project.id, async () => {

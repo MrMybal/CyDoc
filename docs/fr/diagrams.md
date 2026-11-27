@@ -4,8 +4,15 @@ title: Galerie de schémas
 description: Flux, décisions, séquences, classes, dépendances et architecture.
 section: Exemples
 order: 18
+previous: media
+next: blueprints
+sourceRevision: 2
 ---
 Ces schémas sont compilés en SVG accessible. Aucun moteur de schémas n’est ajouté au lecteur. Les fichiers du schéma de dépendances sont cliquables.
+
+Dans Studio, choisissez **Insérer un bloc**, sélectionnez **diagram**, puis **Flux**, **Décision** ou **Séquence**. Nommez les éléments, reliez-les et expliquez ce que le lecteur doit comprendre. **Placer automatiquement** positionne les éléments des flux et décisions. L’aperçu se met à jour pendant l’édition. **JSON avancé** donne accès aux propriétés supplémentaires et aux autres types de schémas.
+
+Dans le lecteur, utilisez **Agrandir le schéma** pour examiner un dessin en restant dans le manuel. **Fermer** ou Échap ramène à la page. **Lire l’explication du schéma** présente les éléments et les connexions sous forme de texte, avec votre description si elle est renseignée.
 
 ## Flux avec décision {#example-1}
 
@@ -13,6 +20,7 @@ Ces schémas sont compilés en SVG accessible. Aucun moteur de schémas n’est 
 {
   "type": "flow",
   "title": "Résolution d’une page locale",
+  "description": "Une page est résolue dans la langue demandée si elle existe, sinon dans la langue par défaut. Le lecteur ne propose que les éditions complètes.",
   "nodes": [
     {
       "id": "start",
@@ -134,7 +142,7 @@ Ces schémas sont compilés en SVG accessible. Aucun moteur de schémas n’est 
         "+ mount(host, config, context)"
       ],
       "methods": [
-        "+ dispose()"
+        "nettoyage renvoyé par mount"
       ],
       "x": 330,
       "y": 10

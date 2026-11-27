@@ -139,7 +139,7 @@ export function compileMarkdown(body, { locale, pageId, linkedDocs = {}, glossar
         if (text.trim().startsWith('{')) {
           const diagram = JSON.parse(text);
           for (const node of diagram.nodes || []) if (node.link || node.href) node.href = resolveHref(node.link || node.href);
-          return renderDiagram(diagram, `${pageId}-${diagramIndex++}`);
+          return renderDiagram(diagram, `${pageId}-${diagramIndex++}`, locale);
         }
         const nodes = text.trim().split(/\s*->\s*/);
         if (nodes.length > 8 || nodes.some(node => node.length > 48)) throw new Error('Diagram supports up to 8 labels, 48 characters each');
@@ -153,7 +153,19 @@ export function compileMarkdown(body, { locale, pageId, linkedDocs = {}, glossar
   const html = marked.parse(body);
   const mediaIds=[...html.matchAll(/data-cydoc-id="([^"]+)"/g)].map(match=>match[1]);
   if(new Set(mediaIds).size!==mediaIds.length)throw new Error(`Duplicate media id in ${pageId}`);
-  const plainHtml = html.replace(/<[^>]*>/g, ' ').replace(/&(amp|lt|gt|quot|#39);/g, (_, entity) => ({amp:'&',lt:'<',gt:'>',quot:'"','#39':"'"})[entity]);
-  const text = (plainHtml + ' ' + codeText.join(' ')).replace(/\s+/g, ' ').trim();
-  return { html, text, headings, anchors, languages: [...languages], code: codeText.join('\n'), assets: [...assets], mediaBlocks, links, kind: mediaBlocks.length ? 'media' : 'guide' };
+  const plain = value => value.replace(/<[^>]*>/g, ' ').replace(/&(amp|lt|gt|quot|#39);/g, (_, entity) => ({amp:'&',lt:'<',gt:'>',quot:'"','#39':"'"})[entity]).replace(/\s+/g,' ').trim();
+  const boundaries=[...html.matchAll(/<h[1-6] id="([^"]+)"/g)],searchSections=[];
+  let visibleText='';
+  const append = fragment => {const value=plain(fragment);if(value)visibleText+=(visibleText?' ':'')+value;};
+  append(html.slice(0,boundaries[0]?.index??html.length));
+  boundaries.forEach((match,i)=>{
+    const fragment=html.slice(match.index,boundaries[i+1]?.index??html.length),close=fragment.indexOf('</h')+5;
+    append(fragment.slice(0,close));
+    const body=plain(fragment.slice(close)),start=visibleText.length+(body?1:0);
+    append(fragment.slice(close));
+    searchSections.push({anchor:match[1],start,end:visibleText.length});
+  });
+  const text = (visibleText + ' ' + codeText.join(' ')).replace(/\s+/g, ' ').trim();
+  const hasProse=marked.lexer(body).some(token=>token.type!=='space'&&!(token.type==='code'&&['image','video','mesh','gallery','graph','blueprint','gif'].includes(token.lang))&&!(token.type==='paragraph'&&token.tokens?.every(item=>item.type==='image'||item.type==='text'&&!item.text.trim())));
+  return { html, text, headings, anchors, ...(searchSections.length?{searchSections}:{}), languages: [...languages], code: codeText.join('\n'), assets: [...assets], mediaBlocks, links, kind: mediaBlocks.length&&!hasProse ? 'media' : 'guide' };
 }

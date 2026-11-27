@@ -4,8 +4,15 @@ title: Graphes et Blueprints
 description: Un module de graphe à nœuds autonome, lié à vos pages de documentation.
 section: Exemples
 order: 17
+previous: diagrams
+next: integration
+sourceRevision: 1
 ---
-Un lecteur de graphes à nœuds avec ports typés, courbes, zones de commentaire, sélection, déplacement, zoom et agrandissement dans la fenêtre. Sélectionnez **Make Help Link** pour ouvrir sa page d’API.
+Un lecteur de graphes à nœuds avec ports typés, courbes, zones de commentaire et agrandissement dans la fenêtre. Le défilement au-dessus du graphe fait normalement défiler le manuel. Sélectionnez un nœud pour lire son rôle et suivre son lien de documentation.
+
+Choisissez **Explorer le graphe** pour déplacer le canevas en glissant et zoomer avec la molette ou les boutons +/−. Les flèches déplacent le canevas ; +/− zoome, Début cadre le graphe et Échap quitte l’exploration. Les raccourcis de zoom du navigateur restent disponibles. Sur écran tactile, quittez l’exploration pour retrouver le défilement vertical de la page. En mode agrandi, Échap quitte d’abord l’exploration ; un second Échap réduit le lecteur.
+
+Ouvrez **Vue textuelle : nœuds et connexions** pour lire les descriptions, les ports et les connexions sortantes sans manipuler le canevas. Recherchez le nom ou la description d’un nœud. **Afficher** centre et sélectionne ce nœud dans le graphe ; son lien de documentation reste aussi disponible dans la vue textuelle. Essayez **Make Help Link** pour rejoindre sa page d’API.
 
 ## Graphe interactif {#graph}
 

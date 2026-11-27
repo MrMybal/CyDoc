@@ -1,0 +1,3 @@
+# Test-only packages; neither is required by the packaged native MCP implementation.
+pytest==9.2.0
+mcp==1.30.0

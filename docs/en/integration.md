@@ -4,6 +4,8 @@ title: Integrate with an app
 description: Open help from Windows, Linux, macOS, Android, or a web application.
 section: Integration
 order: 20
+previous: blueprints
+next:
 ---
 The exported viewer uses web standards. Open it in the system browser or an embedded WebView. The host application chooses how to open it.
 

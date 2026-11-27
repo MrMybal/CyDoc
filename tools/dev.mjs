@@ -1,4 +1,4 @@
-import { watch } from 'node:fs/promises';
+import { watch, cp } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -10,6 +10,7 @@ async function compile() {
     const child = spawn(process.execPath, [resolve(project, 'node_modules/typescript/bin/tsc')], { cwd: project, stdio: 'inherit' });
     child.on('error', no); child.on('exit', code => code === 0 ? yes() : no(new Error(`TypeScript exited ${code}`)));
   });
+  await cp(join(project,'src/viewer.css'),join(project,'dist/viewer.css'));
   return buildSite();
 }
 const site = await compile();

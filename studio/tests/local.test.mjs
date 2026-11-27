@@ -1,12 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, rm, readFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, rm, readFile, writeFile } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { request } from 'node:http';
 import { WebSocket } from 'ws';
 import * as Y from 'yjs';
 import { startStudio } from '../server/server.mjs';
 import { StudioClient } from '../sdk/client.mjs';
+import { createDocumentation } from '../../dist/index.js';
 
 async function fixture(t) {
   await mkdir(resolve('.tmp'), { recursive: true });
@@ -16,6 +17,18 @@ async function fixture(t) {
   return { app, directory, sdk: new StudioClient(app.origin) };
 }
 const call = (app, path, options = {}) => fetch(`${app.origin}/api/${path}`, options);
+
+test('isolated preview omits full-manual path links and saving retains explicit path endpoints',async t=>{
+  const {app,sdk}=await fixture(t),project=await sdk.createProject({name:'Path preview',git:false});
+  const file=join(app.db.data.projects[project.id].root,'.CyDocBuild/manual/en/overview.md');
+  await writeFile(file,'---\nid: overview\ntitle: Path preview\nsection: Guides\nkind: media\nprevious: future#section\nnext:\nrevision: 1\n---\n\nDraft content.\n');
+  const page=await sdk.page(project.id,'en','overview');await sdk.updatePage(project.id,'en','overview',page.body+'An edit.\n',page.revisionToken);
+  assert.match(await readFile(file,'utf8'),/^next: *$/m);
+  const preview=await sdk.preview(project.id,'en','overview');const rendered=preview.manifest.pages[0];
+  assert.equal(rendered.next,undefined);assert.equal(rendered.previous,undefined);assert.equal(rendered.kind,'media');
+  assert.equal(rendered.description,'');
+  assert.equal(createDocumentation(preview.manifest).pages().length,1);
+});
 
 test('local workspace edits and publishes without creating accounts, sessions or SDK tokens', async t => {
   const { app, directory, sdk } = await fixture(t);

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, writeFile, readFile, rm, access, readdir } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, readFile, rm, access, readdir, stat } from 'node:fs/promises';
 import { resolve, join, dirname, basename } from 'node:path';
 import { buildSite } from '../tools/build.mjs';
 
@@ -22,7 +22,12 @@ test('another application builds without CyDoc demo pages, and broken content fa
   await writeFile(configPath, JSON.stringify(config));
   await writeFile(pagePath, metadata + '## Your settings {#settings}\n\nReal content.');
   await writeFile(join(root, 'content/fr/settings.md'), metadata.replace('title: Settings','title: Paramètres') + '## Vos paramètres {#settings}\n\nConfigurez votre application.');
+  const styleBefore=await stat('dist/viewer.css',{bigint:true});
   const { data, output } = await buildSite(configPath);
+  assert.equal((await stat('dist/viewer.css',{bigint:true})).mtimeNs,styleBefore.mtimeNs,'Consumer exports must not rewrite the installed library stylesheet');
+  await Promise.all([buildSite(configPath,{out:'parallel-a'}),buildSite(configPath,{out:'parallel-b'})]);
+  assert.equal((await stat('dist/viewer.css',{bigint:true})).mtimeNs,styleBefore.mtimeNs);
+  assert.equal(await readFile(join(root,'parallel-a/DocData/viewer.css'),'utf8'),await readFile('src/viewer.css','utf8'));
   assert.equal(data.pages.length, 2);
   assert.equal(data.pages[0].id, 'settings');
   assert.deepEqual((await readdir(output)).sort(), ['DocAI.md', 'DocData', 'Documentation.html']);

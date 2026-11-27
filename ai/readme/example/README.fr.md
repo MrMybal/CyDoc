@@ -44,9 +44,11 @@ Studio fournit un éditeur visuel/Markdown, une arborescence, l’import de méd
 - **Anglais et français** : originaux anglais et traduction française complète et à jour exigés avant publication.
 - **Médias optionnels** : lecteurs d’images, vidéos, GIF, meshes, galeries et graphes. Inclure seulement les modules nécessaires ; seul le mesh utilise Three.js.
 - **Contenu technique** : coloration du code à la compilation, schémas SVG, extraction d’annotations, imports Doxygen/TypeDoc et références d’API sans affichage des implémentations brutes.
-- **Écriture et automatisation optionnelles** : édition visuelle/Markdown, Git facultatif, collaboration hébergée, Studio Windows et SDK/MCP local via CyToolsCore.
+- **Écriture et automatisation optionnelles** : édition visuelle/Markdown, Git facultatif, collaboration hébergée, Studio Windows et SDK/MCP local via CyMCPSDK.
 
 ---
+
+La compilation depuis les sources utilise désormais CyMCPSDK 0.7.5 pour l’assistant intégré et l’automatisation locale. Le téléchargement publié Studio 0.1.2 précède cette migration.
 
 ## Installation
 
@@ -84,7 +86,7 @@ npm run build --prefix studio
 npm start --prefix studio -- --local --data ./data --port 4310
 ```
 
-Ouvrez `http://127.0.0.1:4310`. Le service est nécessaire pendant l’écriture ; les manuels exportés restent statiques. L’hébergement en ligne utilise un service authentifié distinct, un stockage persistant, HTTPS et WebSockets. La compilation Windows nécessite aussi Python 3.11+, MSVC, CyUI, CyToolsCore et des fichiers CEF correspondants ; suivez le [guide de compilation de Studio](https://github.com/MrMybal/CyDoc/blob/main/studio/README.md#build-windows).
+Ouvrez `http://127.0.0.1:4310`. Le service est nécessaire pendant l’écriture ; les manuels exportés restent statiques. L’hébergement en ligne utilise un service authentifié distinct, un stockage persistant, HTTPS et WebSockets. La compilation Windows nécessite aussi Python 3.11+, MSVC, CMake 3.24+, libcurl, CyUI, CyMCPSDK 0.7.5 et des fichiers CEF correspondants ; suivez le [guide de compilation de Studio](https://github.com/MrMybal/CyDoc/blob/main/studio/README.md#build-windows).
 
 </details>
 
@@ -123,7 +125,7 @@ Le cœur n’a aucune dépendance à l’exécution. Les outils de génération 
 | Bibliothèque · sources | Licence · texte | Utilisation / périmètre |
 | --- | --- | --- |
 | [CyUI](https://github.com/MrMybal/CyUI) | [MIT](https://github.com/MrMybal/CyUI/blob/main/LICENSE) | Interface native et adaptateur CEF ; l’accès aux sources peut nécessiter une autorisation. |
-| [CyToolsCore](https://github.com/MrMybal/CyToolsCore) | [MIT](https://github.com/MrMybal/CyToolsCore/blob/main/LICENSE) | Exécution des opérations SDK/MCP locales. |
+| [CyMCPSDK](https://github.com/MrMybal/CyMCPSDK) | [MIT](https://github.com/MrMybal/CyMCPSDK/blob/main/LICENSE) | Exécution des opérations SDK/MCP locales. |
 | [Dear ImGui](https://github.com/ocornut/imgui) | [MIT](https://github.com/ocornut/imgui/blob/docking/LICENSE.txt) | Interface native via CyUI/imgui-bundle. |
 | [imgui-bundle](https://github.com/pthom/imgui_bundle) | [MIT et notices des composants](https://github.com/pthom/imgui_bundle/blob/main/LICENSE) | Dépendance Python/native ; ses composants gardent leurs notices. |
 | [CEF / Chromium](https://bitbucket.org/chromiumembedded/cef) | [De type BSD et notices des composants](https://bitbucket.org/chromiumembedded/cef/src/master/LICENSE.txt) | Navigateur intégré ; conserver LICENSE.txt et CREDITS.html. |

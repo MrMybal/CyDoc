@@ -4,6 +4,8 @@ title: Media & viewers
 description: Optional viewers to explore, annotate, and compare images, videos, and meshes.
 section: Create content
 order: 11
+previous: rich-content
+next: diagrams
 ---
 Every media viewer is optional. The host app selects which modules to distribute; the core imports no media viewer or 3D engine. Modules load near their content and release resources when leaving the page.
 

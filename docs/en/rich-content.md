@@ -4,6 +4,9 @@ title: Rich content
 description: Tabs, steps, callouts, collapsible sections, glossary, and code differences.
 section: Examples
 order: 30
+previous: writing
+next: media
+revision: 1
 ---
 One explanation can present several languages without lengthening the page. The term [[PBR]] has a keyboard- and click-accessible definition.
 
@@ -64,20 +67,27 @@ One explanation can present several languages without lengthening the page. The 
 
 ## Step-by-step tutorial {#steps}
 
+Give each step one action, a visible result and an optional remedy. In Studio, choose **Insert a block → steps** to write these fields and move steps up or down. **Result and troubleshooting** opens the optional fields. In the reader, **If this step fails** reveals the extra help only when needed.
+
 ```steps
 {
   "items": [
     {
       "title": "Generate",
-      "body": "`npm run build`"
+      "body": "From the source checkout, run `npm run build`.",
+      "result": "The build creates `dist/site/Documentation.html` and its `DocData/` folder.",
+      "troubleshooting": "Read the exact build error. Check that the dependencies are installed and that both language editions are complete."
     },
     {
       "title": "Distribute",
-      "body": "Copy `dist/site/` with your application."
+      "body": "Copy `dist/site/` with your application.",
+      "result": "The entry file and its complete `DocData/` folder stay together."
     },
     {
       "title": "Open",
-      "body": "[Open a precise section](doc:quickstart#installation)."
+      "body": "[Open a precise section](doc:quickstart#installation).",
+      "result": "The preparation section of the tutorial opens.",
+      "troubleshooting": "Use [the reader checks](doc:troubleshooting#reader) if the manual remains blank."
     }
   ]
 }

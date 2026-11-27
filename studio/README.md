@@ -1,10 +1,12 @@
 # CyDoc Studio
 
-An optional authoring application for CyDoc: a browser editor, a Windows CyUI/CEF shell, and local JavaScript/Python SDK and MCP access through CyToolsCore. The static reader remains independent: installing Studio does not add editor dependencies to exported manuals.
+An optional authoring application for CyDoc: a browser editor, a Windows CyUI/CEF shell, and local JavaScript/Python SDK access and native CyMCPSDK automation. The static reader remains independent: installing Studio does not add editor dependencies to exported manuals.
 
 Studio supports English and French interfaces, visual and Markdown editing, shared Yjs documents, live presence, automatic saving, page properties and hierarchy, private working history, local media, reader previews and publication. Projects work in ordinary folders without Git. Git can be enabled separately, with documentation commits, diffs, branches, history and HTTPS remotes.
 
 ## Windows download
+
+Current source builds are **Studio 0.1.5**, with CyInstaller setup, managed Updates and graceful save-before-close. The published portable 0.1.2 archive below predates this integration. The [installer contract](../.cyinstaller/README.md) documents local signing, packaging and isolated end-to-end tests; local generation does not publish an online update feed.
 
 [Download CyDoc Studio 0.1.2](https://github.com/MrMybal/CyDoc/releases/tag/studio-v0.1.2). Extract the complete Windows x64 ZIP, then start `CyDocStudio.exe`. Keep the adjacent `app/`, `runtime/` and `LICENCES/` directories. Node.js, Python and CEF are bundled; no separate runtime installation or local account setup is needed. This is a portable application, not an installer, and its executables are not code-signed.
 
@@ -107,18 +109,24 @@ const page = await studio.page(project.id, 'en', 'overview');
 await studio.updatePage(project.id, 'en', page.id, page.body + '\nAdditional instructions.\n', page.revisionToken);
 ```
 
-The Python SDK is [desktop/app/sdk.py](desktop/app/sdk.py). The CyTools facade [desktop/app/tool.py](desktop/app/tool.py) uses the actual [CyToolsCore](https://github.com/MrMybal/CyToolsCore) runtime, schema validation, job ownership, input imports and official MCP transport. Install the MIT CyToolsCore package with its `mcp` extra in your private Python environment.
+The direct HTTP Python SDK is [desktop/app/sdk.py](desktop/app/sdk.py). Native automation uses **CyMCPSDK 0.7.5**, revision `35d2d4f`, compiled from source. One C++ Registry serves the integrated assistant, MCP, native SDK calls and CLI. Its 22 business operations use the same Studio service as the editor. Schema validation, revision checks and account permissions remain active.
 
 ```sh
-python studio/desktop/app/tool.py --data-dir /private/cydoc-jobs describe
+python studio/desktop/app/tool.py --data-dir /private/cydoc-jobs list
+python studio/desktop/app/tool.py --data-dir /private/cydoc-jobs describe update_page
+python studio/desktop/app/tool.py --data-dir /private/cydoc-jobs call list_projects --json '{}'
 python studio/desktop/app/tool.py --data-dir /private/cydoc-jobs mcp
 ```
 
-Set `CYDOC_STUDIO_ORIGIN` for that process and, for an account-based service, `CYDOC_STUDIO_TOKEN`. The service must be running. Never point an MCP client at the JSONL `stdio` command; use `mcp`. Operations are discovered as `op_create_project`, `op_get_page`, `op_update_page`, `op_import_asset`, `op_publish_project`, `op_git_action`, and the other operations in [CyTool.json](desktop/app/CyTool.json). Calls return jobs; poll `cy_get_job` until Completed/Failed/Cancelled and inspect the final outputs. An accepted job is not a completed write. Missing/stale `revisionToken` values do not overwrite another editor's work.
+Set `CYDOC_STUDIO_ORIGIN` and, for an account-based service, `CYDOC_STUDIO_TOKEN`. The editing service must already be running; these commands do not start it. CLI calls need no MCP server or graphical window. The packaged entry point is `runtime/desktop/CyDocStudioRuntime.exe --tool`. Give independent processes separate job directories. The native host is required; build it first or set `CYDOC_CYMCP_HOST` to the compiled executable.
 
-An MCP import accepts the absolute original media path. CyToolsCore stages a task-owned copy automatically; importing into the manual is an explicit persistent save. Task cleanup removes staged inputs, not the original or the manual's saved asset. Credential creation and account setup stay in the interactive account/Git panels; do not submit secrets as job parameters.
+Direct operation names such as `create_project`, `get_page` and `update_page` return final results. The compatible `op_*` names accept `{"parameters": {...}}` and return a job ID; poll `cy_get_job` until Completed/Failed/Cancelled. Existing SQLite jobs and their output paths are retained. Inputs are staged privately and removed after execution; original media and saved project assets are preserved. Writes that have started cannot be rolled back by Stop.
 
-The Windows shell's **Local MCP / SDK** panel provides the executable path and a configuration template for its running service. Local mode needs no Studio token; online mode uses the account token. It does not alter another application's MCP configuration. Give separate standalone MCP processes distinct job directories, or use CyToolsCore's shared `serve` / `--connect` workflow with distinct client tokens; independent processes cannot own the same runtime directory.
+The Windows **Assistant** tab hosts the SDK's native ChatUI in a child window with a separate ImGui context. Select a detected provider or enter its executable/service URL, then choose a real catalogued model or a native CLI default. API keys come from the environment variable named in the connection settings. Streaming, Stop, diagnostics and private named conversation histories use the SDK controller. No model weights or CUDA runtime are bundled. Existing local services such as Ollama, LM Studio and llama.cpp remain optional.
+
+The **Local MCP / SDK** tab shows the live loopback HTTP endpoint and copyable configuration. New profiles use **Free**, without a token or an additional Registry write restriction. The saved profiles `local-controlled`, `token-only` and `protected` remain supported. Controlled profiles allow read operations; token profiles require `CYDOC_MCP_TOKEN`. Online Studio account permissions still apply behind the local bridge. Public discovery lives at `/.well-known/cymcp`; `/v1` retains separate private host authentication.
+
+[Agent integration and configuration](../ai/STUDIO.md) documents all operations, cancellation, profiles and optional connections to other applications. Settings and credentials are never added to the exported human manual. The published Studio 0.1.2 download predates this source migration; build the current sources for the Assistant and CyMCPSDK integration.
 
 ## Build Windows
 
@@ -126,10 +134,10 @@ The native shell uses [CyUI](https://github.com/MrMybal/CyUI) Core and its optio
 
 Compile CyUI adapter sources with relative source paths for distribution, so native diagnostics do not embed a developer's checkout path. `-CefBridgeRoot` can supply separately rebuilt `cyui_webcef_bridge.dll` and `cyui_webcef_helper.exe` from the same CyUI/CEF version, while `-CefRoot` supplies the remaining runtime. Packaging excludes dependency development logs, type stubs, caches and local pip provenance while retaining component notices.
 
-With Python 3.11+, Node.js 22+ and MSVC C++ build tools:
+With Python 3.11+, Node.js 22+, CMake 3.24+, libcurl and MSVC C++ build tools:
 
 ```powershell
-./studio/desktop/build.ps1 -CyToolsCoreRoot /path/to/CyToolsCore -CyUIRoot /path/to/CyUI -CefRoot /path/to/CyUI/build/cef -NodeLicense /path/to/node/LICENSE
+./studio/desktop/build.ps1 -CyMCPSDKRoot /path/to/CyMCPSDK -CyUIRoot /path/to/CyUI -CefRoot /path/to/CyUI/build/cef -NodeLicense /path/to/node/LICENSE
 ```
 
 Supply the complete license for the Node.js version being embedded. CEF notices are read from its SDK path in `CMakeCache.txt`, or an explicit `-CefSdkRoot`. The output is `artifacts/CyDocStudio-Windows/CyDocStudio.exe`, with application files under `app/`, engine/interpreter files under `runtime/` and component notices in `LICENCES/`. The build refuses to overwrite a nonempty output directory. User state defaults to `%LOCALAPPDATA%/CyDocStudio`; `--data` overrides it. A source launch uses:
@@ -150,7 +158,11 @@ npm test --prefix studio
 node studio/desktop/test.mjs
 ```
 
-The last command uses `studio/runtime/python/Scripts/python.exe` by default; set `CYDOC_TEST_PYTHON` for another prepared Python environment. It creates a disposable local service and exercises the real CyTools SDK and official MCP client. These are development checks, kept outside exported human manuals.
+Install test-only Python dependencies with `python -m pip install -r studio/desktop/requirements-test.txt`. Build the native host with `./studio/desktop/build-native.ps1 -CyUIRoot /path/to/CyUI -Test`.
+
+The last command uses `studio/runtime/python/Scripts/python.exe` by default; set `CYDOC_TEST_PYTHON` for another prepared Python environment. It creates a disposable local service and exercises the native CyMCPSDK host and official MCP client. These are development checks, kept outside exported human manuals.
+
+For validation while the desktop remains in use, [the installer verification guide](../.cyinstaller/README.md#verification) documents optional headless browser and update/rollback tests. They use disposable profiles and test data without native windows. Browser checks cover French/light layouts, language synchronization, saves and offline close protection; assistant tests use a deterministic streaming provider. These checks do not establish native CEF rendering or real provider authentication.
 
 See [LICENCES.md](LICENCES.md) for component attribution and [../ai/STUDIO.md](../ai/STUDIO.md) for agent integration guidance.
 

@@ -30,6 +30,109 @@ function dom(t) {
 }
 const settle = () => new Promise(resolve => setImmediate(resolve));
 
+test('static diagrams enlarge inside the reader, preserve SVG identity and links, and restore focus on close or navigation', t => {
+  const {host,window}=dom(t);
+  const route={hash:'#/en/first',href:'file:///manual/Documentation.html#/en/first'};
+  Object.defineProperty(globalThis,'location',{configurable:true,value:route});
+  const content=compileMarkdown('## Diagram {#diagram}\n\n```diagram\n'+JSON.stringify({type:'flow',title:'Open help',description:'Open the manual from the application.',nodes:[{id:'app',label:'Application',x:0,y:0,link:'doc:first#diagram'},{id:'reader',label:'Reader',x:260,y:0}],edges:[{from:'app',to:'reader',label:'Help'}]})+'\n```',{locale:'en',pageId:'first'});
+  const data={schemaVersion:1,name:'Diagram fixture',version:'1',defaultLocale:'en',locales:[{code:'en',label:'English'}],pages:[{id:'first',locale:'en',title:'First',description:'',section:'Guide',order:0,...content},{id:'second',locale:'en',title:'Second',description:'',section:'Guide',order:1,html:'<p>Other page</p>',text:'Other page',headings:[]}]};
+  let top=0,nativeCalls=0;Object.defineProperty(window,'scrollY',{configurable:true,get:()=>top});window.scrollTo=options=>{top=options.top;};
+  const viewer=mountViewer(host,data),svg=host.querySelector('article svg'),button=host.querySelector('.diagram-expand'),description=svg.getAttribute('aria-describedby');
+  svg.requestFullscreen=()=>{nativeCalls++;};top=430;button.click();
+  let dialog=host.querySelector('.diagram-dialog');assert.equal(dialog.open,true);assert.equal(dialog.querySelector('svg'),svg);
+  assert.equal(dialog.querySelector('svg a').getAttribute('href'),'#/en/first/diagram');
+  assert.match(dialog.querySelector('.diagram-description').textContent,/Application → Reader: Help/);
+  assert.equal(host.querySelectorAll('.diagram-placeholder').length,1);
+  dialog.querySelector('button').click();assert.equal(dialog.open,false);assert.equal(host.querySelector('article svg'),svg);
+  assert.equal(svg.getAttribute('aria-describedby'),description);assert.equal(window.document.activeElement,button);assert.equal(top,430);
+  button.click();dialog.dispatchEvent(new window.Event('cancel',{cancelable:true}));assert.equal(dialog.open,false);assert.equal(host.querySelector('article svg'),svg);
+  button.click();route.hash='#/en/second';window.dispatchEvent(new window.Event('hashchange'));
+  assert.equal(host.querySelector('.diagram-dialog'),null);assert.equal(host.querySelector('.diagram-placeholder'),null);assert.equal(nativeCalls,0);viewer.destroy();
+});
+
+test('notes and bookmarks survive navigation without persistent storage and stay scoped to the mounted reader', t => {
+  const {host,window}=dom(t);
+  const route={hash:'#/en/first',href:'file:///manual/Documentation.html#/en/first'};
+  Object.defineProperty(globalThis,'location',{configurable:true,value:route});
+  Object.defineProperty(globalThis,'localStorage',{configurable:true,value:{getItem(){throw new Error('Storage denied');},setItem(){throw new Error('Storage denied');}}});
+  const data={schemaVersion:1,name:'Session fixture',version:'1',defaultLocale:'en',locales:[{code:'en',label:'English'}],pages:['first','second'].map((id,i)=>({id,locale:'en',title:id,description:'',section:'Guide',order:i,html:'<p>Help</p>',text:'Help',headings:[]}))};
+  const viewer=mountViewer(host,data);
+  host.querySelector('.personal-notes textarea').value='Keep this draft through navigation';
+  host.querySelector('[data-bookmark]').click();assert.match(host.querySelector('.toast').textContent,/this session/);
+  route.hash='#/en/second';window.dispatchEvent(new window.Event('hashchange'));
+  host.querySelector('[data-personal]').click();
+  const personal=host.querySelector('.personal-dialog');
+  assert.match(personal.querySelector('.personal-local').textContent,/this session only/);
+  assert.ok([...personal.querySelectorAll('a')].some(link=>link.textContent==='first'));
+  assert.match(personal.textContent,/Keep this draft through navigation/);
+  route.hash='#/en/first';window.dispatchEvent(new window.Event('hashchange'));
+  assert.equal(host.querySelector('.personal-notes textarea').value,'Keep this draft through navigation');
+  assert.equal(host.querySelector('[data-bookmark]').getAttribute('aria-pressed'),'true');
+  viewer.destroy();
+  const fresh=mountViewer(host,data);
+  assert.equal(host.querySelector('[data-bookmark]').getAttribute('aria-pressed'),'false');
+  assert.equal(host.querySelector('.personal-notes textarea').value,'');fresh.destroy();
+});
+
+test('page navigation focuses content, reveals collapsed target ancestors and preserves explicit anchors', t => {
+  const {host,window}=dom(t);
+  const route={hash:'#/en/other',href:'file:///manual/Documentation.html#/en/other'};
+  Object.defineProperty(globalThis,'location',{configurable:true,value:route});
+  const page=(id,extra={})=>({id,locale:'en',title:id,description:'',section:'Guides / Editor',order:0,html:'<h2 id="target">Target</h2>',text:'Target',headings:[{id:'target',text:'Target',level:2}],...extra});
+  const data={schemaVersion:1,name:'Focus fixture',version:'1',defaultLocale:'en',locales:[{code:'en',label:'English'}],pages:[page('guide'),page('child',{parent:'guide',order:1}),page('other',{section:'Other',order:2})]};
+  const viewer=mountViewer(host,data);
+  for(const branch of host.querySelectorAll('[data-nav-key^="section:/Guides"],[data-nav-key="page:guide"]'))branch.open=false;
+  host.querySelector('[data-page=child]').focus();
+  route.hash='#/en/child';window.dispatchEvent(new window.Event('hashchange'));
+  assert.equal(window.document.activeElement,host.querySelector('main'));
+  for(const branch of host.querySelectorAll('[data-nav-key^="section:/Guides"],[data-nav-key="page:guide"]'))assert.equal(branch.open,true);
+  assert.equal(host.querySelector('[data-page=child]').getAttribute('aria-current'),'page');
+  route.hash='#/en/child/target';window.dispatchEvent(new window.Event('hashchange'));
+  assert.equal(window.document.activeElement,host.querySelector('#target'));
+  route.hash='#/en/missing';window.dispatchEvent(new window.Event('hashchange'));
+  assert.ok(host.querySelector('.not-found'));assert.equal(window.document.activeElement,host.querySelector('main'));
+  viewer.destroy();
+});
+
+test('all menu dismissal paths synchronize their accessible state and return focus when dismissed', t => {
+  const {host,window}=dom(t);
+  const route={hash:'#/en/first',href:'file:///manual/Documentation.html#/en/first'};
+  Object.defineProperty(globalThis,'location',{configurable:true,value:route});
+  const data={schemaVersion:1,name:'Menu fixture',version:'1',defaultLocale:'en',locales:[{code:'en',label:'English'}],pages:['first','second'].map((id,i)=>({id,locale:'en',title:id,description:'',section:'Guide',order:i,html:'<p>Help</p>',text:'Help',headings:[]}))};
+  const viewer=mountViewer(host,data);
+  let menu=host.querySelector('[data-menu]');menu.click();
+  assert.equal(menu.getAttribute('aria-expanded'),'true');host.querySelector('[data-dismiss-menu]').click();
+  assert.equal(menu.getAttribute('aria-expanded'),'false');assert.equal(window.document.activeElement,menu);
+  menu.click();window.document.dispatchEvent(new window.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
+  assert.equal(menu.getAttribute('aria-expanded'),'false');assert.equal(host.classList.contains('menu-open'),false);
+  menu.click();route.hash='#/en/second';window.dispatchEvent(new window.Event('hashchange'));
+  menu=host.querySelector('[data-menu]');assert.equal(menu.getAttribute('aria-expanded'),'false');assert.equal(host.classList.contains('menu-open'),false);
+  viewer.destroy();
+});
+
+test('mobile page tools, reading mode and reading resume remain available with bilingual section links', t => {
+  const {host,window}=dom(t);
+  const route={hash:'#/en/first',href:'file:///manual/Documentation.html#/en/first'};
+  Object.defineProperty(globalThis,'location',{configurable:true,value:route});
+  window.localStorage.setItem('cydoc:reading:Page tools fixture',JSON.stringify({positions:{'en:first':420}}));
+  const data={schemaVersion:1,name:'Page tools fixture',version:'1',defaultLocale:'en',locales:[{code:'en',label:'English'},{code:'fr',label:'Français'}],pages:['en','fr'].map(locale=>({id:'first',locale,title:locale==='fr'?'Première page':'First page',description:'',section:'Guide',order:0,html:'<h2 id="target">Target</h2>',text:'Target',headings:[{id:'target',text:'Target',level:2}]}))};
+  const viewer=mountViewer(host,data);
+  assert.ok(host.querySelector('.article-header .resume-reading'));
+  const mobile=host.querySelector('.mobile-toc');
+  assert.equal(mobile.querySelector('a').getAttribute('href'),'#/en/first/target');assert.ok(mobile.querySelector('[data-print]'));
+  host.addEventListener('click',event=>{if(event.target.closest('a'))event.preventDefault();});
+  mobile.open=true;mobile.querySelector('a').click();assert.equal(mobile.open,false);
+  host.querySelector('[data-reading-mode]').click();assert.equal(host.classList.contains('reading-mode'),true);
+  assert.equal(window.localStorage.getItem('cydoc:reading-mode'),'true');
+  route.hash='#/fr/first';window.dispatchEvent(new window.Event('hashchange'));
+  assert.equal(host.querySelector('[data-reading-mode]').getAttribute('aria-pressed'),'true');
+  assert.equal(host.querySelector('[data-reading-mode]').getAttribute('aria-label'),'Mode lecture');
+  assert.equal(host.querySelector('.mobile-toc a').getAttribute('href'),'#/fr/first/target');
+  host.querySelector('[data-menu]').click();assert.equal(host.classList.contains('reading-mode'),false);
+  assert.equal(host.querySelector('[data-reading-mode]').getAttribute('aria-pressed'),'false');
+  viewer.destroy();assert.equal(host.classList.contains('reading-mode'),false);
+});
+
 test('comparison grab moves on the image, keeps the range in sync, and is keyboard accessible', async t => {
   const { window, host, context } = dom(t);
   imageModule.mount(host, { src: 'assets/a.svg', compare: 'assets/b.svg', alt: 'Compare' }, context);
@@ -97,6 +200,38 @@ test('graph selection exposes a documentation link and zoom changes the viewport
   assert.equal(host.querySelector('[data-node=b]').getAttribute('aria-pressed'), 'true');
   const before = host.querySelector('output').textContent; host.querySelector('[data-graph=out]').click();
   assert.notEqual(host.querySelector('output').textContent, before); cleanup();
+});
+
+test('graph reading leaves scrolling free and exploration enables keyboard pan, zoom and deliberate Escape',t=>{
+  const {host,context,window}=dom(t);const cleanup=graphModule.mount(host,{nodes:[{id:'a',title:'A',x:0,y:0}]},context);
+  const stage=host.querySelector('.media-stage'),world=host.querySelector('.graph-world'),button=host.querySelector('[data-graph=explore]');
+  const wheel=options=>{const event=new window.WheelEvent('wheel',{deltaY:120,bubbles:true,cancelable:true});if(options?.ctrlKey)Object.defineProperty(event,'ctrlKey',{value:true});stage.dispatchEvent(event);return event;};
+  const before=world.style.transform;assert.equal(wheel().defaultPrevented,false);assert.equal(world.style.transform,before);
+  const readingArrow=new window.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true});stage.dispatchEvent(readingArrow);assert.equal(readingArrow.defaultPrevented,false);
+  button.click();assert.equal(button.getAttribute('aria-pressed'),'true');assert.equal(window.document.activeElement,stage);
+  stage.dispatchEvent(new window.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));assert.notEqual(world.style.transform,before);
+  assert.equal(wheel().defaultPrevented,true);assert.equal(wheel({ctrlKey:true}).defaultPrevented,false);
+  const zoom=host.querySelector('output').textContent;stage.dispatchEvent(new window.KeyboardEvent('keydown',{key:'+',bubbles:true,cancelable:true}));assert.notEqual(host.querySelector('output').textContent,zoom);
+  let escapes=0;window.document.addEventListener('keydown',event=>{if(event.key==='Escape')escapes++;});
+  stage.dispatchEvent(new window.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));assert.equal(escapes,0);assert.equal(button.getAttribute('aria-pressed'),'false');assert.equal(window.document.activeElement,button);assert.equal(wheel().defaultPrevented,false);cleanup();
+});
+
+test('graph text view exposes ports and relationships, filters safely and locates a selected node',t=>{
+  const {host,context,window}=dom(t);const cleanup=graphModule.mount(host,{nodes:[{id:'a',title:'Départ <script>',description:'Première étape',x:0,y:0,outputs:[{id:'exec',label:'',type:'exec'}]},{id:'b',title:'Ouvrir',description:'Deuxième étape',x:500,y:0,inputs:[{id:'exec',label:'',type:'exec'}],href:'#/fr/help'}],links:[{from:['a','exec'],to:['b','exec']}]},context);
+  const details=host.querySelector('.graph-text-view');assert.equal(details.querySelectorAll('li').length,0);details.open=true;details.dispatchEvent(new window.Event('toggle'));
+  assert.match(details.textContent,/Exécution → Ouvrir/);assert.match(details.textContent,/Première étape/);assert.equal(details.querySelector('script'),null);
+  const input=details.querySelector('input');input.value='deuxieme';input.dispatchEvent(new window.Event('input'));assert.equal(details.querySelectorAll('[data-locate-node]').length,1);
+  details.querySelector('[data-locate-node=b]').click();assert.equal(host.querySelector('[data-node=b]').getAttribute('aria-pressed'),'true');assert.equal(window.document.activeElement,host.querySelector('[data-node=b]'));
+  assert.equal(details.querySelector('a').getAttribute('href'),'#/fr/help');assert.equal(details.querySelector('input'),input);cleanup();
+});
+
+test('page breadcrumbs expose translated ancestors and authored previous/next links override global order',t=>{
+  const {host}=dom(t);Object.defineProperty(globalThis,'location',{configurable:true,value:{hash:'#/fr/task',href:'file:///manual/Documentation.html#/fr/task'}});
+  const pages=['home','parent','unrelated','task','finish'].map((id,i)=>({id,locale:'fr',title:{home:'Accueil',parent:'Apprendre',task:'Exercice',finish:'Terminer'}[id]||'Autre',description:'',section:'Guides',order:i,html:id==='finish'?'<h2 id="done">Fin</h2>':'<p>Guide</p>',text:'Guide',headings:id==='finish'?[{id:'done',text:'Fin',level:2}]:[]}));
+  Object.assign(pages[3],{parent:'parent',previous:'',next:'finish#done'});
+  const viewer=mountViewer(host,{schemaVersion:1,name:'Parcours',version:'1',defaultLocale:'fr',locales:[{code:'fr',label:'Français'}],pages},{homePage:'home'});
+  assert.deepEqual([...host.querySelectorAll('.page-breadcrumb a')].map(a=>a.textContent),['Accueil','Apprendre']);assert.equal(host.querySelector('.page-breadcrumb [aria-current=page]').textContent,'Exercice');
+  assert.equal(host.querySelector('.pagination-previous'),null);assert.equal(host.querySelector('.pagination-next').getAttribute('href'),'#/fr/finish/done');assert.equal(host.querySelector('.page-pagination').getAttribute('aria-label'),'Suite du parcours');viewer.destroy();
 });
 
 test('video notes are added at the current playback time with no comparison track required', t => {
@@ -209,7 +344,8 @@ test('page changes preserve the menu, reading positions and selected code tabs; 
   top = 930;
   input('#/fr/second'); assert.equal(top,0);
   assert.equal(host.querySelector('.side-nav').scrollTop,285);
-  assert.equal(host.querySelectorAll('.nav-group')[1].open,false);
+  // Navigation reveals the current target even when its branch was previously closed.
+  assert.equal(host.querySelectorAll('.nav-group')[1].open,true);
   top = 470;
   input('#/fr/first'); assert.equal(top,930);
   assert.equal(host.querySelectorAll('[data-tabs] [role=tab]')[1].getAttribute('aria-selected'),'true');
@@ -345,6 +481,40 @@ test('header results support keyboard selection, modal shortcut and deliberate d
   assert.equal(window.document.activeElement,input);
   input.blur();input.focus();assert.equal(dialog.open,true);
   window.document.body.dispatchEvent(new window.PointerEvent('pointerdown',{bubbles:true}));assert.equal(dialog.open,false);
+  viewer.destroy();
+});
+
+test('search presents safe highlighted sections and recovers from filters without losing the query or focus', t => {
+  const {host,window}=dom(t);
+  const content=compileMarkdown('## Dépanner {#repair}\n\nLe panneau noir se ferme. <script>texte</script>',{locale:'fr',pageId:'guide'});
+  const data={schemaVersion:1,name:'Section search',version:'1',defaultLocale:'fr',locales:[{code:'fr',label:'Français'}],pages:[{id:'guide',locale:'fr',title:'Aide du lecteur',description:'',section:'Guides',order:0,...content}]};
+  const viewer=mountViewer(host,data);
+  const input=host.querySelector('[data-header-search]'),kind=host.querySelector('[data-search-kind]'),status=host.querySelector('.search-caption');
+  const query=value=>{input.value=value;input.dispatchEvent(new window.Event('input',{bubbles:true}));};
+  input.focus();query('panneau');
+  assert.equal(host.querySelector('.search-result').getAttribute('href'),'#/fr/guide/repair');
+  assert.match(host.querySelector('.search-result-section').textContent,/Dépanner/);assert.equal(host.querySelector('.search-result mark').textContent,'panneau');
+  assert.equal(status.textContent,'1 résultat');
+  kind.value='api';kind.dispatchEvent(new window.Event('change',{bubbles:true}));
+  assert.ok(host.querySelector('.search-empty'));host.querySelector('.search-empty [data-reset-search-filters]').click();
+  assert.equal(kind.value,'');assert.equal(input.value,'panneau');assert.equal(window.document.activeElement,input);assert.ok(host.querySelector('.search-result'));
+  assert.equal(host.querySelector('.search-caption'),status);
+  query('<script>');assert.equal(host.querySelector('.search-result script'),null);assert.match(host.querySelector('.search-result').textContent,/<script>/);
+  query('zz-no-match');host.querySelector('[data-clear-search]').click();assert.equal(input.value,'');assert.equal(window.document.activeElement,input);assert.match(status.textContent,/Pour commencer/);
+  host.querySelector('[data-bookmark]').focus();assert.equal(host.querySelector('.search-dialog').open,false);assert.equal(input.hasAttribute('aria-activedescendant'),false);
+  viewer.destroy();
+});
+
+test('search announces capped results and retains explicit filters across page navigation', t => {
+  const {host,window}=dom(t);
+  const route={hash:'#/en/page-0',href:'file:///manual/Documentation.html#/en/page-0'};Object.defineProperty(globalThis,'location',{configurable:true,value:route});
+  const data={schemaVersion:1,name:'Many results',version:'1',defaultLocale:'en',locales:[{code:'en',label:'English'}],pages:Array.from({length:35},(_,i)=>({id:`page-${i}`,locale:'en',title:`Page ${i}`,description:'Common help',section:'Guides',order:i,kind:'api',languages:['cpp'],html:'<p>Common help</p>',text:'Common help',headings:[]}))};
+  const viewer=mountViewer(host,data),input=host.querySelector('[data-header-search]');input.focus();input.value='common';input.dispatchEvent(new window.Event('input',{bubbles:true}));
+  assert.equal(host.querySelectorAll('.search-result').length,30);assert.match(host.querySelector('.search-caption').textContent,/More than 30 results/);
+  const kind=host.querySelector('[data-search-kind]');kind.value='api';kind.dispatchEvent(new window.Event('change',{bubbles:true}));
+  route.hash='#/en/page-1';window.dispatchEvent(new window.Event('hashchange'));
+  assert.equal(host.querySelector('[data-search-kind]').value,'api');
+  host.querySelector('[data-header-search]').focus();assert.equal(host.querySelector('.search-filters [data-reset-search-filters]').hidden,false);
   viewer.destroy();
 });
 

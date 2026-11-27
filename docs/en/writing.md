@@ -4,6 +4,8 @@ title: Write pages
 description: Focus on your explanations. CyDoc takes care of their presentation.
 section: Create content
 order: 10
+previous: quickstart
+next: rich-content
 ---
 Write Markdown files in each locale folder. Headings, lists, tables, quotes, links, and code blocks are supported.
 

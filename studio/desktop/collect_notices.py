@@ -11,6 +11,9 @@ if python_notice.exists():
     shutil.copyfile(python_notice, destination/'Python.txt')
 for distribution in importlib.metadata.distributions():
     name = ''.join(character for character in distribution.metadata['Name'] if character.isalnum() or character in '-_.')
+    # Never reintroduce the removed runtime's notices from an older build environment.
+    if name.lower().replace('_', '-') == 'cytools-core':
+        continue
     for entry in distribution.files or []:
         path = Path(str(entry))
         if path.name.lower().startswith(('license','licence','copying','notice','copyright')) or ('.dist-info' in str(path) and 'licenses' in path.parts):

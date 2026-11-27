@@ -4,7 +4,7 @@ title: CyDoc Studio
 description: Écrire, organiser et publier une documentation avec l’éditeur visuel et Markdown.
 section: Premiers pas
 order: 3
-sourceRevision: 1
+sourceRevision: 5
 ---
 CyDoc Studio est l’éditeur facultatif des manuels CyDoc. Travaillez en local sans compte, ou rejoignez un espace hébergé pour écrire en équipe. Votre documentation publiée reste indépendante de Studio.
 
@@ -34,7 +34,11 @@ Si un fichier change en dehors de Studio, résolvez le conflit avant d’enregis
 
 Importez des fichiers locaux avec la médiathèque, puis utilisez leurs chemins `assets/` dans le contenu. Activez uniquement les modules nécessaires au projet dans ses paramètres : image, vidéo, GIF, mesh, galerie et graphe. Une galerie nécessite aussi les lecteurs employés par ses éléments.
 
-L’éditeur visuel présente les médias enrichis sous forme de cartes avec un aperçu local et une configuration JSON modifiable. Markdown donne accès à toute la syntaxe CyDoc pour les [médias](doc:media), les [schémas](doc:diagrams), les [graphes à nœuds](doc:blueprints), les annotations et les comparaisons. Certains contenus avancés se configurent avec ces blocs plutôt qu’avec un outil visuel dédié. L’aperçu utilise le lecteur réel et les modules sélectionnés.
+L’éditeur visuel présente les médias enrichis sous forme de cartes avec un aperçu local et une configuration JSON modifiable. Pour créer un schéma, utilisez **Insérer un bloc → diagram**, puis choisissez **Flux**, **Décision** ou **Séquence**. Modifiez son titre, son explication, ses éléments et ses connexions dans le formulaire ; l’aperçu se met à jour immédiatement. Utilisez **Placer automatiquement** pour les flux et décisions, ou **JSON avancé** pour les propriétés personnalisées et les autres types de schémas.
+
+Pour un tutoriel ou une série de vérifications de dépannage, choisissez **Insérer un bloc → steps**. Donnez à chaque étape un titre et une action. Ouvrez **Résultat et dépannage** pour ajouter le résultat attendu et une aide facultative en cas d’échec. Montez ou descendez les étapes pour ajuster leur ordre. Utilisez **Aperçu** après insertion pour vérifier la présentation dans le lecteur. Consultez [l’exemple par étapes](doc:rich-content#steps).
+
+Markdown donne accès à toute la syntaxe CyDoc pour les [médias](doc:media), les [schémas](doc:diagrams), les [graphes à nœuds](doc:blueprints), les annotations et les comparaisons. Les blocs existants conservent leur JSON modifiable. L’aperçu de la page utilise le lecteur réel et les modules sélectionnés.
 
 ## Compléter les deux langues {#translations}
 
@@ -67,3 +71,25 @@ Les commits incluent uniquement les chemins de documentation. Fermez les autres 
 Choisissez **Clair**, **Sombre**, **Minuit**, **Nord**, **Papier** ou **Contraste élevé**. Studio utilise les six mêmes palettes que la bibliothèque. Dans Windows, Options synchronise l’interface native, l’éditeur et le manuel intégré ; Sombre est le choix par défaut. Vous pouvez également changer la langue de l’interface et la taille du texte.
 
 L’onglet Windows MCP / SDK local affiche l’adresse du service local en cours et sa configuration d’intégration. Les instructions détaillées d’automatisation restent dans les guides séparés pour les assistants, en dehors de ce manuel.
+
+## Utiliser l’assistant intégré {#assistant}
+
+Les compilations actuelles depuis les sources incluent un onglet **Assistant** utilisant CyMCPSDK. Cet onglet est plus récent que le téléchargement publié Studio 0.1.2.
+
+1. Ouvrez Assistant, puis **Réglages de connexion**. Choisissez un fournisseur détecté ou indiquez son exécutable ou l’URL de son service. La détection seule ne confirme pas que son compte est connecté.
+2. Choisissez un modèle dans le catalogue du fournisseur. Les CLI natifs et les services locaux installés peuvent aussi utiliser un champ modèle vide. Pour une clé API, indiquez le nom de sa variable d’environnement dans les réglages de connexion.
+3. Sélectionnez **Connecter**, puis décrivez le travail de documentation. Les fournisseurs compatibles peuvent lire les projets, modifier les pages, importer des médias et publier avec les opérations habituelles de Studio. Vérifiez les résultats annoncés et prévisualisez la page modifiée.
+
+Les réponses apparaissent progressivement. Utilisez **Arrêter** pour interrompre une réponse et les appels d’outils suivants. Les sauvegardes déjà terminées restent enregistrées. Les erreurs et diagnostics de connexion restent visibles pour vous permettre de corriger les réglages sans supposer qu’une modification a réussi.
+
+Donnez un nom à la conversation pour conserver son historique privé et laissez **Reprendre la conversation enregistrée** coché pour la retrouver. Utilisez un autre nom pour une nouvelle conversation. Les fournisseurs locaux facultatifs utilisent un service Ollama, LM Studio ou llama.cpp existant ; ouvrir Studio ne nécessite aucun téléchargement de modèle.
+
+## Installer et mettre à jour Studio {#updates}
+
+Les sources Studio 0.1.3 ajoutent le setup CyInstaller et un onglet **Mises à jour**. Le téléchargement portable publié 0.1.2 précède cette fonction. Pour une première installation gérée, fermez l’éditeur portable et lancez le setup hors ligne vers un dossier d’installation distinct et vide. Vos projets, résultats de tâches et brouillons du navigateur conservent leurs emplacements de données. Les préférences sont copiées dans le sous-dossier `config/` du dossier de données existant ; leurs anciennes copies restent disponibles.
+
+Dans une copie installée, ouvrez Mises à jour et sélectionnez **Rechercher des mises à jour** pour un nouveau contrôle. **Ouvrir CyInstaller** affiche la version disponible et ses notes. Choisir **Plus tard** laisse Studio ouvert. Après votre accord, Studio attend la sauvegarde du travail en cours, puis laisse l’installeur fermer et remplacer le programme. Si la sauvegarde échoue, reconnectez l’éditeur et réessayez ; la mise à jour ne doit pas supprimer un brouillon.
+
+L’installeur gère la vérification, la relance et la version précédente. Après une mise à jour réussie, Studio affiche sa version d’origine. Si plusieurs démarrages ne parviennent pas à terminer l’initialisation, l’installeur peut proposer un retour à la version précédente. Un contrôle hors ligne ou en échec est indiqué explicitement au lieu d’être présenté comme à jour.
+
+Les copies portables et de développement ne recherchent pas automatiquement les mises à jour. Elles nécessitent un véritable setup pour activer ce fonctionnement. Les contrôles en ligne nécessitent aussi la publication des fichiers de release signés par l’éditeur ; préparer un setup localement ne les publie pas. Une désinstallation normale conserve les préférences et le travail ; lisez les choix de suppression supplémentaires avant de retirer des fichiers utilisateur.

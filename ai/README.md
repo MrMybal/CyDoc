@@ -14,6 +14,7 @@ Use this index when integrating CyDoc into an application, writing its documenta
 | Build an application's bilingual static showcase from a complete local example | [Standalone showcase convention](showcase/README.md) |
 | Standardize an application README with a native three-column GitHub header, version notes, dependency licenses and optional AI Usage links | [README convention](readme/README.md), [AI instructions](readme/DocAI.md) and [complete templates](readme/TEMPLATE.md) |
 | Change CyDoc itself | [Repository instructions](../AGENTS.md) and [README](../README.md) |
+| Prepare an explicitly requested local build and GitHub release without Actions | [Local publication](RELEASING.md) |
 
 The host application's instructions and requested scope still apply. These guides do not authorize publishing, installing services, rewriting Git history or changing unrelated application code.
 

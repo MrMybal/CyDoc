@@ -4,6 +4,9 @@ title: Contenu enrichi
 description: Onglets, étapes, encadrés, sections repliables, glossaire et différences de code.
 section: Exemples
 order: 30
+previous: writing
+next: media
+sourceRevision: 1
 ---
 Les mêmes explications peuvent présenter plusieurs langages sans allonger la page. Le terme [[PBR]] dispose d’une définition au clavier et au clic.
 
@@ -64,20 +67,27 @@ Les mêmes explications peuvent présenter plusieurs langages sans allonger la p
 
 ## Tutoriel par étapes {#steps}
 
+Donnez à chaque étape une action, un résultat visible et une solution facultative. Dans Studio, choisissez **Insérer un bloc → steps** pour remplir ces champs et monter ou descendre les étapes. **Résultat et dépannage** ouvre les champs facultatifs. Dans le lecteur, **Si cette étape échoue** affiche l’aide supplémentaire au moment utile.
+
 ```steps
 {
   "items": [
     {
       "title": "Générer",
-      "body": "`npm run build`"
+      "body": "Depuis le dépôt des sources, lancez `npm run build`.",
+      "result": "La génération crée `dist/site/Documentation.html` et son dossier `DocData/`.",
+      "troubleshooting": "Lisez l’erreur exacte de génération. Vérifiez que les dépendances sont installées et que les deux éditions linguistiques sont complètes."
     },
     {
       "title": "Distribuer",
-      "body": "Copiez le dossier `dist/site/` avec votre application."
+      "body": "Copiez le dossier `dist/site/` avec votre application.",
+      "result": "Le fichier d’entrée et son dossier `DocData/` complet restent ensemble."
     },
     {
       "title": "Ouvrir",
-      "body": "[Ouvrez une section précise](doc:quickstart#installation)."
+      "body": "[Ouvrez une section précise](doc:quickstart#installation).",
+      "result": "La section de préparation du tutoriel s’ouvre.",
+      "troubleshooting": "Suivez [les vérifications du lecteur](doc:troubleshooting#reader) si le manuel reste vide."
     }
   ]
 }

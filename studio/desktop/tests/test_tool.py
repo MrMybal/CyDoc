@@ -1,4 +1,4 @@
-"""Real CyToolsCore SDK and official MCP transport checks against a disposable Studio."""
+"""Native CyMCPSDK and official MCP transport checks against a disposable Studio."""
 import asyncio
 import json
 import os
@@ -8,9 +8,8 @@ import time
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'app'))
-from tool import create_runtime
+from host import NativeHost
 from sdk import StudioClient
-from cytools_core import CyToolError
 
 
 @pytest.fixture
@@ -28,28 +27,27 @@ def fixture():
 
 
 def test_sdk_real_jobs_revisions_and_automatic_local_asset_import(fixture, tmp_path):
-    with create_runtime(tmp_path/'jobs') as runtime:
-        actor = runtime.authenticate(runtime.create_client('SDK test')['token'])
-        with runtime.task(actor) as session:
-            def invoke(operation, parameters):
-                job = runtime.wait(actor, runtime.submit(actor, session, operation, parameters)['jobId'])
-                assert job['state'] == 'Completed', job
-                return job['outputs']['result']
-            project = invoke('create_project', {'name': 'SDK-authored manual', 'git': False})
-            identifier = project['id']
-            assert any(item['id'] == identifier for item in invoke('list_projects', {}))
-            page = invoke('get_page', {'projectId': identifier, 'locale': 'en', 'pageId': 'overview'})
-            updated = invoke('update_page', {'projectId': identifier, 'locale': 'en', 'pageId': 'overview', 'revisionToken': page['revisionToken'], 'body': page['body']+'\nAn SDK-authored instruction.\n'})
-            assert 'SDK-authored instruction' in updated['body']
-            source = tmp_path/'external.png'
-            source.write_bytes(bytes.fromhex('89504e470d0a1a0a'))
-            result = invoke('import_asset', {'projectId': identifier, 'source': str(source)})
-            assert result['src'].endswith('external.png')
-            assert source.exists()
-            with pytest.raises(CyToolError):
-                runtime.submit(actor, session, 'update_page', {'projectId': identifier, 'locale': 'en', 'pageId': 'overview', 'body': 'missing revision'})
+    with NativeHost(tmp_path/'jobs') as host:
+        host.start()
+        def invoke(operation, parameters):
+            return host.request({'method': 'invoke', 'name': operation, 'arguments': parameters})['result']
+        project = invoke('create_project', {'name': 'SDK-authored manual', 'git': False})
+        identifier = project['id']
+        assert any(item['id'] == identifier for item in invoke('list_projects', {}))
+        page = invoke('get_page', {'projectId': identifier, 'locale': 'en', 'pageId': 'overview'})
+        updated = invoke('update_page', {'projectId': identifier, 'locale': 'en', 'pageId': 'overview', 'revisionToken': page['revisionToken'], 'body': page['body']+'\nAn SDK-authored instruction.\n'})
+        assert 'SDK-authored instruction' in updated['body']
+        with pytest.raises(RuntimeError, match='409'):
+            host.request({'method': 'invoke', 'name': 'update_page', 'arguments': {'projectId': identifier, 'locale': 'en', 'pageId': 'overview', 'revisionToken': page['revisionToken'], 'body': 'stale'}})
+        source = tmp_path/'external.png'
+        source.write_bytes(bytes.fromhex('89504e470d0a1a0a'))
+        result = invoke('import_asset', {'projectId': identifier, 'source': str(source)})
+        assert result['src'].endswith('external.png')
         assert source.exists()
-        assert not list((tmp_path/'jobs/inputs').rglob('*.png'))
+        assert not list((tmp_path/'jobs/Workspaces').rglob('inputs/*.png'))
+        with pytest.raises(RuntimeError):
+            host.request({'method': 'invoke', 'name': 'update_page', 'arguments': {'projectId': identifier}})
+
 
 
 def test_official_mcp_discovery_execution_and_validation(fixture, tmp_path):

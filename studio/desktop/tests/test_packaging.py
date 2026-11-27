@@ -23,3 +23,17 @@ def test_prepare_package_retains_runtime_and_notices(tmp_path, monkeypatch):
     runpy.run_path(str(script), run_name='__main__')
     remaining = {p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file()}
     assert remaining == {files[0], files[1], files[-1]}
+
+
+def test_native_automation_has_no_legacy_runtime_imports():
+    import ast
+    import json
+    application = Path(__file__).resolve().parents[1]/'app'
+    assert not (application/'CyTool.json').exists()
+    descriptor = json.loads((application/'CyMCP.json').read_text('utf-8'))
+    assert descriptor['sdk']['name'] == 'CyMCPSDK'
+    assert len(descriptor['operations']) == 22
+    for source in application.glob('*.py'):
+        for node in ast.walk(ast.parse(source.read_text('utf-8'))):
+            names = [node.module or ''] if isinstance(node, ast.ImportFrom) else [entry.name for entry in node.names] if isinstance(node, ast.Import) else []
+            assert not any(name.startswith('cytools_core') for name in names), source

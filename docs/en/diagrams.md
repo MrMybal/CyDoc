@@ -4,8 +4,15 @@ title: Diagram gallery
 description: Flows, decisions, sequences, classes, dependencies, and architecture.
 section: Examples
 order: 18
+previous: media
+next: blueprints
+revision: 2
 ---
 These diagrams compile to accessible SVG. No diagram engine is added to the viewer. Files in the dependency diagram are clickable.
+
+In Studio, choose **Insert a block**, select **diagram**, then choose **Flow**, **Decision** or **Sequence**. Name the elements, connect them and explain what the reader should understand. **Arrange automatically** positions flow and decision elements. The preview updates while you edit. **Advanced JSON** gives access to additional properties and diagram types.
+
+In the reader, use **Enlarge diagram** to inspect a drawing without leaving the manual. **Close** or Escape returns to the page. **Read the diagram explanation** lists the elements and connections as text, along with your description when supplied.
 
 ## Flow with a decision {#example-1}
 
@@ -13,6 +20,7 @@ These diagrams compile to accessible SVG. No diagram engine is added to the view
 {
   "type": "flow",
   "title": "Resolve a local page",
+  "description": "A page is resolved in the requested language when available, or in the default language. The reader offers only complete editions.",
   "nodes": [
     {
       "id": "start",
@@ -134,7 +142,7 @@ These diagrams compile to accessible SVG. No diagram engine is added to the view
         "+ mount(host, config, context)"
       ],
       "methods": [
-        "+ dispose()"
+        "cleanup returned by mount"
       ],
       "x": 330,
       "y": 10

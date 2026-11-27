@@ -5,7 +5,10 @@ CyDoc Studio is part of [CyDoc](https://github.com/MrMybal/CyDoc) and uses its M
 | Component | License | Source |
 | --- | --- | --- |
 | CyUI 1.2.0 | MIT | https://github.com/MrMybal/CyUI |
-| CyToolsCore 0.10.1 | MIT | https://github.com/MrMybal/CyToolsCore |
+| CyMCPSDK 0.7.5 | MIT | https://github.com/MrMybal/CyMCPSDK |
+| CyInstaller 0.1.0 | MIT | https://github.com/MrMybal/CyInstaller |
+| libcurl | curl | https://curl.se/docs/copyright.html |
+| nlohmann/json, cpp-httplib, PicoSHA2 | MIT | https://github.com/MrMybal/CyMCPSDK/blob/main/THIRD_PARTY_NOTICES.md |
 | Tiptap open source editor packages | MIT | https://github.com/ueberdosis/tiptap |
 | ProseMirror | MIT | https://github.com/ProseMirror |
 | CodeMirror | MIT | https://github.com/codemirror |

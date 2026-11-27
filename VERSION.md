@@ -2,11 +2,23 @@
 
 [Back to README](README.md) · [Français](VERSION.fr.md)
 
-**Reader library: 0.1.0 · Studio editor: 0.1.2**<br>
+**Reader library: 0.1.0 · Studio sources: 0.1.5**<br>
 **Stage: IN DEVELOPMENT**<br>
 **Available native editor package: Windows x64**
 
 CyDoc is an early implementation. Studio 0.1.2 is a published portable release; that publication does not establish production maturity for every integration. Review the documented limits before depending on a target runtime.
+
+## Studio 0.1.5 sources — shared language preference
+
+Changing the interface language in editor preferences also updates and saves the native shell language. Theme changes and existing preferences are retained. This source build remains separate from the published portable 0.1.2 download.
+
+## Studio 0.1.4 sources — save status and readability
+
+Opening an unchanged page now receives a durable save acknowledgement. Concurrent deletions are checked against the saved text as well as the collaboration state vector, and Ctrl+S waits for that acknowledgement. Native controls use larger text, visible field borders and bounded form widths. These source changes are not part of the published portable 0.1.2 download.
+
+## Studio 0.1.3 sources — assistant and managed installation
+
+The current sources replace the previous automation runtime with CyMCPSDK 0.7.5, revision `35d2d4f`. They add the native Assistant tab, shared chat/CLI/MCP operations and public local discovery. CyInstaller 0.1.0 provides signed setup, managed updates, startup confirmation and rollback. The editor waits for saved work before closing for an update. Existing projects, jobs and browser drafts retain their locations; preference files are copied into `config/` while their originals remain available. These changes are not included in the published Studio 0.1.2 portable download. Local release generation does not publish an online update.
 
 ## Studio 0.1.2
 
@@ -14,7 +26,7 @@ CyDoc is an early implementation. Studio 0.1.2 is a published portable release; 
 - Local projects without accounts, including an editable bilingual CyDoc example.
 - Optional Git, separate authenticated online editing, invitations, project roles and simultaneous editing.
 - Windows CyUI/CEF shell with full-window Editor, Documentation, Options and Local MCP / SDK tabs.
-- Six shared themes and JavaScript/Python SDKs with 22 CyToolsCore MCP operations.
+- Six shared themes and JavaScript/Python SDKs with 22 MCP operations.
 - Complete English/French static export with the separate DocAI.md sidecar.
 
 [Download and official release notes](https://github.com/MrMybal/CyDoc/releases/tag/studio-v0.1.2) · [SHA-256 checksums](https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/SHA256SUMS.txt)

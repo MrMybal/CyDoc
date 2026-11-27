@@ -12,8 +12,8 @@
     </td>
     <td width="300" align="right" valign="top">
       <p><sub>Application license</sub><br><a href="LICENSE"><strong>MIT</strong></a></p>
-      <p><sub>Versions</sub><br><a href="VERSION.md"><strong>Reader 0.1.0</strong><br><strong>Studio 0.1.2</strong></a><br><strong>IN DEVELOPMENT</strong></p>
-      <p><a href="https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/CyDocStudio-0.1.2-windows-x64.zip"><strong>Download Studio</strong></a><br><sub>Windows x64 · portable</sub></p>
+      <p><sub>Source versions</sub><br><a href="VERSION.md"><strong>Reader 0.1.0</strong><br><strong>Studio 0.1.5</strong></a><br><strong>IN DEVELOPMENT</strong></p>
+      <p><a href="https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/CyDocStudio-0.1.2-windows-x64.zip"><strong>Download Studio 0.1.2</strong></a><br><sub>Windows x64 · portable</sub></p>
     </td>
   </tr>
 </table>
@@ -23,7 +23,7 @@
 
 A modular documentation library for application and plug-in developers. Write illustrated manuals, open the right explanation from your application and ship a searchable reader that works directly from local files. The optional **CyDoc Studio** editor adds visual and Markdown authoring.
 
-> **IN DEVELOPMENT · Reader 0.1.0 · Studio 0.1.2**
+> **IN DEVELOPMENT · Reader 0.1.0 · Studio 0.1.5 sources**
 >
 > This is an early implementation with a published Windows editor. Native integrations and media compatibility still need target validation. Read the [version notes and known limitations](VERSION.md).
 
@@ -44,7 +44,7 @@ Studio provides visual/Markdown editing, a page tree, media import, page propert
 - **English and French:** English originals and complete, current French translations are required for publication.
 - **Optional media:** image, video, GIF, mesh, gallery and graph viewers. Include only the modules needed by the manual; only mesh uses Three.js.
 - **Technical content:** build-time code highlighting, SVG diagrams, annotated source extraction, Doxygen/TypeDoc imports and API references without raw implementation listings.
-- **Optional authoring tools:** visual/Markdown editing, optional Git, hosted collaboration, Windows Studio and local SDK/MCP automation through CyToolsCore.
+- **Optional authoring tools:** visual/Markdown editing, optional Git, hosted collaboration, Windows Studio and local SDK/MCP automation through CyMCPSDK.
 
 ### Compatibility and limits
 
@@ -53,6 +53,8 @@ The reader targets modern browsers and WebViews on Windows, Linux, macOS and And
 Review the [documented limits and issue tracking](VERSION.md#documented-limitations) before choosing a target.
 
 ---
+
+Studio 0.1.5 sources use CyMCPSDK 0.7.5 for the integrated assistant and local automation, and CyInstaller 0.1.0 for setup, managed updates and rollback. The published Studio 0.1.2 portable download predates these changes. See the [source version notes](VERSION.md).
 
 ## Installation
 
@@ -63,6 +65,8 @@ Review the [documented limits and issue tracking](VERSION.md#documented-limitati
 3. Choose **Open the CyDoc example**, or create a local project. Local use requires no account.
 
 The application is portable. Its runtimes are bundled. [Release notes and checksums](https://github.com/MrMybal/CyDoc/releases/tag/studio-v0.1.2) accompany the ZIP. The current Windows Python/CEF bridge runs without the CEF process sandbox; open trusted projects.
+
+For the current source version with Assistant and managed updates, [build the Windows editor](studio/README.md#build-windows) and [create its signed CyInstaller setup](.cyinstaller/README.md#build-and-release-locally). A native Linux Studio download is not available yet.
 
 ### Use the library or browser editor
 
@@ -101,7 +105,7 @@ npm run build --prefix studio
 npm start --prefix studio -- --local --data ./data --port 4310
 ```
 
-Open `http://127.0.0.1:4310`. An editing service is needed while authoring; exported manuals remain static. Online hosting uses a separate authenticated service, persistent storage, HTTPS and WebSockets. Windows source builds additionally need Python 3.11+, MSVC, CyUI, CyToolsCore and matching CEF files; follow the [Studio build guide](https://github.com/MrMybal/CyDoc/blob/main/studio/README.md#build-windows).
+Open `http://127.0.0.1:4310`. An editing service is needed while authoring; exported manuals remain static. Online hosting uses a separate authenticated service, persistent storage, HTTPS and WebSockets. Windows source builds additionally need Python 3.11+, MSVC, CMake 3.24+, libcurl, CyUI, CyMCPSDK 0.7.5 and matching CEF files; follow the [Studio build guide](https://github.com/MrMybal/CyDoc/blob/main/studio/README.md#build-windows).
 
 
 ### Build a manual or a showcase
@@ -158,7 +162,8 @@ The core has no runtime dependencies. Generation tools do not run inside the exp
 | Library · source | License · terms | Use / scope |
 | --- | --- | --- |
 | [CyUI](https://github.com/MrMybal/CyUI) | [MIT](https://github.com/MrMybal/CyUI/blob/main/LICENSE) | Native interface and CEF adapter; source access may require permission. |
-| [CyToolsCore](https://github.com/MrMybal/CyToolsCore) | [MIT](https://github.com/MrMybal/CyToolsCore/blob/main/LICENSE) | Local SDK/MCP operation runtime. |
+| [CyMCPSDK](https://github.com/MrMybal/CyMCPSDK) | [MIT](https://github.com/MrMybal/CyMCPSDK/blob/main/LICENSE) | Local SDK/MCP operation runtime. |
+| [CyInstaller](https://github.com/MrMybal/CyInstaller) | [MIT](https://github.com/MrMybal/CyInstaller/blob/main/LICENSE) | Studio setup and update engine. |
 | [Dear ImGui](https://github.com/ocornut/imgui) | [MIT](https://github.com/ocornut/imgui/blob/docking/LICENSE.txt) | Native UI through CyUI/imgui-bundle. |
 | [imgui-bundle](https://github.com/pthom/imgui_bundle) | [MIT and component notices](https://github.com/pthom/imgui_bundle/blob/main/LICENSE) | Python/native UI dependency; its components retain separate notices. |
 | [CEF / Chromium](https://bitbucket.org/chromiumembedded/cef) | [BSD-style and component notices](https://bitbucket.org/chromiumembedded/cef/src/master/LICENSE.txt) | Embedded browser; retain LICENSE.txt and CREDITS.html. |

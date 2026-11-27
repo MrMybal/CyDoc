@@ -2,11 +2,23 @@
 
 [Retour au README](README.fr.md) · [English](VERSION.md)
 
-**Bibliothèque du lecteur : 0.1.0 · Éditeur Studio : 0.1.2**<br>
+**Bibliothèque du lecteur : 0.1.0 · Sources Studio : 0.1.5**<br>
 **Statut : EN DÉVELOPPEMENT**<br>
 **Paquet natif de l’éditeur disponible : Windows x64**
 
 CyDoc est une première implémentation. Studio 0.1.2 est une release portable publiée ; cette publication ne garantit pas la maturité de toutes les intégrations. Consultez les limites documentées avant de dépendre d’un environnement cible.
+
+## Sources Studio 0.1.5 — langue de l’interface partagée
+
+Changer la langue dans les préférences de l’éditeur met aussi à jour et enregistre la langue du conteneur natif. Le thème et les autres préférences sont conservés. Cette compilation reste distincte du téléchargement portable publié 0.1.2.
+
+## Sources Studio 0.1.4 — sauvegarde et lisibilité
+
+Une page ouverte sans modification reçoit désormais un accusé de sauvegarde durable. Les suppressions concurrentes sont vérifiées avec le texte sauvegardé et le vecteur de collaboration ; Ctrl+S attend cet accusé. Les contrôles natifs utilisent un texte plus grand, des contours visibles et des formulaires de largeur limitée. Ces changements ne font pas partie du téléchargement portable publié 0.1.2.
+
+## Sources Studio 0.1.3 — assistant et installation gérée
+
+Les sources actuelles remplacent le précédent moteur d’automatisation par CyMCPSDK 0.7.5, révision `35d2d4f`. Elles ajoutent l’onglet Assistant natif, des opérations communes au chat, au CLI et à MCP, ainsi que l’annonce locale publique. CyInstaller 0.1.0 fournit le setup signé, les mises à jour gérées, la confirmation du démarrage et le retour arrière. L’éditeur attend la sauvegarde du travail avant de fermer pour une mise à jour. Les projets, tâches et brouillons du navigateur conservent leurs emplacements ; les préférences sont copiées dans `config/` en conservant leurs originaux. Ces changements ne sont pas inclus dans le téléchargement portable publié Studio 0.1.2. La génération locale d’une release ne publie pas de mise à jour en ligne.
 
 ## Studio 0.1.2
 
@@ -14,7 +26,7 @@ CyDoc est une première implémentation. Studio 0.1.2 est une release portable p
 - Projets locaux sans compte, avec un exemple CyDoc bilingue modifiable.
 - Git facultatif, édition en ligne authentifiée séparée, invitations, rôles et écriture simultanée.
 - Interface Windows CyUI/CEF avec onglets occupant la fenêtre pour l’éditeur, la documentation, les options et le MCP/SDK local.
-- Six thèmes partagés, SDK JavaScript/Python et 22 opérations CyToolsCore MCP.
+- Six thèmes partagés, SDK JavaScript/Python et 22 opérations MCP.
 - Export statique anglais/français complet, avec le fichier DocAI.md séparé.
 
 [Téléchargement et notes officielles](https://github.com/MrMybal/CyDoc/releases/tag/studio-v0.1.2) · [Sommes SHA-256](https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/SHA256SUMS.txt)

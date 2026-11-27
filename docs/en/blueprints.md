@@ -4,8 +4,15 @@ title: Graphs & Blueprints
 description: An independent node graph module linked to your documentation pages.
 section: Examples
 order: 17
+previous: diagrams
+next: integration
+revision: 1
 ---
-A node graph viewer with typed ports, curves, comment groups, selection, pan, zoom, and in-window enlargement. Select **Make Help Link** to open its API page.
+A node graph viewer with typed ports, curves, comment groups and in-window enlargement. Scrolling over the graph normally scrolls the manual. Select a node to read its role and follow its documentation link.
+
+Choose **Explore graph** to drag the canvas and zoom with the wheel or the +/− buttons. The arrow keys move the canvas; +/− zoom, Home fits the graph and Escape leaves exploration. Browser zoom shortcuts remain available. On touch screens, leave exploration to resume vertical page scrolling. When enlarged, Escape first leaves exploration; another Escape reduces the viewer.
+
+Open **Text view: nodes and connections** to read node descriptions, ports and outgoing connections without manipulating the canvas. Search by a node's name or description. **Show** centers and selects that node in the graph; its documentation link is also available in the text view. Try **Make Help Link** to reach its API page.
 
 ## Interactive graph {#graph}
 

@@ -135,7 +135,6 @@ export async function buildSite(configPath, overrides = {}) {
     cp(resolve(projectRoot, 'web/reader.html'), join(output, 'Documentation.html')),
     writeFile(join(output, 'DocAI.md'), docAiGuide(data, modules)),
     cp(resolve(projectRoot, 'src/viewer.css'), join(dataOutput, 'viewer.css')),
-    cp(resolve(projectRoot, 'src/viewer.css'), resolve(projectRoot, 'dist/viewer.css')),
     cp(resolve(base, config.assets || 'assets'), join(dataOutput, 'assets'), { recursive: true }),
     build({ entryPoints: [resolve(projectRoot, 'web/boot.mjs')], bundle: true, format: 'iife', minify: true, target: 'es2020', outfile: join(dataOutput, 'viewer.js') })
   ]);
@@ -167,4 +166,8 @@ export async function buildSite(configPath, overrides = {}) {
   }
   return { data, output };
 }
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) await buildSite(process.argv[2]);
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  await mkdir(resolve(projectRoot,'dist'),{recursive:true});
+  await cp(resolve(projectRoot,'src/viewer.css'),resolve(projectRoot,'dist/viewer.css'));
+  await buildSite(process.argv[2]);
+}

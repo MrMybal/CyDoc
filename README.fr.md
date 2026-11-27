@@ -12,8 +12,8 @@
     </td>
     <td width="300" align="right" valign="top">
       <p><sub>Licence de l’application</sub><br><a href="LICENSE"><strong>MIT</strong></a></p>
-      <p><sub>Versions</sub><br><a href="VERSION.fr.md"><strong>Lecteur 0.1.0</strong><br><strong>Studio 0.1.2</strong></a><br><strong>EN DÉVELOPPEMENT</strong></p>
-      <p><a href="https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/CyDocStudio-0.1.2-windows-x64.zip"><strong>Télécharger Studio</strong></a><br><sub>Windows x64 · portable</sub></p>
+      <p><sub>Versions des sources</sub><br><a href="VERSION.fr.md"><strong>Lecteur 0.1.0</strong><br><strong>Studio 0.1.5</strong></a><br><strong>EN DÉVELOPPEMENT</strong></p>
+      <p><a href="https://github.com/MrMybal/CyDoc/releases/download/studio-v0.1.2/CyDocStudio-0.1.2-windows-x64.zip"><strong>Télécharger Studio 0.1.2</strong></a><br><sub>Windows x64 · portable</sub></p>
     </td>
   </tr>
 </table>
@@ -23,7 +23,7 @@
 
 Bibliothèque de documentation modulaire pour les développeurs d’applications et de plugins. Rédigez des manuels illustrés, ouvrez la bonne explication depuis votre application et livrez un lecteur avec recherche qui fonctionne directement depuis des fichiers locaux. L’éditeur optionnel **CyDoc Studio** ajoute l’écriture visuelle et Markdown.
 
-> **EN DÉVELOPPEMENT · Lecteur 0.1.0 · Studio 0.1.2**
+> **EN DÉVELOPPEMENT · Lecteur 0.1.0 · Sources Studio 0.1.5**
 >
 > Il s’agit d’une première implémentation avec un éditeur Windows publié. Les intégrations natives et la compatibilité des médias nécessitent encore des vérifications sur les cibles. Consultez les [notes de version et limites connues](VERSION.fr.md).
 
@@ -44,7 +44,7 @@ Studio fournit un éditeur visuel/Markdown, une arborescence, l’import de méd
 - **Anglais et français** : originaux anglais et traduction française complète et à jour exigés avant publication.
 - **Médias optionnels** : lecteurs d’images, vidéos, GIF, meshes, galeries et graphes. Inclure seulement les modules nécessaires ; seul le mesh utilise Three.js.
 - **Contenu technique** : coloration du code à la compilation, schémas SVG, extraction d’annotations, imports Doxygen/TypeDoc et références d’API sans affichage des implémentations brutes.
-- **Écriture et automatisation optionnelles** : édition visuelle/Markdown, Git facultatif, collaboration hébergée, Studio Windows et SDK/MCP local via CyToolsCore.
+- **Écriture et automatisation optionnelles** : édition visuelle/Markdown, Git facultatif, collaboration hébergée, Studio Windows et SDK/MCP local via CyMCPSDK.
 
 ### Compatibilité et limites
 
@@ -53,6 +53,8 @@ Le lecteur cible les navigateurs et WebViews modernes sur Windows, Linux, macOS 
 Consultez les [limites documentées et le suivi des problèmes](VERSION.fr.md#limites-documentées) avant de choisir votre cible.
 
 ---
+
+Les sources Studio 0.1.5 utilisent CyMCPSDK 0.7.5 pour l’assistant intégré et l’automatisation locale, et CyInstaller 0.1.0 pour le setup, les mises à jour gérées et le retour arrière. Le téléchargement portable publié Studio 0.1.2 précède ces changements. Consultez les [notes de version des sources](VERSION.fr.md).
 
 ## Installation
 
@@ -63,6 +65,8 @@ Consultez les [limites documentées et le suivi des problèmes](VERSION.fr.md#li
 3. Choisissez **Open the CyDoc example**, ou créez un projet local. Aucun compte n’est requis en local.
 
 L’application est portable et ses moteurs d’exécution sont inclus. Les [notes de release et sommes de contrôle](https://github.com/MrMybal/CyDoc/releases/tag/studio-v0.1.2) accompagnent le ZIP. Le pont Windows Python/CEF actuel s’exécute sans le bac à sable de processus CEF ; ouvrez des projets de confiance.
+
+Pour la version actuelle des sources avec l’assistant et les mises à jour gérées, [compilez l’éditeur Windows](studio/README.md#build-windows) et [créez son setup CyInstaller signé](.cyinstaller/README.md#build-and-release-locally). Le téléchargement natif de Studio pour Linux n’est pas encore disponible.
 
 ### Utiliser la bibliothèque ou l’éditeur dans le navigateur
 
@@ -101,7 +105,7 @@ npm run build --prefix studio
 npm start --prefix studio -- --local --data ./data --port 4310
 ```
 
-Ouvrez `http://127.0.0.1:4310`. Le service est nécessaire pendant l’écriture ; les manuels exportés restent statiques. L’hébergement en ligne utilise un service authentifié distinct, un stockage persistant, HTTPS et WebSockets. La compilation Windows nécessite aussi Python 3.11+, MSVC, CyUI, CyToolsCore et des fichiers CEF correspondants ; suivez le [guide de compilation de Studio](https://github.com/MrMybal/CyDoc/blob/main/studio/README.md#build-windows).
+Ouvrez `http://127.0.0.1:4310`. Le service est nécessaire pendant l’écriture ; les manuels exportés restent statiques. L’hébergement en ligne utilise un service authentifié distinct, un stockage persistant, HTTPS et WebSockets. La compilation Windows nécessite aussi Python 3.11+, MSVC, CMake 3.24+, libcurl, CyUI, CyMCPSDK 0.7.5 et des fichiers CEF correspondants ; suivez le [guide de compilation de Studio](https://github.com/MrMybal/CyDoc/blob/main/studio/README.md#build-windows).
 
 
 ### Construire un manuel ou une vitrine
@@ -158,7 +162,8 @@ Le cœur n’a aucune dépendance à l’exécution. Les outils de génération 
 | Bibliothèque · sources | Licence · texte | Utilisation / périmètre |
 | --- | --- | --- |
 | [CyUI](https://github.com/MrMybal/CyUI) | [MIT](https://github.com/MrMybal/CyUI/blob/main/LICENSE) | Interface native et adaptateur CEF ; l’accès aux sources peut nécessiter une autorisation. |
-| [CyToolsCore](https://github.com/MrMybal/CyToolsCore) | [MIT](https://github.com/MrMybal/CyToolsCore/blob/main/LICENSE) | Exécution des opérations SDK/MCP locales. |
+| [CyMCPSDK](https://github.com/MrMybal/CyMCPSDK) | [MIT](https://github.com/MrMybal/CyMCPSDK/blob/main/LICENSE) | Exécution des opérations SDK/MCP locales. |
+| [CyInstaller](https://github.com/MrMybal/CyInstaller) | [MIT](https://github.com/MrMybal/CyInstaller/blob/main/LICENSE) | Moteur d’installation et de mise à jour de Studio. |
 | [Dear ImGui](https://github.com/ocornut/imgui) | [MIT](https://github.com/ocornut/imgui/blob/docking/LICENSE.txt) | Interface native via CyUI/imgui-bundle. |
 | [imgui-bundle](https://github.com/pthom/imgui_bundle) | [MIT et notices des composants](https://github.com/pthom/imgui_bundle/blob/main/LICENSE) | Dépendance Python/native ; ses composants gardent leurs notices. |
 | [CEF / Chromium](https://bitbucket.org/chromiumembedded/cef) | [De type BSD et notices des composants](https://bitbucket.org/chromiumembedded/cef/src/master/LICENSE.txt) | Navigateur intégré ; conserver LICENSE.txt et CREDITS.html. |

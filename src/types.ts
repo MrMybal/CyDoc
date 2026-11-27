@@ -1,5 +1,7 @@
 export interface Locale { code: string; label: string }
 export interface Heading { id: string; text: string; level: number }
+/** UTF-16 offsets into DocPage.text; the anchor must be one of its headings. */
+export interface SearchSection { anchor: string; start: number; end: number }
 export interface DocPage {
   id: string;
   locale: string;
@@ -8,10 +10,14 @@ export interface DocPage {
   section: string;
   /** Optional parent page ID for nested navigation; page routes remain unchanged. */
   parent?: string;
+  /** Optional page-id#anchor destinations. An empty string hides that direction. */
+  previous?: string;
+  next?: string;
   order: number;
   html: string;
   text: string;
   headings: Heading[];
+  searchSections?: SearchSection[];
   source?: string;
   sourcePageId?: string;
   symbol?: string;
@@ -38,7 +44,7 @@ export interface Documentation {
 export type ReaderState = Record<string, string>;
 export interface DocRoute { locale: string; pageId: string; anchor?: string; state?: ReaderState }
 export interface ResolvedPage { page: DocPage; requestedLocale: string; fallback: boolean }
-export interface SearchResult { page: DocPage; score: number; excerpt: string; anchor?: string }
+export interface SearchResult { page: DocPage; score: number; excerpt: string; anchor?: string; section?: string; matchedTerms?: string[] }
 export interface SearchOptions { language?: string; kind?: string; fuzzy?: boolean }
 export interface ViewerOptions {
   initialLocale?: string;

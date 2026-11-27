@@ -44,9 +44,11 @@ Studio provides visual/Markdown editing, a page tree, media import, page propert
 - **English and French:** English originals and complete, current French translations are required for publication.
 - **Optional media:** image, video, GIF, mesh, gallery and graph viewers. Include only the modules needed by the manual; only mesh uses Three.js.
 - **Technical content:** build-time code highlighting, SVG diagrams, annotated source extraction, Doxygen/TypeDoc imports and API references without raw implementation listings.
-- **Optional authoring tools:** visual/Markdown editing, optional Git, hosted collaboration, Windows Studio and local SDK/MCP automation through CyToolsCore.
+- **Optional authoring tools:** visual/Markdown editing, optional Git, hosted collaboration, Windows Studio and local SDK/MCP automation through CyMCPSDK.
 
 ---
+
+The source build now uses CyMCPSDK 0.7.5 for its integrated assistant and local automation. The published Studio 0.1.2 download predates this migration.
 
 ## Installation
 
@@ -84,7 +86,7 @@ npm run build --prefix studio
 npm start --prefix studio -- --local --data ./data --port 4310
 ```
 
-Open `http://127.0.0.1:4310`. An editing service is needed while authoring; exported manuals remain static. Online hosting uses a separate authenticated service, persistent storage, HTTPS and WebSockets. Windows source builds additionally need Python 3.11+, MSVC, CyUI, CyToolsCore and matching CEF files; follow the [Studio build guide](https://github.com/MrMybal/CyDoc/blob/main/studio/README.md#build-windows).
+Open `http://127.0.0.1:4310`. An editing service is needed while authoring; exported manuals remain static. Online hosting uses a separate authenticated service, persistent storage, HTTPS and WebSockets. Windows source builds additionally need Python 3.11+, MSVC, CMake 3.24+, libcurl, CyUI, CyMCPSDK 0.7.5 and matching CEF files; follow the [Studio build guide](https://github.com/MrMybal/CyDoc/blob/main/studio/README.md#build-windows).
 
 </details>
 
@@ -123,7 +125,7 @@ The core has no runtime dependencies. Generation tools do not run inside the exp
 | Library · source | License · terms | Use / scope |
 | --- | --- | --- |
 | [CyUI](https://github.com/MrMybal/CyUI) | [MIT](https://github.com/MrMybal/CyUI/blob/main/LICENSE) | Native interface and CEF adapter; source access may require permission. |
-| [CyToolsCore](https://github.com/MrMybal/CyToolsCore) | [MIT](https://github.com/MrMybal/CyToolsCore/blob/main/LICENSE) | Local SDK/MCP operation runtime. |
+| [CyMCPSDK](https://github.com/MrMybal/CyMCPSDK) | [MIT](https://github.com/MrMybal/CyMCPSDK/blob/main/LICENSE) | Local SDK/MCP operation runtime. |
 | [Dear ImGui](https://github.com/ocornut/imgui) | [MIT](https://github.com/ocornut/imgui/blob/docking/LICENSE.txt) | Native UI through CyUI/imgui-bundle. |
 | [imgui-bundle](https://github.com/pthom/imgui_bundle) | [MIT and component notices](https://github.com/pthom/imgui_bundle/blob/main/LICENSE) | Python/native UI dependency; its components retain separate notices. |
 | [CEF / Chromium](https://bitbucket.org/chromiumembedded/cef) | [BSD-style and component notices](https://bitbucket.org/chromiumembedded/cef/src/master/LICENSE.txt) | Embedded browser; retain LICENSE.txt and CREDITS.html. |

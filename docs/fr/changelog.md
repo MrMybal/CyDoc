@@ -16,7 +16,7 @@ L’[éditeur Studio](doc:studio#start), facultatif, ajoute :
 - Git facultatif avec commits de documentation, différences, branches, historique et dépôts distants HTTPS pris en charge.
 - Application portable Windows x64 construite avec CyUI et CEF, environnements d’exécution inclus et onglets Éditeur, Documentation, Options et MCP / SDK local occupant la fenêtre.
 - Les six thèmes de la bibliothèque partagés entre l’éditeur, l’interface native et le manuel intégré.
-- SDK JavaScript/Python et 22 opérations MCP locales via CyToolsCore.
+- SDK JavaScript/Python et 22 opérations MCP locales via le moteur d’automatisation.
 
 Studio possède ses propres dépendances. La bibliothèque de lecture reste en version 0.1.0 et les manuels exportés s’ouvrent toujours directement avec `file://`.
 

@@ -31,17 +31,46 @@ def main():
     parser.add_argument('--cef', type=Path)
     parser.add_argument('--studio', type=Path)
     parser.add_argument('--origin')
-    parser.add_argument('--tab', choices=['editor','documentation','options','mcp'], default='editor')
+    parser.add_argument('--tab', choices=['editor','documentation','assistant','updates','options','mcp'], default='editor')
     parser.add_argument('--capture', type=Path)
     parser.add_argument('--exit-after', type=float, default=0)
+    parser.add_argument('--cy-updated-from')
+    parser.add_argument('--update-action', choices=['info','check','window'])
+    parser.add_argument('--health-report', type=Path)
     args = parser.parse_args()
     frozen = bool(getattr(sys, 'frozen', False))
     distribution = Path(sys.executable).resolve().parents[2] if frozen else None
-    studio = args.studio or (distribution / 'app/cydoc/studio' if frozen else Path(__file__).resolve().parents[2])
     data = (args.data or Path(os.environ.get('LOCALAPPDATA', str(Path.home()))) / 'CyDocStudio').resolve()
+    from updater import UpdateService
+    updates = UpdateService(distribution, ['--data',str(data), *(['--origin',args.origin] if args.origin else [])])
+    atexit.register(updates.close)
+    if args.update_action:
+        if args.update_action == 'info':
+            print(json.dumps({'appId':'mrmybal.cydocstudio','mode':updates.mode}));return
+        if updates.mode != 'managed':
+            print(json.dumps({'type':'result','code':11,'status':'not_installed','message':'A CyInstaller installation or repair is required.'}),file=sys.stderr)
+            raise SystemExit(11)
+        if args.update_action == 'window':
+            if not updates.open_window():
+                print(json.dumps({'type':'result','code':1,'message':'The CyInstaller window could not start.'}),file=sys.stderr)
+                raise SystemExit(1)
+            return
+        updates.check();updates.pending.result(timeout=95);result=updates.poll()
+        code = result.code if result.success or result.code not in (0,100,102,103) else 1
+        print(json.dumps(result.result if result.success else {'type':'result','code':code,'message':result.diagnostic}))
+        raise SystemExit(max(1,code) if code<0 else code)
+    startup = updates.startup()
+    if startup and startup.code == 103:
+        if not updates.open_window(recovery=True):raise RuntimeError('The CyInstaller recovery window could not start.')
+        return
+    studio = args.studio or (distribution / 'app/cydoc/studio' if frozen else Path(__file__).resolve().parents[2])
+    studio_version = json.loads((studio/'package.json').read_text('utf-8'))['version']
     data.mkdir(parents=True, exist_ok=True)
-    logging.basicConfig(filename=data/'desktop.log', level=logging.INFO, encoding='utf-8', format='%(asctime)s %(levelname)s %(message)s')
-    settings_file = data/'desktop-settings.json'
+    from storage import prepare_preferences
+    preferences = prepare_preferences(data)
+    (data/'logs').mkdir(exist_ok=True)
+    logging.basicConfig(filename=data/'logs/desktop.log', level=logging.INFO, encoding='utf-8', format='%(asctime)s %(levelname)s %(message)s')
+    settings_file = preferences/'desktop-settings.json'
     settings = {'language': 'en', 'theme': 'dark', 'textScale': 1.0, 'allowedFolders': [], 'port': 4310}
     if settings_file.exists():
         settings.update(json.loads(settings_file.read_text('utf-8')))
@@ -54,14 +83,14 @@ def main():
     if settings.get('appearanceVersion', 0) < 3:
         settings['appearanceVersion'] = 3
         settings_file.write_text(json.dumps(settings,ensure_ascii=False,indent=2),encoding='utf-8')
-    allowed_file=data/'allowed-folders.json'
+    allowed_file=preferences/'allowed-folders.json'
     allowed_file.write_text(json.dumps(settings['allowedFolders']),encoding='utf-8')
     cef = (args.cef or (distribution/'runtime/cef' if frozen else Path(os.environ.get('CYDOC_CEF_DIR', 'runtime/cef')))).resolve()
     library, helper = cef/'cyui_webcef_bridge.dll', cef/'cyui_webcef_helper.exe'
     if not library.is_file() or not helper.is_file():
         raise RuntimeError('CEF is missing. Supply --cef with the matching CyUI WebCEF runtime directory.')
     process = None
-    log_stream = (data/'server.log').open('a', encoding='utf-8')
+    log_stream = (data/'logs/server.log').open('a', encoding='utf-8')
     origin = args.origin
     setup_code = None
     if not origin:
@@ -107,7 +136,7 @@ def main():
     from cyui_modules.cef import CEFRuntime
     from cyui_modules.web import web_panel
 
-    c.register_translations('fr', {'Documentation': 'Documentation', 'Local MCP / SDK': 'MCP / SDK local', 'Open local application': 'Ouvrir une application locale', 'Options': 'Options', 'Language': 'Langue', 'Theme': 'Thème', 'Text size': 'Taille du texte', 'Licenses': 'Licences', 'Save configuration': 'Enregistrer la configuration', 'Load configuration': 'Charger une configuration', 'Restart to apply the allowed folder.': 'Redémarrez pour appliquer le dossier autorisé.', 'The editor service is available at:': 'Le service d’édition est disponible à :', 'Create a token in the web Account panel, then configure your MCP client.': 'Créez un jeton dans le panneau Compte de l’éditeur, puis configurez votre client MCP.', 'Copy configuration': 'Copier la configuration', 'Close': 'Fermer', 'Local service': 'Service local', 'Online service': 'Service en ligne', 'Editor': 'Éditeur', 'Light': 'Clair', 'Dark': 'Sombre', 'Midnight blue': 'Bleu nuit', 'Violet': 'Violet', 'Amber night': 'Ambre nocturne', 'Local mode: no account or SDK token is required.': 'Mode local : aucun compte ni jeton SDK n’est nécessaire.'})
+    c.register_translations('fr', {'Updates': 'Mises à jour', 'Assistant': 'Assistant', 'Documentation': 'Documentation', 'Local MCP / SDK': 'MCP / SDK local', 'Open local application': 'Ouvrir une application locale', 'Options': 'Options', 'Language': 'Langue', 'Theme': 'Thème', 'Text size': 'Taille du texte', 'Licenses': 'Licences', 'Save configuration': 'Enregistrer la configuration', 'Load configuration': 'Charger une configuration', 'Restart to apply the allowed folder.': 'Redémarrez pour appliquer le dossier autorisé.', 'The editor service is available at:': 'Le service d’édition est disponible à :', 'Create a token in the web Account panel, then configure your MCP client.': 'Créez un jeton dans le panneau Compte de l’éditeur, puis configurez votre client MCP.', 'Copy configuration': 'Copier la configuration', 'Close': 'Fermer', 'Local service': 'Service local', 'Online service': 'Service en ligne', 'Editor': 'Éditeur', 'Light': 'Clair', 'Dark': 'Sombre', 'Midnight blue': 'Bleu nuit', 'Violet': 'Violet', 'Amber night': 'Ambre nocturne', 'Local mode: no account or SDK token is required.': 'Mode local : aucun compte ni jeton SDK n’est nécessaire.'})
     runtime = None
     view = None
     textures = {}
@@ -118,6 +147,19 @@ def main():
     capture_done = False
     start = time.monotonic()
     renderer_ready = False
+    application_ready = False
+    health_written = False
+    exit_timer_requested = False
+    from shutdown import CloseGuard
+    close_guard = CloseGuard()
+    native_host = None
+    assistant_window = 0
+    assistant_bounds = None
+    parent_window = 0
+    user32 = ctypes.windll.user32
+    user32.GetActiveWindow.restype = ctypes.c_void_p
+    user32.MoveWindow.argtypes = [ctypes.c_void_p, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_bool]
+    user32.ShowWindow.argtypes = [ctypes.c_void_p, ctypes.c_int]
     def host_theme():
         return {'protocol':'cyui.web','version':1,'type':'theme','payload':{'theme':settings['theme'],'locale':settings['language'],'localWorkspace':not bool(args.origin),'textScale':settings['textScale']}}
 
@@ -125,35 +167,26 @@ def main():
         for backend in [view,manual_view]:
             if backend is not None:
                 backend.post_json(host_theme())
+        if native_host and native_host.ready and native_host.process.poll() is None:
+            theme = next(item for item in catalog if item['id'] == settings['theme'])
+            native_host.request({'command':'appearance', 'locale':settings['language'], 'light':theme['light'],
+                                 'colors':theme['colors'], 'textScale':settings['textScale']})
 
     def apply_native_theme():
         theme = next(item for item in catalog if item['id'] == settings['theme'])
-        c.apply('light-grey' if theme['light'] else 'navy', 'compact')
-        palette = dict(vars(c.palette()))
-        def colour(token):
-            value = theme['colors'][token].lstrip('#')
-            if len(value) == 3:
-                value = ''.join(character*2 for character in value)
-            return c.rgb(int(value,16))
-        mapping = {'bg0':'sidebar','bg1':'bg','bg2':'surface','bg3':'card','bg4':'accent-bg','bg5':'line',
-                   'text':'text','textDim':'muted','textFaint':'faint','line':'line','lineStrong':'line',
-                   'grid':'line','gridStrong':'line','accent':'accent','accentHover':'accent','accentDim':'accent',
-                   'selection':'accent-bg','info':'accent'}
-        palette.update({key:colour(token) for key,token in mapping.items()})
-        palette['accentText'] = c.contrast_text(palette['accent'])
-        c.set_palette(palette)
-        i.get_style().font_scale_main = settings['textScale']
+        from appearance import apply_theme
+        apply_theme(theme, settings['textScale'])
     parameters = h.RunnerParams()
-    parameters.app_window_params.window_title = 'CyDoc Studio 0.1.2'
+    parameters.app_window_params.window_title = 'CyDoc Studio '+studio_version
     parameters.app_window_params.window_geometry.size = (1500, 940)
     parameters.app_window_params.restore_previous_geometry = not bool(args.capture)
     parameters.imgui_window_params.default_imgui_window_type = h.DefaultImGuiWindowType.provide_full_screen_window
     parameters.imgui_window_params.show_menu_bar = False
     parameters.imgui_window_params.show_status_bar = False
     parameters.imgui_window_params.remember_theme = False
-    parameters.ini_filename = str(data/'desktop.ini')
+    parameters.ini_filename = str(preferences/'desktop.ini')
     parameters.fps_idling.enable_idling = False
-    parameters.callbacks.load_additional_fonts = c.load_fonts
+    parameters.callbacks.load_additional_fonts = lambda: c.load_fonts(size=16)
     parameters.callbacks.setup_imgui_style = apply_native_theme
 
     def save_settings():
@@ -179,12 +212,19 @@ def main():
                 del textures[key]
 
     def initialize():
-        nonlocal runtime, view
+        nonlocal runtime, view, native_host, parent_window
         apply_native_theme()
         c.set_locale(settings['language'])
         runtime = CEFRuntime(library, helper, data/'browser-profile', no_sandbox=True)
         url = origin + ('/#setup='+setup_code if setup_code else '/')
         view = runtime.create(url, (origin,), lambda w,h,p: upload('editor',w,h,p), release)
+        from host import NativeHost
+        from native_window import studio_window
+        os.environ['CYDOC_STUDIO_ORIGIN'] = origin
+        parent_window = studio_window(parameters.app_window_params.window_title)
+        native_host = NativeHost(data/'jobs')
+        native_host.start(chat=True, parent=parent_window, language=settings['language'])
+        broadcast_theme()
 
     def pump():
         if runtime:
@@ -192,10 +232,10 @@ def main():
 
     def options():
         nonlocal picker
-        i.begin_child('options-page', c.dp2(0, 0))
+        i.begin_child('options-page', (min(c.dp(960),i.get_content_region_avail().x),0))
         i.dummy(c.dp2(1, 18)); i.indent(c.dp(28))
         c.heading(c.tr('Options'), 1)
-        if c.begin_properties('settings', c.dp(220)):
+        if c.begin_properties('settings', min(c.dp(220),i.get_content_region_avail().x*.38)):
             c.property(c.tr('Language'))
             changed, selected = i.combo('##language', ['en','fr'].index(settings['language']), ['English','Français'])
             if changed:
@@ -216,34 +256,67 @@ def main():
             picker = ('folder', pfd.select_folder(c.tr('Open local application')))
         if c.button(c.tr_label('Save configuration')):
             picker = ('save', pfd.save_file(c.tr('Save configuration'),'studio-settings.json',['JSON','*.json']))
-        i.same_line()
+        if i.get_content_region_avail().x >= c.dp(500):i.same_line()
         if c.button(c.tr_label('Load configuration')):
             picker = ('load', pfd.open_file(c.tr('Load configuration'),'', ['JSON','*.json']))
         c.divider(); c.heading(c.tr('Licenses'),3)
-        for name, link in [('CyDoc','https://github.com/MrMybal/CyDoc'),('CyUI','https://github.com/MrMybal/CyUI'),('CyToolsCore','https://github.com/MrMybal/CyToolsCore'),('Dear ImGui / imgui-bundle','https://github.com/pthom/imgui_bundle'),('CEF / Chromium','https://bitbucket.org/chromiumembedded/cef')]:
+        for name, link in [('CyDoc','https://github.com/MrMybal/CyDoc'),('CyUI','https://github.com/MrMybal/CyUI'),('CyMCPSDK 0.7.5','https://github.com/MrMybal/CyMCPSDK'),('CyInstaller 0.1.0','https://github.com/MrMybal/CyInstaller'),('Dear ImGui / imgui-bundle','https://github.com/pthom/imgui_bundle'),('CEF / Chromium','https://bitbucket.org/chromiumembedded/cef')]:
             i.text_wrapped(name+' · '+link)
         i.unindent(c.dp(28)); i.end_child()
 
+    def update_panel():
+        tr = lambda en, fr: fr if settings['language']=='fr' else en
+        i.begin_child('updates-page', (min(c.dp(960),i.get_content_region_avail().x),0));i.dummy(c.dp2(1,18));i.indent(c.dp(28))
+        c.heading(tr('Studio updates','Mises à jour de Studio'),1)
+        i.text_wrapped(tr('Installed version: ','Version installée : ')+studio_version)
+        if args.cy_updated_from:
+            i.text_wrapped(tr('Updated from ','Mise à jour depuis ')+args.cy_updated_from)
+        if updates.mode!='managed':
+            i.text_wrapped(tr('Install Studio with its signed CyInstaller setup to enable managed updates. Your projects and drafts remain in the existing data folder.', 'Installez Studio avec son setup CyInstaller signé pour activer les mises à jour gérées. Vos projets et brouillons restent dans le dossier de données existant.'))
+            if updates.mode=='repair':i.text_wrapped(tr('The installer engine or registration needs repair.', 'Le moteur ou l’enregistrement de l’installation doit être réparé.'))
+        else:
+            if not updates.busy:
+                if c.button(tr('Check for updates','Rechercher des mises à jour')):updates.check()
+                i.same_line()
+                if c.button(tr('Open CyInstaller','Ouvrir CyInstaller')) and not updates.open_window():
+                    c.notify(tr('The update window could not start.','La fenêtre de mise à jour n’a pas pu démarrer.'),'error')
+            else:i.text_wrapped(tr('CyInstaller is working…','CyInstaller est en cours d’exécution…'))
+            result=updates.last
+            if result:
+                if not result.success:i.text_wrapped(tr('Update check failed: ','Échec du contrôle : ')+result.diagnostic)
+                elif result.operation=='check':
+                    messages={0:tr('No newer version reported.','Aucune version plus récente signalée.'),100:tr('An update is available. Open CyInstaller to review and install it.','Une mise à jour est disponible. Ouvrez CyInstaller pour la consulter et l’installer.'),102:tr('An update is downloaded and ready. Open CyInstaller to apply it.','Une mise à jour est téléchargée et prête. Ouvrez CyInstaller pour l’appliquer.')}
+                    i.text_wrapped(messages.get(result.code,result.diagnostic))
+                    if result.result.get('latest_version'):i.text_wrapped(tr('Available version: ','Version disponible : ')+str(result.result['latest_version']))
+                    if result.result.get('offline'):i.text_wrapped(tr('Offline: showing the last cached result.','Hors ligne : affichage du dernier résultat en cache.'))
+                    elif result.result.get('cached'):i.text_wrapped(tr('Result from the installer cache.','Résultat issu du cache de l’installeur.'))
+            i.text_wrapped(tr('Opening the update window keeps Studio running. When you accept an update, Studio saves pending work before closing.', 'Ouvrir la fenêtre de mise à jour laisse Studio ouvert. Lorsque vous acceptez une mise à jour, Studio enregistre le travail en attente avant de fermer.'))
+        i.unindent(c.dp(28));i.end_child()
+
     def mcp():
-        i.begin_child('mcp-page', c.dp2(0, 0))
+        i.begin_child('mcp-page', (min(c.dp(1040),i.get_content_region_avail().x),0))
         i.dummy(c.dp2(1, 18)); i.indent(c.dp(28))
         c.heading(c.tr('Local MCP / SDK'),1)
         i.text_wrapped(c.tr('The editor service is available at:')+' '+origin)
-        i.text_wrapped(c.tr('Create a token in the web Account panel, then configure your MCP client.' if args.origin else 'Local mode: no account or SDK token is required.'))
-        executable = sys.executable
-        arguments = ['--data-dir',str(data/'jobs'),'mcp']
-        arguments.insert(0,'--tool' if frozen else str(Path(__file__).with_name('tool.py')))
-        environment = {'CYDOC_STUDIO_ORIGIN': origin}
+        if native_host.ready['requiresToken']:
+            i.text_wrapped('MCP : CYDOC_MCP_TOKEN' if settings['language']=='fr' else 'MCP requires CYDOC_MCP_TOKEN.')
+        else:
+            i.text_wrapped('MCP : aucun jeton requis.' if settings['language']=='fr' else 'MCP: no token required.')
         if args.origin:
-            environment['CYDOC_STUDIO_TOKEN'] = 'REPLACE_WITH_YOUR_PRIVATE_TOKEN'
-        config = json.dumps({'mcpServers':{'cydoc-studio':{'command':executable,'args':arguments,'env':environment}}},indent=2)
+            i.text_wrapped('Les opérations en ligne utilisent CYDOC_STUDIO_TOKEN dans l’environnement de Studio.' if settings['language']=='fr' else 'Online operations use CYDOC_STUDIO_TOKEN from the Studio environment.')
+        endpoint = native_host.ready['endpoint']
+        configuration = {'url': endpoint}
+        if native_host.ready['requiresToken']:
+            configuration['headers'] = {'Authorization': 'Bearer REPLACE_WITH_YOUR_PRIVATE_MCP_TOKEN'}
+        config = json.dumps({'mcpServers': {'cydoc-studio': configuration}}, indent=2)
+        i.text_wrapped('CyMCPSDK 0.7.5 · '+native_host.ready['profile']+' · '+endpoint)
         i.input_text_multiline('##mcp',config,c.dp2(-28,350),i.InputTextFlags_.read_only)
         if c.button(c.tr_label('Copy configuration')):
             i.set_clipboard_text(config)
         i.unindent(c.dp(28)); i.end_child()
 
     def event(backend, item):
-        nonlocal renderer_ready, last_appearance
+        nonlocal renderer_ready, last_appearance, application_ready
         if item['kind'] == 'navigated':
             renderer_ready = True
             backend.post_json(host_theme())
@@ -255,10 +328,19 @@ def main():
                 if message.get('protocol') != 'cyui.web' or message.get('version') != 1:
                     return
                 kind = message.get('type')
-                if kind in ('editor-ready','reader-ready'):
+                if kind == 'close-prepared' and backend is view:
+                    ready = close_guard.reply(message.get('payload',{}))
+                    if ready is True:parameters.app_shall_exit=True
+                    elif ready is False:c.notify('Enregistrement impossible : reconnectez l’éditeur avant de fermer.' if settings['language']=='fr' else 'Could not save: reconnect the editor before closing.','error')
+                elif kind == 'editor-initialized' and backend is view:
+                    application_ready = True
+                elif kind in ('editor-ready','reader-ready'):
                     backend.post_json(host_theme())
-                elif kind == 'appearance' and message.get('payload',{}).get('theme') in theme_ids:
-                    settings['theme'] = message['payload']['theme'];apply_native_theme();save_settings();broadcast_theme()
+                elif kind == 'appearance':
+                    from appearance import preference_changes
+                    changes = preference_changes(settings, message.get('payload'), theme_ids)
+                    if changes:
+                        settings.update(changes);c.set_locale(settings['language']);apply_native_theme();save_settings();broadcast_theme()
                 elif kind == 'appearance-applied':
                     appearance = message.get('payload',{})
                     if appearance != last_appearance:
@@ -277,11 +359,11 @@ def main():
                 logging.exception('Native editor message failed')
 
     def draw():
-        nonlocal picker, manual_view, selected_once
+        nonlocal picker, manual_view, selected_once, assistant_window, assistant_bounds, health_written, exit_timer_requested
         runtime.begin_frame()
         shown = None
         if i.begin_tab_bar('studio-tabs'):
-            for key, label in [('editor','Editor'),('documentation','Documentation'),('options','Options'),('mcp','Local MCP / SDK')]:
+            for key, label in [('editor','Editor'),('documentation','Documentation'),('assistant','Assistant'),('updates','Updates'),('options','Options'),('mcp','Local MCP / SDK')]:
                 flags = i.TabItemFlags_.set_selected if not selected_once and args.tab == key else 0
                 selected, _ = i.begin_tab_item(c.tr_label(label), flags=flags)
                 if selected:
@@ -289,6 +371,24 @@ def main():
                         options()
                     elif key == 'mcp':
                         mcp()
+                    elif key == 'updates':
+                        update_panel()
+                    elif key == 'assistant':
+                        shown = 'assistant'
+                        handle_file = data/'jobs/assistant-window.json'
+                        if not assistant_window and handle_file.exists():
+                            assistant_window = json.loads(handle_file.read_text('utf-8'))['handle']
+                        if assistant_window:
+                            position = i.get_cursor_screen_pos(); viewport = i.get_main_viewport()
+                            size = i.get_content_region_avail()
+                            from native_window import panel_bounds
+                            bounds = panel_bounds(parent_window, position, size, viewport, i.get_io().display_size)
+                            if bounds != assistant_bounds:
+                                user32.MoveWindow(assistant_window, *bounds, True); assistant_bounds = bounds
+                            user32.ShowWindow(assistant_window, 8)
+                            i.dummy(size)
+                        else:
+                            i.text_unformatted('Starting assistant… / Démarrage de l’assistant…')
                     else:
                         if key == 'documentation' and manual_view is None:
                             manual_view = runtime.create(origin+'/help/Documentation.html#/'+settings['language']+'/overview', (origin,), lambda w,h,p: upload('manual',w,h,p), release)
@@ -298,6 +398,8 @@ def main():
                     i.end_tab_item()
             i.end_tab_bar()
             selected_once = True
+        if assistant_window and shown != 'assistant':
+            user32.ShowWindow(assistant_window, 0)
         for backend in [view, manual_view]:
             if backend is not None and backend is not shown:
                 for _ in range(256):
@@ -325,8 +427,26 @@ def main():
                 logging.exception('Native option failed');c.notify(str(error),'error')
         c.render_notifications()
         runtime.end_frame()
-        if args.exit_after and time.monotonic()-start > args.exit_after:
-            parameters.app_shall_exit=True
+        result = updates.poll()
+        if result and result.operation=='check' and result.success and result.code in (100,102):
+            c.notify('Une mise à jour de Studio est disponible.' if settings['language']=='fr' else 'A Studio update is available.','info')
+        if application_ready and updates.mode=='managed' and not updates.confirmed and not updates.busy and (not updates.last or updates.last.operation!='confirm'):
+            updates.confirm()
+        updates.tick()
+        if application_ready and not health_written and (updates.mode!='managed' or updates.confirmed):
+            health_written=True
+            if args.health_report:
+                args.health_report.parent.mkdir(parents=True,exist_ok=True)
+                args.health_report.write_text(json.dumps({'version':studio_version,'ready':True,'confirmed':updates.confirmed,'updateMode':updates.mode,'updatedFrom':args.cy_updated_from,'pid':os.getpid(),'origin':origin}),encoding='utf-8')
+        if args.exit_after and not exit_timer_requested and time.monotonic()-start > args.exit_after:
+            exit_timer_requested=True;close_guard.request()
+        if close_guard.request_id and not close_guard.sent:
+            if not renderer_ready:parameters.app_shall_exit=True
+            else:view.post_json({'protocol':'cyui.web','version':1,'type':'prepare-close','payload':{'requestId':close_guard.request_id}});close_guard.sent=True
+        expired = close_guard.expired()
+        if expired:
+            view.post_json({'protocol':'cyui.web','version':1,'type':'cancel-close','payload':{'requestId':expired}})
+            c.notify('La fermeture attend une confirmation de sauvegarde de l’éditeur.' if settings['language']=='fr' else 'Closing requires the editor’s save confirmation.','error')
 
     def capture():
         nonlocal capture_done
@@ -338,6 +458,9 @@ def main():
             capture_done=True
 
     def close():
+        updates.close()
+        if native_host:
+            native_host.close()
         if runtime:
             runtime.close()
 
@@ -346,6 +469,7 @@ def main():
     parameters.callbacks.show_gui=draw
     parameters.callbacks.before_swap=capture
     parameters.callbacks.before_exit=close
+    parameters.callbacks.confirm_exit=close_guard.request
     try:
         h.run(parameters)
     finally:

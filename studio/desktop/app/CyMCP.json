@@ -1,53 +1,17 @@
 {
   "schemaVersion": 1,
-  "protocolVersion": "1.0",
   "id": "cy.doc.studio",
   "name": "CyDocStudio",
-  "version": "0.1.2",
-  "description": "Create, edit and publish local or online CyDoc projects.",
-  "vendor": "Cyberalien",
-  "author": "Cyberalien",
-  "executable": "runtime/python/Scripts/python.exe app/tool.py",
-  "categories": [
-    "documentation"
-  ],
-  "tags": [
-    "documentation",
-    "editor"
-  ],
-  "capabilities": [
-    "jobs",
-    "cancellation"
-  ],
-  "backends": [],
-  "platforms": [
-    {
-      "os": "Windows",
-      "architecture": "x64",
-      "status": "Experimental",
-      "computeBackends": [
-        "CPU"
-      ]
-    }
-  ],
-  "interfaces": [
-    "Native",
-    "CLI",
-    "JSONL",
-    "HTTP",
-    "MCP",
-    "ImGui"
-  ],
-  "runtimeRequirements": [],
-  "concurrency": {
-    "policy": "Sequential",
-    "maxWorkers": 1
+  "version": "0.1.5",
+  "sdk": {
+    "name": "CyMCPSDK",
+    "version": "0.7.5",
+    "revision": "35d2d4fd85982d3d0ba278594e85fa37f325b4f2"
   },
   "operations": [
     {
       "id": "list_projects",
-      "name": "list projects",
-      "description": "list projects",
+      "description": "List documentation projects visible to the configured Studio account or local workspace.",
       "inputSchema": {
         "type": "object",
         "properties": {},
@@ -64,18 +28,11 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": true,
-      "supportsProgress": false
+      "readOnly": true,
+      "canCancel": true
     },
     {
       "id": "create_project",
-      "name": "create project",
       "description": "Create a persistent documentation workspace, optionally with Git, a cloned HTTPS remote or an operator-allowed application path.",
       "inputSchema": {
         "type": "object",
@@ -114,19 +71,12 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": false,
-      "supportsProgress": false
+      "readOnly": false,
+      "canCancel": false
     },
     {
       "id": "get_project",
-      "name": "get project",
-      "description": "get project",
+      "description": "Read a project, its page tree, available languages and publication state.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -149,19 +99,12 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": true,
-      "supportsProgress": false
+      "readOnly": true,
+      "canCancel": true
     },
     {
       "id": "create_page",
-      "name": "create page",
-      "description": "create page",
+      "description": "Create a bilingual page with a stable page ID and optional navigation parent or section.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -220,19 +163,12 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": false,
-      "supportsProgress": false
+      "readOnly": false,
+      "canCancel": false
     },
     {
       "id": "get_page",
-      "name": "get page",
-      "description": "get page",
+      "description": "Read Markdown and its revisionToken before editing a page.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -267,18 +203,11 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": true,
-      "supportsProgress": false
+      "readOnly": true,
+      "canCancel": true
     },
     {
       "id": "update_page",
-      "name": "update page",
       "description": "Update Markdown using the revisionToken returned by get_page. Conflicting writes fail without replacing another editor’s work.",
       "inputSchema": {
         "type": "object",
@@ -323,18 +252,11 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": false,
-      "supportsProgress": false
+      "readOnly": false,
+      "canCancel": false
     },
     {
       "id": "update_metadata",
-      "name": "update metadata",
       "description": "Update title, description, section, parent, order or translationReviewed using the current revisionToken.",
       "inputSchema": {
         "type": "object",
@@ -404,19 +326,12 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": false,
-      "supportsProgress": false
+      "readOnly": false,
+      "canCancel": false
     },
     {
       "id": "archive_page",
-      "name": "archive page",
-      "description": "archive page",
+      "description": "Archive a page in the project; existing saved revisions remain available.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -451,18 +366,11 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": false,
-      "supportsProgress": false
+      "readOnly": false,
+      "canCancel": false
     },
     {
       "id": "update_settings",
-      "name": "update settings",
       "description": "Set name, version, homePage, local logo and enabled optional modules.",
       "inputSchema": {
         "type": "object",
@@ -521,19 +429,12 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": false,
-      "supportsProgress": false
+      "readOnly": false,
+      "canCancel": false
     },
     {
       "id": "list_assets",
-      "name": "list assets",
-      "description": "list assets",
+      "description": "List imported project media and logical asset paths.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -556,19 +457,12 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": true,
-      "supportsProgress": false
+      "readOnly": true,
+      "canCancel": true
     },
     {
       "id": "import_asset",
-      "name": "import asset",
-      "description": "Import a local media file automatically through CyToolsCore task input staging. Original files are preserved.",
+      "description": "Import a local media file automatically through private job input staging. Original files are preserved.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -576,8 +470,7 @@
             "type": "string"
           },
           "source": {
-            "type": "string",
-            "x-cy-kind": "File"
+            "type": "string"
           },
           "name": {
             "type": "string"
@@ -599,18 +492,11 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": false,
-      "supportsProgress": false
+      "readOnly": false,
+      "canCancel": false
     },
     {
       "id": "publish_project",
-      "name": "publish project",
       "description": "Build the human reader. English originals and current complete French translations are mandatory. Does not push Git.",
       "inputSchema": {
         "type": "object",
@@ -634,19 +520,12 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": false,
-      "supportsProgress": false
+      "readOnly": false,
+      "canCancel": false
     },
     {
       "id": "git_status",
-      "name": "git status",
-      "description": "git status",
+      "description": "Read Git status without changing the repository.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -669,18 +548,11 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": true,
-      "supportsProgress": false
+      "readOnly": true,
+      "canCancel": true
     },
     {
       "id": "git_action",
-      "name": "git action",
       "description": "Explicit Git action. Commit uses message/name/email, remote uses url. Pull is fast-forward only; no force/reset.",
       "inputSchema": {
         "type": "object",
@@ -746,19 +618,12 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": false,
-      "supportsProgress": false
+      "readOnly": false,
+      "canCancel": false
     },
     {
       "id": "list_members",
-      "name": "list members",
-      "description": "list members",
+      "description": "Read project members and their roles on an account-based service.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -781,19 +646,12 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": true,
-      "supportsProgress": false
+      "readOnly": true,
+      "canCancel": true
     },
     {
       "id": "invite_member",
-      "name": "invite member",
-      "description": "invite member",
+      "description": "Invite an editor or viewer to a project using the configured account permissions.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -837,19 +695,12 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": false,
-      "supportsProgress": false
+      "readOnly": false,
+      "canCancel": false
     },
     {
       "id": "remove_member",
-      "name": "remove member",
-      "description": "remove member",
+      "description": "Remove a user from a project using the configured account permissions.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -876,19 +727,12 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": false,
-      "supportsProgress": false
+      "readOnly": false,
+      "canCancel": false
     },
     {
       "id": "page_history",
-      "name": "page history",
-      "description": "page history",
+      "description": "List saved private revisions for one page and locale.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -923,18 +767,11 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": true,
-      "supportsProgress": false
+      "readOnly": true,
+      "canCancel": true
     },
     {
       "id": "restore_page",
-      "name": "restore page",
       "description": "Restore a private working revision through the same conflict-checked collaboration state.",
       "inputSchema": {
         "type": "object",
@@ -987,19 +824,12 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": false,
-      "supportsProgress": false
+      "readOnly": false,
+      "canCancel": false
     },
     {
       "id": "preview_page",
-      "name": "preview page",
-      "description": "preview page",
+      "description": "Compile a working page preview without publishing the manual.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1034,19 +864,12 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": true,
-      "supportsProgress": false
+      "readOnly": true,
+      "canCancel": true
     },
     {
       "id": "reload_external",
-      "name": "reload external",
-      "description": "reload external",
+      "description": "Reload externally edited source files into the collaborative working state.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1081,18 +904,11 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 134217728
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": false,
-      "supportsProgress": false
+      "readOnly": false,
+      "canCancel": false
     },
     {
       "id": "export_manual",
-      "name": "export manual",
       "description": "Download the last successful published manual into a task-owned ZIP. Export it before finishing the task to keep it.",
       "inputSchema": {
         "type": "object",
@@ -1116,15 +932,8 @@
         ],
         "additionalProperties": false
       },
-      "resourceRequirements": {
-        "ramBytes": 536870912,
-        "diskBytes": 268435456
-      },
-      "supportedBackends": [],
-      "permissions": [],
-      "canRunAsync": true,
-      "canCancel": true,
-      "supportsProgress": false
+      "readOnly": false,
+      "canCancel": true
     }
   ]
 }

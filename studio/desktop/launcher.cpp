@@ -20,10 +20,8 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
     const DWORD count = GetModuleFileNameW(nullptr, path, 32768);
     if (!count || count == 32768) return 1;
     const std::wstring root = std::wstring(path).substr(0, std::wstring(path).find_last_of(L"\\/"));
-    // A side-by-side runtime lets an update replace the launcher while an older window is open.
-    const std::wstring current = root + L"\\runtime\\desktop\\CyDocStudioRuntime-0.1.2.exe";
-    const std::wstring executable = GetFileAttributesW(current.c_str()) != INVALID_FILE_ATTRIBUTES
-        ? current : root + L"\\runtime\\desktop\\CyDocStudioRuntime.exe";
+    // CyInstaller owns replacement/rollback. The launcher always runs the managed payload.
+    const std::wstring executable = root + L"\\runtime\\desktop\\CyDocStudioRuntime.exe";
     std::wstring command = quote(executable);
     int argc = 0; auto argv = CommandLineToArgvW(GetCommandLineW(), &argc);
     for (int index = 1; index < argc; ++index) command += L" " + quote(argv[index]);

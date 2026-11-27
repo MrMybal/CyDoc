@@ -1,6 +1,10 @@
 import * as Y from 'yjs';
+import { prepareShutdown } from './shutdown.mjs';
+import { acknowledgesSavedState } from './save-ack.mjs';
 import { applyTheme, themes } from './appearance.mjs';
 import { bindEditor } from './editor.mjs';
+import { diagramPreset, mountDiagramBuilder, diagramBuilderLabels } from './diagram-builder.mjs';
+import { stepsTemplate, mountStepsBuilder, stepsBuilderLabels } from './steps-builder.mjs';
 import { t, locale as uiLocale, setLocale } from './i18n.mjs';
 
 const app = document.querySelector('#app'), dialog = document.querySelector('#dialog');
@@ -28,7 +32,9 @@ let user, projects = [], project, page, contentLocale = 'en', editor, socket, co
 let invitation = new URLSearchParams(location.hash.slice(1)).get('invite') || '';
 let setupCode = new URLSearchParams(location.hash.slice(1)).get('setup') || '';
 let nativeFolder;
-let desktopLocal=false;
+let blockBuilder;
+dialog.addEventListener('close', () => { blockBuilder?.destroy(); blockBuilder = undefined; });
+let desktopLocal=false, activeRequests=0, activeActions=0, closingRequest;
 function readRoute(){const match=location.hash.match(/^#\/project\/([a-f0-9]{32})\/(en|fr)\/([a-z0-9][a-z0-9-]*)$/);return match?{project:match[1],locale:match[2],page:match[3]}:undefined;}
 let initialRoute=readRoute();
 const writingPositions=new Map();let navigationScroll=0;
@@ -36,16 +42,20 @@ function savePositions(){const writing=document.querySelector('.writing');if(wri
 if (invitation || setupCode) history.replaceState(null, '', location.pathname);
 applyTheme(localStorage.getItem('cydoc-studio-theme') || 'dark'); setLocale(uiLocale);
 async function api(path, input, method = 'GET') {
+  activeRequests++;
+  try {
   const response = await fetch(`/api/${path}`, { method, headers: input instanceof File ? {} : { 'Content-Type': 'application/json' }, body: input === undefined ? undefined : input instanceof File ? input : JSON.stringify(input) });
   const value = await response.json(); if (!response.ok) throw new Error(value.error || `HTTP ${response.status}`); return value;
+  } finally { activeRequests--; }
 }
 function notice(value, error = false) { const node = document.querySelector('#notification'); node.textContent = value; node.className = `show${error ? ' error' : ''}`; clearTimeout(node.timer); node.timer = setTimeout(() => node.className = '', error ? 10000 : 4500); }
 function state(key) { connection = key; const node = document.querySelector('#save-state'); if (node) node.textContent = t(key); }
 function modal(title, contents, { wide = false } = {}) {
+  blockBuilder?.destroy(); blockBuilder = undefined;
   dialog.className = wide ? 'modal-wide' : ''; dialog.innerHTML = `<div class="row" style="margin-bottom:20px"><h2 class="grow" style="margin:0">${e(title)}</h2>${button('close-dialog', 'close', 'close', 'class="icon"')}</div>${contents}<p class="error" id="modal-error" role="alert"></p>`;
   if (!dialog.open) dialog.showModal();
 }
-async function run(fn) { try { await fn(); } catch (error) { const target = dialog.open && dialog.querySelector('#modal-error'); if (target) target.textContent = error.message; else notice(error.message, true); } }
+async function run(fn) { activeActions++; try { await fn(); } catch (error) { const target = dialog.open && dialog.querySelector('#modal-error'); if (target) target.textContent = error.message; else notice(error.message, true); } finally { activeActions--; } }
 function localeOptions() { return `<option value="en" ${contentLocale === 'en' ? 'selected' : ''}>English</option><option value="fr" ${contentLocale === 'fr' ? 'selected' : ''}>Français</option>`; }
 function openDocumentation() { modal(t('documentation'), `<iframe class="preview-frame" title="${e(t('documentation'))}" src="/help/Documentation.html#/${uiLocale}/overview"></iframe>`, {wide:true}); }
 async function auth(mode) {
@@ -132,10 +142,15 @@ async function openPage(id) {
         if (writable) socket.send(JSON.stringify({ type: 'update', update: encode(Y.encodeStateAsUpdate(editor.doc)) }));
         document.querySelector('.writing').inert = false;
         requestAnimationFrame(()=>{if(pageGeneration===generation)document.querySelector('.writing').scrollTop=writingPositions.get(`${project.id}/${contentLocale}/${id}`)||0;});
-        state(writable ? 'saved' : 'readOnly');
+        state(writable ? 'saving' : 'readOnly');
       }
       if (value.type === 'update') { editor.apply(decode(value.update)); if (writable) state('saving'); }
-      if (value.type === 'saved') { page.revisionToken = value.revisionToken; page.revision = value.revision; page.sourceRevision=value.sourceRevision; page.body = editor.shared.toString(); updatePageInProject(page);document.querySelector('.properties .status').textContent=translationLabel(page); if (value.vector === encode(Y.encodeStateVector(editor.doc))) { localStorage.removeItem(draftKey); state(writable ? 'saved' : 'readOnly'); } }
+      if (value.type === 'saved') {
+        page.revisionToken = value.revisionToken; page.revision = value.revision; page.sourceRevision=value.sourceRevision;
+        page.body = editor.shared.toString(); updatePageInProject(page);document.querySelector('.properties .status').textContent=translationLabel(page);
+        const acknowledged = await acknowledgesSavedState(value, () => editor ? {document:editor.doc,vector:encode(Y.encodeStateVector(editor.doc)),body:editor.shared.toString()} : {});
+        if (generation === pageGeneration && acknowledged) { localStorage.removeItem(draftKey); state(writable ? 'saved' : 'readOnly'); }
+      }
       if(value.type==='original-revision'){const original=project.pages.find(row=>row.id===value.id&&row.locale==='en');if(original)original.revision=value.revision;renderTree();document.querySelector('.properties .status').textContent=translationLabel(page);}
       if (value.type === 'metadata') { page = value.page; updatePageInProject(page); }
       if (value.type === 'error') { state('disconnected'); modal(t('unsavedWarning'),`<p class="error">${e(value.message)}</p><div class="actions">${button('download-draft','downloadDraft')}${button('reload-external','reloadExternal',undefined,project.role==='owner'?'':'disabled')}</div>`); }
@@ -169,9 +184,23 @@ const templates = {
 };
 function insertBlock() {
   if (!editor) return;
-  modal(t('insert'), `<form id="insert-block-form" class="stack"><label>${e(t('blockType'))}<select name="type">${Object.keys(templates).map(type => `<option>${type}</option>`).join('')}</select></label><label>${e(t('json'))}<textarea name="json" rows="14" spellcheck="false">${e(JSON.stringify(templates.image,null,2))}</textarea></label><div class="actions"><button class="primary">${e(t('insertBlock'))}</button></div></form>`);
-  const form = document.querySelector('#insert-block-form'); form.elements.type.onchange = () => form.elements.json.value = JSON.stringify(templates[form.elements.type.value], null, 2);
-  form.onsubmit = event => { event.preventDefault(); run(async () => { const type = form.elements.type.value; const value = JSON.parse(form.elements.json.value); if (['image','video','gallery','gif','mesh','graph'].includes(type) && !project.config.modules.includes(type)) throw new Error(`${t('modules')}: ${type}`); editor.insert(`\n\n\`\`\`${type}\n${JSON.stringify(value,null,2)}\n\`\`\`\n\n`); dialog.close(); }); };
+  const diagramLabels = diagramBuilderLabels(uiLocale), stepLabels = stepsBuilderLabels(uiLocale);
+  modal(t('insert'), `<form id="insert-block-form" class="stack"><label>${e(t('blockType'))}<select name="type" aria-label="${e(t('blockType'))}">${Object.keys(templates).map(type => `<option>${type}</option>`).join('')}</select></label><div data-guided-diagram hidden></div><details data-block-json open><summary>${e(t('json'))}</summary><textarea aria-label="${e(t('json'))}" name="json" rows="14" spellcheck="false">${e(JSON.stringify(templates.image,null,2))}</textarea></details><div class="actions"><button class="primary" data-insert-submit>${e(t('insertBlock'))}</button></div></form>`);
+  const form = document.querySelector('#insert-block-form');
+  form.elements.type.onchange = () => {
+    blockBuilder?.destroy(); blockBuilder = undefined;
+    const diagram = form.elements.type.value === 'diagram', steps = form.elements.type.value === 'steps', host = form.querySelector('[data-guided-diagram]');
+    dialog.classList.toggle('diagram-modal', diagram);
+    dialog.classList.toggle('steps-modal', steps);
+    host.classList.remove('diagram-builder','steps-builder');
+    host.hidden = !diagram && !steps; form.querySelector('[data-block-json]').open = !diagram && !steps;
+    form.querySelector('[data-block-json] summary').textContent = diagram ? diagramLabels.advanced : steps ? stepLabels.advanced : t('json');
+    form.elements.json.value = JSON.stringify(diagram ? diagramPreset('flow', contentLocale) : steps ? stepsTemplate() : templates[form.elements.type.value], null, 2);
+    form.querySelector('[data-insert-submit]').disabled = false;
+    if (diagram) blockBuilder = mountDiagramBuilder(host, form.elements.json, { locale: uiLocale, contentLocale, onValidity: valid => { form.querySelector('[data-insert-submit]').disabled = !valid; } });
+    if (steps) blockBuilder = mountStepsBuilder(host, form.elements.json, { locale: uiLocale, onValidity: valid => { form.querySelector('[data-insert-submit]').disabled = !valid; } });
+  };
+  form.onsubmit = event => { event.preventDefault(); if (blockBuilder && !blockBuilder.valid) return; run(async () => { const type = form.elements.type.value; const value = JSON.parse(form.elements.json.value); if (['image','video','gallery','gif','mesh','graph'].includes(type) && !project.config.modules.includes(type)) throw new Error(`${t('modules')}: ${type}`); editor.insert(`\n\n\`\`\`${type}\n${JSON.stringify(value,null,2)}\n\`\`\`\n\n`); dialog.close(); }); };
 }
 async function media() {
   if (!project) return;
@@ -244,8 +273,8 @@ document.addEventListener('click', event => { const node = event.target.closest(
   const chain = editor.rich.chain().focus();
   if (command === 'h2') chain.toggleHeading({level:2}).run(); if (command === 'bold') chain.toggleBold().run(); if (command === 'italic') chain.toggleItalic().run(); if (command === 'bullet') chain.toggleBulletList().run(); if (command === 'ordered') chain.toggleOrderedList().run(); if (command === 'quote') chain.toggleBlockquote().run(); if (command === 'code') chain.toggleCodeBlock({language:'cpp'}).run(); if (command === 'table') chain.insertTable({rows:3,cols:3,withHeaderRow:true}).run(); if (command === 'link') { const url = prompt(t('link'),'doc:overview#getting-started'); if (url) chain.setLink({href:url}).run(); }
 }); });
-document.addEventListener('change', event => { const kind=event.target.dataset.preference;if(!kind)return;run(async()=>{if(kind==='theme'){const theme=applyTheme(event.target.value);globalThis.cyuiNative?.postMessage({protocol:'cyui.web',version:1,type:'appearance',payload:{theme}});}else{setLocale(event.target.value);dialog.close();if(user){if(project){const id=page?.id;renderShell();if(id)await openPage(id);}else renderShell();}else await auth();}}); });
-document.addEventListener('keydown', event => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase()==='s'){event.preventDefault();if(project)run(async()=>{await api(`projects/${project.id}`);state('saved');});}if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='k'){event.preventDefault();document.querySelector('#page-search')?.focus();} });
+document.addEventListener('change', event => { const kind=event.target.dataset.preference;if(!kind)return;run(async()=>{if(kind==='theme'){const theme=applyTheme(event.target.value);globalThis.cyuiNative?.postMessage({protocol:'cyui.web',version:1,type:'appearance',payload:{theme}});}else if(kind==='language'){setLocale(event.target.value);globalThis.cyuiNative?.postMessage({protocol:'cyui.web',version:1,type:'appearance',payload:{locale:uiLocale}});dialog.close();if(user){if(project){const id=page?.id;renderShell();if(id)await openPage(id);}else renderShell();}else await auth();}}); });
+document.addEventListener('keydown', event => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase()==='s'){event.preventDefault();if(project)run(async()=>{await api(`projects/${project.id}`);});}if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='k'){event.preventDefault();document.querySelector('#page-search')?.focus();} });
 window.addEventListener('beforeunload', event => { if(connection==='saving'){event.preventDefault();event.returnValue='';} });
 window.addEventListener('popstate',()=>{if(!user)return;const route=readRoute();if(!route)return run(()=>loadProjects());if(route.project===project?.id&&route.page===page?.id&&route.locale===contentLocale)return;contentLocale=route.locale;run(()=>openProject(route.project,route.page));});
 async function initialize() { try { user=await api('me');await loadProjects(); } catch { await auth(); } }
@@ -253,6 +282,14 @@ if (globalThis.cyuiNative?.addEventListener) {
   globalThis.cyuiNative.addEventListener('message', event => {
     const message = event.data;
     if (message?.protocol !== 'cyui.web' || message.version !== 1) return;
+    if(message.type==='cancel-close' && message.payload?.requestId===closingRequest){closingRequest=undefined;app.inert=false;return;}
+    if(message.type==='prepare-close' && typeof message.payload?.requestId==='string'){
+      const requestId=closingRequest=message.payload.requestId;app.inert=true;
+      prepareShutdown({pendingRequests:()=>activeRequests+activeActions,state:()=>connection,hasDocument:()=>!!editor,flush:async()=>{if(project)await api(`projects/${project.id}`);}})
+        .then(()=>{if(closingRequest===requestId)globalThis.cyuiNative.postMessage({protocol:'cyui.web',version:1,type:'close-prepared',payload:{requestId,ready:true}});})
+        .catch(()=>{if(closingRequest===requestId){closingRequest=undefined;app.inert=false;globalThis.cyuiNative.postMessage({protocol:'cyui.web',version:1,type:'close-prepared',payload:{requestId,ready:false}});}});
+      return;
+    }
     if(message.type==='open-studio-documentation'||message.type==='focus-documentation'){openDocumentation();return;}
     if(message.type==='open-project-folder'&&typeof message.payload?.path==='string'){nativeFolder=message.payload;if(user)run(async()=>{await newProject();document.querySelector('#create-project').elements.path.value=nativeFolder.path;document.querySelector('#create-project').elements.name.value=nativeFolder.name||'';nativeFolder=undefined;});return;}
     if(message.type!=='theme')return;
@@ -268,4 +305,4 @@ if (globalThis.cyuiNative?.addEventListener) {
   });
   globalThis.cyuiNative.postMessage({protocol:'cyui.web',version:1,type:'editor-ready'});
 }
-initialize();
+initialize().then(()=>globalThis.cyuiNative?.postMessage({protocol:'cyui.web',version:1,type:'editor-initialized'})).catch(error=>notice(error.message,true));

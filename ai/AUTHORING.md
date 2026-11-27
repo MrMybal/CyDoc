@@ -46,7 +46,7 @@ Metadata supports simple single-line values, not full YAML. Each page needs `id`
 
 Organize the manual as a tree. Add `parent: overview` to a child page's metadata, using an existing page ID rather than a file path or title. A parent may have its own parent; missing targets, self references and cycles fail validation. Keep parent IDs consistent across translations. Root pages can use section paths such as `section: Guides / Workspace`. The hierarchy changes navigation, not routes: a child still uses `doc:child-id#section`. Group optional API references by their public functions, includes and modules.
 
-The reader's header searches prose, code and symbols with live results and content/language filters. Ctrl+K opens the search dialog. Keep useful descriptions and explicit anchors so search results and contextual links remain understandable.
+The reader's header searches prose, code and symbols with live results and content/language filters. Ctrl+K opens the search dialog. Results show the page's section path, a readable excerpt and, when available, the matching heading as a direct destination. The compiler indexes section-body offsets without duplicating their text; keep useful descriptions and explicit anchors so these destinations remain understandable and stable. Matches are highlighted safely, including accent-insensitive and typo-tolerant matches. Clear filters to widen a search or clear the query to return to starting pages. The current filters stay with the mounted reader while navigating; no search history is stored.
 
 The navigation tooltip uses the complete page `title`, followed by its optional `description`. Write short, useful descriptions; no separate tooltip configuration is needed. Folder tooltips include their full navigation path. Code-tab items and gallery items may each add a plain-text `description`, displayed beneath their complete label when hovered or focused. These descriptions are text, not Markdown or HTML.
 
@@ -55,6 +55,10 @@ English is the source/default language; French is mandatory. Translate titles, d
 Update `revision` when the original meaning changes, and update `sourceRevision` only when the translation has caught up. Without an original revision, the build uses a content fingerprint. `DocData/translation-report.json` is build metadata; it has no reader page, navigation item or search result. The legacy `translationReport` setting does not restore a report page.
 
 Keep human content focused on using the application. AI instructions belong in the separate `DocAI.md` sidecar; build instructions, audit logs, migration inventories and verification history belong outside the human manual. Existing Markdown can set `audience: internal` or `audience: ai` to be excluded from pages and search. Its old page ID redirects to the manual's home unless an explicit alias overrides it. The default audience is `user`; other values fail validation. Files named `DocAI.md` in content directories are ignored.
+
+Organize human pages around their purpose. An overview explains the product and links to useful starting points. A tutorial states its goal and prerequisites, gives a small sequence of actions, and describes the visible result after each step. A practical guide covers one task. A troubleshooting page starts from a symptom, supplies a check and a remedy, and explains how to recognize success. Use the existing `steps`, `callout` and `details` blocks for these structures; these are editorial patterns, not new manifest content kinds. The checkout's bilingual `quickstart.md` and `troubleshooting.md` pages are maintained examples. Keep the application's own subject matter and existing IDs when applying their structure.
+
+Use flat frontmatter `previous: quickstart` and `next: media#images` to choose a learning path instead of global page order. Destinations must exist; the build validates their anchors and aliases. An omitted direction keeps the default adjacent page; an explicitly empty value hides it at a path endpoint. Set the same IDs in both translations. A parent controls the breadcrumb and tree, independently of this reading sequence. Illustrated explanations remain searchable as guides by default; standalone media keep their media kind. Use an explicit `kind: guide`, `kind: media` or `kind: api` when the page's role needs a deliberate override.
 
 ## Links are part of the application contract
 
@@ -81,7 +85,7 @@ CyDoc rich fences contain **JSON**, not Mermaid syntax or arbitrary JavaScript:
 ```
 
 ```steps
-{"items":[{"title":"Build","body":"Generate the manual."},{"title":"Ship","body":"Copy its complete output directory."}]}
+{"items":[{"title":"Build","body":"Generate the manual.","result":"The entry HTML and its DocData folder are present.","troubleshooting":"Read the exact build error and check the [guide](doc:troubleshooting)."},{"title":"Ship","body":"Copy its complete output directory."}]}
 ```
 
 ```details
@@ -92,6 +96,10 @@ CyDoc rich fences contain **JSON**, not Mermaid syntax or arbitrary JavaScript:
 {"lang":"cpp","before":"open_help();","after":"open_help(\"overview\");"}
 ```
 ````
+
+Steps retain the existing `title` and Markdown `body` fields. Optional Markdown `result` appears under a localized **Expected result** label; optional Markdown `troubleshooting` appears in a collapsed **If this step fails** section. Blank optional fields are omitted. Links, assets and code inside these fields use the same compiler and validation as other Markdown. Translate both fields with the page. Existing blocks without them keep their action-only presentation.
+
+Studio's **Insert a block → steps** provides title/action fields, optional result/troubleshooting fields and add/remove/reorder controls for 1–50 steps. Insertion requires nonempty titles and actions. Advanced JSON remains editable, including extension properties; reordering moves entire items without changing authored identifiers. The form does not render Markdown: use the page's real reader preview after insertion. Existing blocks remain editable as JSON in the editor.
 
 Glossary blocks use `{"items":[{"term":"PBR","definition":"Physically based rendering."}]}`. A `[[PBR]]` inline tooltip needs a `glossary` entry for the current locale in the build configuration. Raw HTML is escaped; do not inject `<script>` tags or rely on handwritten embedded HTML.
 
@@ -141,6 +149,14 @@ Media paths must remain under `assets/`, without parent traversal or remote URLs
 ## Static diagrams and interactive graphs
 
 Static diagrams are compiled into accessible SVG and need no media module. Supported types include `flow`, `decision`, `sequence`, `class`, `dependency` and `architecture`; their schemas differ. This is a small flow example:
+
+Add an optional plain-text `description` to explain the diagram's purpose. The compiler also supplies a collapsible text alternative naming its elements and connections (or sequence messages, including replies), in the page's language. The stock reader adds **Enlarge diagram**, with an in-window dialog, Escape/Close dismissal and focus restoration. SVG IDs and links are retained while expanded. Linear `Source -> Build` diagrams keep their short accessible label and can also be enlarged.
+
+Keep element and participant labels concise. They wrap within the shape (up to 500 characters); Studio's guided fields use shorter limits and its automatic placement accounts for the resulting shape height. Hand-authored coordinates remain yours to adjust when a label changes size.
+
+Studio's **Insert a block → diagram** offers guided Flow, Decision and Sequence models with editable labels, connections, a description, automatic placement and a preview from the same SVG renderer. Advanced JSON remains available for custom properties and other supported diagram types. Changing labels and arranging a model keep element IDs; deleting an element also removes its connections. This is an authoring form, not an interactive graph editor or Mermaid interpreter.
+
+The optional graph reader defaults to reading mode: ordinary wheel and vertical touch input can scroll the manual. **Explore graph** enables canvas drag, wheel zoom, arrow-key panning (Shift for larger moves), +/− zoom and Home fit. Escape leaves exploration before an enlarged viewer is reduced. Ctrl/Command wheel and keyboard shortcuts remain available to the browser. **Text view: nodes and connections** provides a lazily rendered, searchable list of descriptions, ports, outgoing relationships and safe documentation links. **Show** centers/selects the node and focuses it on the canvas. Existing media state keys (`node`, `zoom`, `x`, `y`) and node/port IDs are unchanged.
 
 ````markdown
 ```diagram

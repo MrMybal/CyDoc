@@ -4,6 +4,8 @@ title: Intégrer à une application
 description: Ouvrez une page d’aide depuis Windows, Linux, macOS, Android ou une application web.
 section: Intégration
 order: 20
+previous: blueprints
+next:
 ---
 Le lecteur exporté utilise les standards du web. Il peut s’ouvrir dans le navigateur du système ou dans une WebView embarquée. L’application hôte choisit le mode d’ouverture.
 

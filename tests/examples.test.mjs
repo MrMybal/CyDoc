@@ -5,6 +5,31 @@ import { compileMarkdown } from '../tools/compiler.mjs';
 import { parseBlueprint, validateGraph } from '../tools/blueprint.mjs';
 import { extractComments } from '../tools/extract.mjs';
 import { sourceDependencies } from '../tools/source-index.mjs';
+import { createDocumentation, parseLink, hasAnchor } from '../dist/index.js';
+import { renderOverview } from '../web/overview.mjs';
+
+test('the task-based home, tutorial and troubleshooting resolve in both complete editions with legacy anchors', async () => {
+  const data=JSON.parse(await readFile('dist/site/DocData/manifest.json','utf8'));
+  const docs=createDocumentation(data);
+  for(const locale of ['en','fr']) {
+    const home=renderOverview(locale);
+    assert.match(home,/class="home-paths"/);
+    for(const heading of docs.resolve('overview',locale).page.headings)assert.ok(home.includes(`id="${heading.id}"`),`Missing rendered home anchor ${locale}/${heading.id}`);
+    for(const match of home.matchAll(/href="(#\/[^\"]+)"/g)) {
+      const route=parseLink(match[1]);const resolved=docs.resolve(route.pageId,route.locale);
+      assert.ok(resolved,`Missing home destination ${match[1]}`);
+      if(route.anchor)assert.ok(hasAnchor(resolved.page,route.anchor));
+    }
+    const tutorial=docs.resolve('quickstart',locale).page;
+    for(const anchor of ['installation','first-page','build','contextual-help','L1','code-2-L1','code-3-L1','code-4-L1'])assert.ok(hasAnchor(tutorial,anchor),`Missing preserved tutorial anchor ${locale}/${anchor}`);
+    assert.match(tutorial.html,/class="content-steps"/);
+    const path=['quickstart','writing','rich-content','media','diagrams','blueprints','integration'];
+    for(let i=0;i<path.length;i++){const current=docs.resolve(path[i],locale).page;assert.equal(current.next,i===path.length-1?'':path[i+1]);if(i)assert.equal(current.previous,path[i-1]);}
+    const troubleshooting=docs.resolve('troubleshooting',locale).page;
+    assert.equal(troubleshooting.locale,locale);
+    for(const anchor of ['reader','page','media','language','personal-data','support'])assert.ok(hasAnchor(troubleshooting,anchor));
+  }
+});
 
 test('nine languages have extracted API pages and file references without source listings', async () => {
   const data = JSON.parse(await readFile('dist/site/DocData/manifest.json', 'utf8'));

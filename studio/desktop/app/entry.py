@@ -1,10 +1,9 @@
-"""Frozen entry: desktop by default, real CyToolsCore CLI/MCP with --tool."""
+"""Frozen entry: desktop by default, native CyMCPSDK CLI/MCP with --tool."""
 import sys
 if '--tool' in sys.argv:
     sys.argv.remove('--tool')
-    from tool import create_runtime
-    from cytools_core.transports.cli import run_cli
-    raise SystemExit(run_cli(create_runtime))
+    from tool import run
+    raise SystemExit(run())
 else:
     from main import main
     try:

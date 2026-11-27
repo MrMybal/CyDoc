@@ -9,7 +9,7 @@ export function richBlock(kind, text, { id, render, code, escape, link, locale }
   }
   if (kind === 'steps') {
     if (!Array.isArray(data.items) || data.items.length > 50) throw new Error('Invalid steps');
-    return `<ol class="content-steps">${data.items.map(item => `<li><strong>${escape(item.title)}</strong>${render(String(item.body || ''))}</li>`).join('')}</ol>`;
+    return `<ol class="content-steps" role="list">${data.items.map(item => `<li><strong class="step-title">${escape(item.title)}</strong>${render(String(item.body || ''))}${String(item.result || '').trim() ? `<div class="step-result"><strong>${fr ? 'Résultat attendu' : 'Expected result'}</strong>${render(String(item.result))}</div>` : ''}${String(item.troubleshooting || '').trim() ? `<details class="step-troubleshooting"><summary>${fr ? 'Si cette étape échoue' : 'If this step fails'}</summary><div>${render(String(item.troubleshooting))}</div></details>` : ''}</li>`).join('')}</ol>`;
   }
   if (kind === 'callout') {
     const type = ['note', 'tip', 'warning', 'danger'].includes(data.type) ? data.type : 'note';

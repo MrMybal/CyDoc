@@ -4,6 +4,8 @@ title: Écrire des pages
 description: Concentrez-vous sur vos explications. CyDoc s’occupe de leur présentation.
 section: Créer du contenu
 order: 10
+previous: quickstart
+next: rich-content
 ---
 Écrivez des fichiers Markdown dans le dossier de chaque langue. Les titres, listes, tableaux, citations, liens et blocs de code sont pris en charge.
 
